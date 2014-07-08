@@ -59,17 +59,17 @@ namespace gui
 class window
 {
 protected:
-	std::unique_ptr<wordring::gui::detail::native_window> m_native; // pimpl
+	std::unique_ptr<detail::native_window> m_native_window; // pimpl
 
 public:
 
 public:
-	explicit window(detail::native_window* p);
+	explicit window(detail::native_window* nw);
 	window();
 	virtual ~window();
 
 	/// pimplの実装側インターフェースを返します
-	detail::native_window* get_native();
+	detail::native_window* get_native_window();
 
 	/** @brief ウィンドウを作成します
 	 *  @details 子ウィンドウは作成時に親ウィンドウが必要です。
@@ -97,7 +97,7 @@ public:
 	virtual point_int get_position() const;
 
 	/// メッセージ・ハンドラ
-	virtual bool on_create();
+	virtual bool onCreate();
 	/// メッセージ・ハンドラ
 	virtual bool on_click();
 	/// メッセージ・ハンドラ

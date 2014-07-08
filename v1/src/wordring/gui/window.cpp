@@ -31,69 +31,69 @@ using namespace wordring::gui;
 
 // window ---------------------------------------------------------------------
 
-window::window() : m_native(new wordring::gui::detail::native_window_impl)
+window::window() : m_native_window(new detail::native_window_impl)
 {
-	m_native->set_window(this);
+	m_native_window->set_window(this);
 }
 
-window::window(detail::native_window* p) : m_native(p)
+window::window(detail::native_window* p) : m_native_window(p)
 {
-	m_native->set_window(this);
+	m_native_window->set_window(this);
 }
 
 window::~window(){}
 
 void window::create(window * parent)
 {
-	m_native->create(parent);
+	m_native_window->create(parent);
 }
 
-detail::native_window* window::get_native()
+detail::native_window* window::get_native_window()
 {
-	return m_native.get();
+	return m_native_window.get();
 }
 
 void window::close()
 {
-	m_native->close();
+	m_native_window->close();
 }
 
 void window::destroy()
 {
-	return m_native->destroy();
+	return m_native_window->destroy();
 }
 
 window* window::get_parent()
 {
-	return m_native->get_parent()->get_window();
+	return m_native_window->get_parent()->get_window();
 }
 
 void window::set_parent(window* parent)
 {
-	m_native->set_parent(parent->get_native());
+	m_native_window->set_parent(parent->get_native_window());
 }
 
 void window::set_size(size_int size)
 {
-	m_native->set_size(size);
+	m_native_window->set_size(size);
 }
 
 size_int window::get_size() const
 {
-	return m_native->get_size();
+	return m_native_window->get_size();
 }
 void window::set_position(point_int point)
 {
-	m_native->set_position(point);
+	m_native_window->set_position(point);
 }
 
 point_int window::get_position() const
 {
-	return m_native->get_position();
+	return m_native_window->get_position();
 }
 
 /// メッセージ・ハンドラ
-bool window::on_create()
+bool window::onCreate()
 {
 	return true;
 }

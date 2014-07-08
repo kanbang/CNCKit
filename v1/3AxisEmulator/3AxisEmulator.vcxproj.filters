@@ -68,5 +68,8 @@
     <ClInclude Include="..\include\wordring\geometry\shape.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_class.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
