@@ -170,6 +170,7 @@ public:
 	container_window() { }
 };
 
+
 template <typename T>
 class form_window : public container_window<T>
 {

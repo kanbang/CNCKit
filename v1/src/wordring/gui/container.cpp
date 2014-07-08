@@ -1,10 +1,10 @@
-/**
+ï»¿/**
 * @file    wordring/gui/container.cpp
 *
-* @brief   GUIƒRƒ“ƒeƒi‚ÌÀ‘•ƒtƒ@ƒCƒ‹
+* @brief   GUIã‚³ãƒ³ãƒ†ãƒŠã®å®Ÿè£…ãƒ•ã‚¡ã‚¤ãƒ«
 *
 * @details
-*          ƒtƒH[ƒ€‚È‚Ç‚ÌGUIƒRƒ“ƒeƒi‚Å‚·B
+*          ãƒ•ã‚©ãƒ¼ãƒ ãªã©ã®GUIã‚³ãƒ³ãƒ†ãƒŠã§ã™ã€‚
 *
 *
 *
@@ -12,9 +12,9 @@
 * @author  Kouichi Minami
 * @date    2014
 *
-* @par     ƒz[ƒ€
+* @par     ãƒ›ãƒ¼ãƒ 
 *          https://github.com/wordring/
-* @par     ƒ‰ƒCƒZƒ“ƒX
+* @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
 *          PDS
 */
 

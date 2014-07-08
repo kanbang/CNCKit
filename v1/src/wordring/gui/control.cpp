@@ -1,10 +1,10 @@
-/**
+ï»¿/**
 * @file    wordring/gui/control.cpp
 *
-* @brief   GUIƒRƒ“ƒgƒ[ƒ‹‚ÌÀ‘•ƒtƒ@ƒCƒ‹
+* @brief   GUIã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®å®Ÿè£…ãƒ•ã‚¡ã‚¤ãƒ«
 *
 * @details
-*          ƒ{ƒ^ƒ“AƒXƒNƒ[ƒ‹ƒo[‚È‚Ç‚ÌGUIƒRƒ“ƒgƒ[ƒ‹‚Å‚·B
+*          ãƒœã‚¿ãƒ³ã€ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ãªã©ã®GUIã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã§ã™ã€‚
 *
 *
 *
@@ -12,9 +12,9 @@
 * @author  Kouichi Minami
 * @date    2014
 *
-* @par     ƒz[ƒ€
+* @par     ãƒ›ãƒ¼ãƒ 
 *          https://github.com/wordring/
-* @par     ƒ‰ƒCƒZƒ“ƒX
+* @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
 *          PDS
 */
 
