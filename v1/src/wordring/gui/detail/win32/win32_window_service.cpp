@@ -1,10 +1,22 @@
-﻿// wordring/gui/detail/win32/window_service.cpp
-
-// Kouichi Minami 2014
-// https://github.com/wordring/
-// PDSとして提供
-
-// ウインドウ・システムのメッセージ・ポンプを提供
+﻿/**
+ * @file    wordring/gui/detail/win32/win32_window_service.cpp
+ *
+ * @brief   ウィンドウ・サービスのwin32環境固有実装ファイル
+ *
+ * @details
+ *          一般的なGUIライブラリにおけるメッセージ・ポンプ相当です。\n
+ *          pimplによって実装を隠蔽します。
+ *          このファイルは、win32専用です。
+ *          
+ *
+ * @author  Kouichi Minami
+ * @date    2014
+ *
+ * @par     ホーム
+ *          https://github.com/wordring/
+ * @par     ライセンス
+ *          PDS
+ */
 
 #ifdef _WIN32
 
@@ -13,7 +25,7 @@
 
 using namespace wordring::gui::detail;
 
-void native_window_service_impl::run()
+void win32_window_service_impl::run()
 {
 
 	MSG msg;

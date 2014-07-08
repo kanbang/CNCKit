@@ -1,9 +1,16 @@
 ﻿/**
  * @file    3AxisEmulator/main.cpp
+ *
  * @brief   3軸CNCエミュレータ
  *
+ * @details
+ *          CNCソフトウェア開発用のツールとして仮想的なCNCマシンとして
+ *          エミュレータを準備します。
+ *          開発の段階が進むにつれて、シミュレータとしての機能が追加されると
+ *          良いと思います。
+ *
  * @author  Kouichi Minami
- * @date    2014/07/03
+ * @date    2014
  *
  * @par     ホーム
  *          https://github.com/wordring/
@@ -20,38 +27,53 @@
 #include <cstdint>
 #include <iostream>
 
+#include <wordring/gui/window.h>
 #include <wordring/gui/window_service.h>
+#include <wordring/gui/container.h>
 
 
 int main()
 {
+	using namespace wordring::gui;
+
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
-/*
-	HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle(NULL);
 
-	WNDCLASS wndClass;
+	std::cout << sizeof(window);
 
-	wndClass.cbClsExtra = 0;
-	wndClass.cbWndExtra = 0;
-	wndClass.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
-	wndClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wndClass.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
-	wndClass.hInstance = hInstance;
-	wndClass.lpfnWndProc = WindowProc;
-	wndClass.lpszClassName = L"WindowWithConsole";
-	wndClass.lpszMenuName = NULL;
-	wndClass.style = CS_HREDRAW | CS_VREDRAW;
+	window_service ws;
 
-	if (!::RegisterClass(&wndClass)) { return -1; }
+	container_window w, w2;
+	button_window b;
+	form f;
 
-	HWND hWnd = ::CreateWindow(L"WindowWithConsole", L"Test", WS_OVERLAPPEDWINDOW, 100, 100, 200, 200, NULL, NULL, hInstance, NULL);
+	w.on_create = [&](){
 
-	if (hWnd == NULL) { return -1; }
 
-	::ShowWindow(hWnd, SW_SHOW);
-	::UpdateWindow(hWnd);
-*/
-	wordring::gui::window_service ws;
+		w2.create(NULL);
+
+		w2.set_parent(&w);
+		w2.close();
+
+
+	};
+
+	w2.on_create = [&](){
+		b.create(&w2);
+		//b.set_parent(&w2);
+		b.set_size(size_int(100, 160));
+		b.on_click = [](){
+			std::cout << "click!" << std::endl;
+		};
+
+	};
+	w.create(NULL);
+	w.set_size(size_int(500, 500));
+	w.set_position(point_int(500, 10));
+
+	w.get_position();
+
+
+
 	ws.run();
 
 	//std::cout << sizeof(int32_t);
