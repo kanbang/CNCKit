@@ -35,42 +35,18 @@
 int main()
 {
 	using namespace wordring::gui;
-
+#ifdef _DEBUG
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
+#endif // _DEBUG
 
 	std::cout << sizeof(window);
 
 	window_service ws;
 
-	container_window w, w2;
-	button_window b;
+	//container_window w, w2;
+	//button_window b;
 	form f;
 
-	w.on_create = [&](){
-
-
-		w2.create(NULL);
-
-		w2.set_parent(&w);
-		w2.close();
-
-
-	};
-
-	w2.on_create = [&](){
-		b.create(&w2);
-		//b.set_parent(&w2);
-		b.set_size(size_int(100, 160));
-		b.on_click = [](){
-			std::cout << "click!" << std::endl;
-		};
-
-	};
-	w.create(NULL);
-	w.set_size(size_int(500, 500));
-	w.set_position(point_int(500, 10));
-
-	w.get_position();
 
 
 

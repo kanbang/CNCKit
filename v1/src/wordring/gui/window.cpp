@@ -29,6 +29,8 @@
 
 using namespace wordring::gui;
 
+// window ---------------------------------------------------------------------
+
 window::window() : m_native(new wordring::gui::detail::native_window_impl)
 {
 	m_native->set_window(this);
@@ -44,6 +46,11 @@ window::~window(){}
 void window::create(window * parent)
 {
 	m_native->create(parent);
+}
+
+detail::native_window* window::get_native()
+{
+	return m_native.get();
 }
 
 void window::close()
@@ -85,18 +92,32 @@ point_int window::get_position() const
 	return m_native->get_position();
 }
 
-detail::native_window* window::get_native()
+/// メッセージ・ハンドラ
+bool window::on_create()
 {
-	return m_native.get();
+	return true;
 }
 
-/*
-void set_size(size_int size);
-virtual size_int get_size() const;
+/// メッセージ・ハンドラ
+bool window::on_click()
+{
+	return true;
+}
 
-virtual void set_position(point_int point);
-virtual size_int get_position() const;
-*/
+// control_window -------------------------------------------------------------
+
+control_window_::control_window_()
+	: window(new detail::native_control_window_impl)
+{
+}
+
+// container_window -----------------------------------------------------------
+
+container_window_::container_window_()
+	: window(new detail::native_container_window_impl)
+{
+
+}
 
 button_window::button_window()
 	: window(new wordring::gui::detail::native_button_window_impl)

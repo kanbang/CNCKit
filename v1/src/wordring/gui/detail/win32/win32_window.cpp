@@ -39,70 +39,7 @@ std::map<HWND, native_window*> win32_message_map::g_map;
 
 // ウィンドウ・クラス ---------------------------------------------------------
 
-/*
-template <typename T>
-LRESULT CALLBACK window_class<T>::WindowProc(
-	HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	T* self = T::g_window_class.find_window(hWnd);
 
-	//	(win32_window_impl*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
-
-	if (uMsg == WM_CREATE || uMsg == WM_NCCREATE)
-	{
-		LPCREATESTRUCT pcs = (LPCREATESTRUCT)lParam;
-		self = (window_type*)pcs->lpCreateParams;
-
-		T::g_window_class.add_window(hWnd, self);
-		self->m_hwnd = hWnd;
-	}
-
-	if (self)
-	{
-		return self->window_proc(hWnd, uMsg, wParam, lParam);
-	}
-	else
-	{
-
-		switch (uMsg)
-		{
-		case WM_GETMINMAXINFO:
-			break;
-		default:
-#ifdef _DEBUG
-			std::cout << "WM_CREATE 以前に送出されたハンドルされないメッセージ: 0x";
-			std::cout << std::hex << uMsg << std::endl;
-#endif // _DEBUG
-			break;
-		}
-
-	}
-
-	return  ::DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-*/
-/*
-template <typename T>
-void window_map<T>::add(HWND hwnd, T* pT)
-{
-	m_handles.push_back(hwnd);
-	m_objects.push_back(pT);
-}
-
-template <typename T>
-T* window_map<T>::find(HWND hwnd)
-{
-	assert(m_handles.size() == m_objects.size());
-
-	std::vector<HWND>::iterator it =
-		std::find(m_handles.begin(), m_handles.end(), hwnd);
-	if (it == m_handles.end()) { return m_current;  }
-
-	return m_objects.at(it - m_handles.begin());
-}
-
-*/
 // 基本ウィンドウ -------------------------------------------------------------
 
 win32_window_impl::win32_window_impl()
@@ -197,7 +134,7 @@ point_int win32_window_impl::get_position() const
 	BOOL result = ::GetWindowRect(m_hwnd, &rect);
 	assert(result != 0);
 	//return size_int(rect.right, rect.bottom);
-	return point_int(0, 0);
+	return point_int(rect.left, rect.top);
 }
 
 LRESULT win32_window_impl::window_proc(
@@ -207,9 +144,10 @@ LRESULT win32_window_impl::window_proc(
 	{
 	case WM_COMMAND:
 		return on_command(hWnd, uMsg, wParam, lParam);
+
 	case WM_CREATE:
-		on_create();
-		break;
+		return on_create();
+
 	case WM_DESTROY:
 		win32_message_map::remove_window(m_hwnd);
 		::PostQuitMessage(0);
@@ -230,19 +168,138 @@ LRESULT win32_window_impl::on_command(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 	return 0;
 }
 
-void win32_window_impl::on_create()
+LRESULT win32_window_impl::on_create()
 {
-	std::function<void()> fn = get_window()->on_create;
-	if (fn) { fn(); }
+	return get_window()->on_create() ? 0 : -1;
 }
 
-void win32_window_impl::on_click()
+LRESULT win32_window_impl::on_click()
 {
-	std::function<void()> fn = get_window()->on_click;
-	if (fn) { fn(); }
+	get_window()->on_click();
 }
 
-win32_window_impl::win32_window_impl_class win32_window_impl::g_window_class;
+WNDCLASSEX win32_window_impl::window_class::create() const
+{
+	WNDCLASSEX wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = win32_window_class<win32_window_impl>::WindowProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = sizeof(win32_window_impl*);
+	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
+	wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
+	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = TEXT("win32_window_impl_class");
+	wcex.hIconSm = NULL;
+
+	return wcex;
+}
+
+win32_window_impl::window_class win32_window_impl::g_window_class;
+
+
+
+// win32_control_window_impl --------------------------------------------------
+
+win32_control_window_impl::win32_control_window_impl()
+{
+}
+
+void win32_control_window_impl::create(window* parent)
+{
+	HWND hparent = NULL;
+	if (parent)
+	{
+		hparent = dynamic_cast<win32_control_window_impl*>(parent->get_native())->m_hwnd;
+	}
+
+	m_hwnd = ::CreateWindow(
+		(LPCTSTR)(DWORD)win32_control_window_impl::g_window_class.m_atom,
+		L"Tes", WS_CHILD | WS_VISIBLE,
+		100,
+		100,
+		200,
+		200,
+		hparent,
+		NULL,
+		win32_control_window_impl::g_window_class.m_hinstance,
+		this);
+	::ShowWindow(m_hwnd, SW_SHOW);
+	::UpdateWindow(m_hwnd);
+}
+
+WNDCLASSEX win32_control_window_impl::window_class::create() const
+{
+	WNDCLASSEX wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = win32_window_class<win32_control_window_impl>::WindowProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = sizeof(win32_control_window_impl*);
+	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
+	wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
+	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = TEXT("win32_control_window_impl");
+	wcex.hIconSm = NULL;
+
+	return wcex;
+}
+
+win32_control_window_impl::window_class win32_control_window_impl::g_window_class;
+
+
+// win32_container_window_impl ------------------------------------------------
+
+void win32_container_window_impl::create(window* parent)
+{
+	HWND hparent = NULL;
+	if (parent)
+	{
+		hparent = dynamic_cast<win32_window_impl*>(parent->get_native())->m_hwnd;
+	}
+	m_hwnd = ::CreateWindow(
+		(LPCTSTR)(DWORD)win32_container_window_impl::g_window_class.m_atom,
+		L"win32_container_window_impl", WS_OVERLAPPEDWINDOW,
+		100,
+		100,
+		200,
+		200,
+		hparent,
+		NULL,
+		win32_container_window_impl::g_window_class.m_hinstance,
+		this);
+	::ShowWindow(m_hwnd, SW_SHOW);
+	::UpdateWindow(m_hwnd);
+}
+
+WNDCLASSEX win32_container_window_impl::window_class::create() const
+{
+	WNDCLASSEX wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = win32_window_class<win32_container_window_impl>::WindowProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = sizeof(win32_container_window_impl*);
+	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
+	wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
+	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = TEXT("win32_container_window_impl");
+	wcex.hIconSm = NULL;
+
+	return wcex;
+}
+
+
+win32_container_window_impl::window_class win32_container_window_impl::g_window_class;
 
 void win32_button_window_impl::create(window* parent)
 {

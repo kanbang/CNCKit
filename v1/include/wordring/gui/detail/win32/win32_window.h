@@ -24,14 +24,10 @@
 #ifndef WORDRING_WIN32_WINDOW_H
 #define WORDRING_WIN32_WINDOW_H
 
-//#include <wordring/gui/window_service.h>
-//#include <wordring/gui/detail/win32/win32_window_service.h>
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/geometry/shape.h>
 
 #include <Windows.h>
-
-#include <thread>
 
 #include <utility>
 #include <map>
@@ -50,24 +46,33 @@ namespace detail
 
 // メッセージ・マップ ---------------------------------------------------------
 
+/**
+ * @brief メッセージ・マップ
+ * @details
+ *    ウィンドウズのウィンドウ・ハンドルとC++のウィンドウ・オブジェクトを
+ *    結びつけるマップです。
+ *    現在はスレッドに対応していないため、プロセス内に一つしか有りません。
+ */
 class win32_message_map
 {
 	/// プログラム内唯一のマップ
 	static std::map<HWND, native_window*> g_map;
 
 public:
-	/// 
+	/// ハンドルとウィンドウ・オブジェクトのセットをマップに追加します
 	static void add_window(HWND hwnd, native_window* pwin)
 	{
 		g_map[hwnd] = pwin;
 	}
 
+	/// ハンドルからウィンドウ・オブジェクトを検索します
 	static native_window* find_window(HWND hwnd)
 	{
 		std::map<HWND, native_window*>::iterator it = g_map.find(hwnd);
 		return (it == g_map.end()) ? nullptr : it->second;
 	}
 
+	/// ハンドルを指定してウィンドウ・オブジェクトとのセットを削除します
 	static void remove_window(HWND hwnd)
 	{
 		size_t n = g_map.erase(hwnd);
@@ -79,6 +84,10 @@ public:
 
 /**
  * @brief 基底ウィンドウ・クラス
+ * @details
+ *    win32のウィンドウ・クラスを作る目的の基底クラスです。
+ *    C++のクラスとwin32のウィンドウ・クラスを結びつけます。
+ *    仮想関数を使わずにメッセージを配送する能力があります。
  */
 template <typename T>
 struct win32_window_class
@@ -86,34 +95,23 @@ struct win32_window_class
 	HINSTANCE m_hinstance;
 	ATOM m_atom;
 
-	win32_window_class() : m_hinstance((HINSTANCE)NULL), m_atom((ATOM)NULL) { }
+	/// win32のウィンドウ・クラスを登録します
+	win32_window_class() : m_hinstance((HINSTANCE)NULL), m_atom((ATOM)NULL)
+	{
+		T::window_class* self = static_cast<T::window_class*>(this);
+		WNDCLASSEX wcex = self->T::window_class::create();
+		m_atom = ::RegisterClassEx(&wcex);
+		m_hinstance = wcex.hInstance;
+	}
 
+	/// win32のウィンドウ・オブジェクトを解除します
 	virtual ~win32_window_class()
 	{
 		assert(m_atom != (ATOM)NULL);
 		::UnregisterClass((LPCTSTR)(DWORD)m_atom, m_hinstance);
 	}
 
-	static WNDCLASSEX create_class()
-	{
-		WNDCLASSEX wcex;
-
-		wcex.cbSize = sizeof(WNDCLASSEX);
-		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc = win32_window_class<T>::WindowProc;
-		wcex.cbClsExtra = 0;
-		wcex.cbWndExtra = sizeof(T*);
-		wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
-		wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
-		wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-		wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
-		wcex.lpszMenuName = NULL;
-		wcex.lpszClassName = TEXT("win32_window_class<T>");
-		wcex.hIconSm = NULL;
-
-		return wcex;
-	}
-
+	/// ウィンドウ・プロシージャの雛型です
 	static LRESULT CALLBACK WindowProc(
 		HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -186,51 +184,73 @@ public:
 	virtual void set_position(point_int point);
 	virtual point_int get_position() const;
 
+	/// WM_COMMANDを処理します
 	LRESULT on_command(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	void on_create();
-	void on_click();
 
+	LRESULT on_create();
+	LRESULT on_click();
+
+	/// オブジェクト用にカスタマイズされたウィンドウ・プロシージャです
 	LRESULT window_proc(
 		HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-	struct win32_window_impl_class
-		: public win32_window_class<win32_window_impl>
+	/// win32_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
+	struct window_class : public win32_window_class<win32_window_impl>
 	{
-		win32_window_impl_class()
-		{
-			WNDCLASSEX wcex = create_class();
-			m_atom = ::RegisterClassEx(&wcex);
-			m_hinstance = wcex.hInstance;
-		}
-
-		~win32_window_impl_class(){}
-
-		WNDCLASSEX create_class() const
-		{
-			WNDCLASSEX wcex =
-				win32_window_class<win32_window_impl>::create_class();
-
-			wcex.lpszClassName = TEXT("win32_window_impl_class");
-
-			return wcex;
-		}
-
-		//static LRESULT CALLBACK WindowProc(
-			//HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		window_class() { }
+		virtual ~window_class() { }
+		WNDCLASSEX create() const;
 	};
 
-	static win32_window_impl_class g_window_class;
+	/// win32_window_impl用のwindow_class
+	static window_class g_window_class;
 };
 
+/**
+ * @brief コントロール・ウィンドウ
+ * @details
+ *    - native_control_window_implにtypedefされます。
+ */
 class win32_control_window_impl : public win32_window_impl
 {
+public:
+	win32_control_window_impl();
 
+	void create(window* parent);
+
+	/// win32_control_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
+	struct window_class : public win32_window_class<win32_control_window_impl>
+	{
+		window_class() { }
+		virtual ~window_class() { }
+		WNDCLASSEX create() const;
+	};
+
+	/// win32_control_window_impl用のwindow_class
+	static window_class g_window_class;
 };
 
-class win32_container_window_impl : public win32_window_impl
+/**
+ * @brief コンテナ・ウィンドウ
+ * @details
+ *    - win32_container_window_implにtypedefされます。
+ */
+class win32_container_window_impl : public win32_control_window_impl
 {
+public:
+	void create(window* parent);
 
+	/// win32_container_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
+	struct window_class : public win32_window_class<win32_container_window_impl>
+	{
+		window_class() { }
+		virtual ~window_class() { }
+		virtual WNDCLASSEX create() const;
+	};
+
+	/// win32_container_window_impl用のwindow_class
+	static window_class g_window_class;
 };
 
 class win32_button_window_impl : public win32_window_impl
@@ -241,6 +261,11 @@ public:
 
 /** window.cppで使用 */
 typedef win32_window_impl native_window_impl;
+/** window.cppで使用 */
+typedef win32_control_window_impl native_control_window_impl;
+/** window.cppで使用 */
+typedef win32_container_window_impl native_container_window_impl;
+/** window.cppで使用 */
 typedef win32_button_window_impl native_button_window_impl;
 
 

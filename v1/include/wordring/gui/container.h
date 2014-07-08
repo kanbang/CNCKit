@@ -44,16 +44,25 @@ public:
 class form : public container
 {
 protected:
-	std::unique_ptr<window> m_window; /// 内部でウィンドウを使用します
+	/// 内部でウィンドウを使用します
+	std::unique_ptr<form_window<form> > m_window;
 
 public:
 	form();
 
-	virtual void set_size(size_int size); /// コントロールの大きさを設定する
-	virtual size_int get_size() const; /// コントロールの大きさを取得する
+	/// 子コントロールから呼び出され、自身を返します
+	virtual form* get_form();
+	/// 関連付けられたウィンドウを返します
+	virtual window* get_window();
+	/// コントロールの大きさを設定する
+	virtual void set_size(size_int size);
+	/// コントロールの大きさを取得する
+	virtual size_int get_size() const;
 
 	virtual void set_position(point_int point);
 	virtual point_int get_position() const;
+
+	//virtual bool on_click();
 };
 
 

@@ -33,6 +33,7 @@ namespace gui
 
 
 class container; // 前方宣言
+class form; // 前方宣言
 
 class control
 {
@@ -44,13 +45,35 @@ private:
 
 public:
 	/// イベント・ハンドラ
-	std::function<void()> on_create;
+	std::function<bool()> onCreate;
 	/// イベント・ハンドラ
-	std::function<void()> on_click;
+	std::function<bool()> onDestroy;
+	/// イベント・ハンドラ
+	std::function<bool()> onClick;
+	/// イベント・ハンドラ
+	std::function<bool()> onDblClick;
+	/// イベント・ハンドラ
+	std::function<bool()> onMouseMove;
+	/// イベント・ハンドラ
+	std::function<bool()> onMouseOut;
+	/// イベント・ハンドラ
+	std::function<bool()> onMouseOver;
+	/// イベント・ハンドラ
+	std::function<bool()> onMouseDown;
+	/// イベント・ハンドラ
+	std::function<bool()> onMouseUp;
+	/// イベント・ハンドラ
+	std::function<bool()> onKeyPress;
+	/// イベント・ハンドラ
+	std::function<bool()> onKeyDown;
+	/// イベント・ハンドラ
+	std::function<bool()> onKeyUp;
 
 public:
+	control();
 	//virtual void set_parent(container* parent);
-	//virtual container* get_parent();
+	virtual container* get_parent();
+	virtual form* get_form();
 	
 	//virtual window_service* get_service() const;
 
@@ -65,6 +88,12 @@ public:
 
 	virtual void set_position(point_int point) = 0;
 	virtual point_int get_position() const = 0;
+
+	virtual bool on_click()
+	{
+		if (onClick) { return onClick(); }
+		return false;
+	}
 };
 
 
