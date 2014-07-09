@@ -50,47 +50,138 @@ namespace detail
 /**
  * @brief 基本ウィンドウ
  * 
- * - native_window_implにtypedefされます。
+ * 
  */
-class win32_window_impl : public native_window
+class native_window_impl : public native_window
 {
 public:
 	HWND m_hwnd;
 
 public:
-	win32_window_impl();
+	native_window_impl();
 
 	virtual void create(window* parent);
 	/// ウィンドウを最小化します
-	virtual void close();
+	void close();
 
-	virtual void destroy();
+	void destroy();
 
-	virtual native_window* get_parent();
-	virtual void set_parent(native_window* parent);
+	native_window* get_parent();
+	void set_parent(native_window* parent);
 
-	virtual void set_size(size_int size);
-	virtual size_int get_size() const;
-	virtual void set_position(point_int point);
-	virtual point_int get_position() const;
+	void set_size(size_int size);
+	size_int get_size() const;
+	void set_position(point_int point);
+	point_int get_position() const;
 
-	/// WM_COMMANDを処理します
-	//LRESULT on_command(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	//LRESULT on_create(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
-	//LRESULT on_click();
+protected:
+	// マウス・メッセージ -----------------------------------------------------
 
-	/// オブジェクト用にカスタマイズされたウィンドウ・プロシージャです
-	LRESULT window_proc(
-		HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	/// ファイルがドラッグ・アンド・ドロップされた
+	void onDropFiles(HWND hwnd, HDROP hdrop);
+
+	void onLButtonDblClk(
+		HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
+	void onLButtonDown(
+		HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
+
+	void onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+
+	int onMouseActivate(
+		HWND hwnd, HWND hwndTopLevel, UINT codeHitTest, UINT msg);
+
+	void onMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
+
+	void onMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys);
+
+	void onRButtonDblClk(
+		HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
+
+	void onRButtonDown(
+		HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags);
+
+	void onRButtonUp(HWND hwnd, int x, int y, UINT flags);
+
+	// キーボード・メッセージ -------------------------------------------------
+
+	void onChar(HWND hwnd, TCHAR ch, int cRepeat);
+
+	void onDeadChar(HWND hwnd, TCHAR ch, int cRepeat);
+
+	void onHotKey(HWND hwnd, int idHotKey, UINT fuModifiers, UINT vk);
+
+	void onKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+
+	void onKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+
+	void onSysChar(HWND hwnd, TCHAR ch, int cRepeat);
+
+	void onSysDeadChar(HWND hwnd, TCHAR ch, int cRepeat);
+
+	void onSysKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+
+	void onSysKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+
+	// 一般メッセージ ---------------------------------------------------------
+
+	void onActivate(HWND hwnd, UINT state, HWND hwndActDeact, BOOL fMinimized);
+
+	void onActivateApp(HWND hwnd, BOOL fActivate, DWORD dwThreadId);
+
+	void onClose(HWND hwnd);
+
+	void onCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
+
+	void onCompacting(HWND hwnd, UINT compactRatio);
+
+	BOOL onCopyData(HWND hwnd, HWND hwndFrom, PCOPYDATASTRUCT pcds);
+
+	BOOL onCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);
+
+	void onDestroy(HWND hwnd);
+
+	BOOL onEraseBkgnd(HWND hwnd, HDC hdc);
+
+	void onKillFocus(HWND hwnd, HWND hwndNewFocus);
+
+	void onMove(HWND hwnd, int x, int y);
+
+	void onPaint(HWND hwnd);
+
+	void onPower(HWND hwnd, int code);
+
+	BOOL onQueryEndSession(HWND hwnd);
+
+	void onQuit(HWND hwnd, int exitCode);
+
+	void onSetFocus(HWND hwnd, HWND hwndOldFocus);
+
+	void onShowWindow(HWND hwnd, BOOL fShow, UINT status);
+
+	void onSize(HWND hwnd, UINT state, int cx, int cy);
+
+	void onSysCommand(HWND hwnd, UINT cmd, int x, int y);
+
+	void onTimer(HWND hwnd, UINT id);
+
+	void onWindowPosChanged(HWND hwnd, const LPWINDOWPOS lpwpos);
+
+	BOOL onWindowPosChanging(HWND hwnd, LPWINDOWPOS lpwpos);
+
+public:
+	/** ウィンドウ・プロシージャの雛型です
+	 * @param flg 
+	 *    
+	 */
+	LRESULT CALLBACK WindowProc(
+		bool& flg, HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	/// win32_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
 	struct window_class
-		: public win32_window_class<window_class, window, win32_window_impl>
+		: public win32_window_class<window_class, native_window_impl>
 	{
-		window_class() { }
-		virtual ~window_class() { }
 		static WNDCLASSEX create();
 	};
 
@@ -98,11 +189,59 @@ public:
 	static window_class g_window_class;
 };
 
+template <typename T>
+class native_container_window_impl : public native_window_impl
+{
+public:
+
+	LRESULT CALLBACK WindowProc(
+		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+
+	}
+
+	struct window_class
+		: public win32_window_class<
+			window_class, native_container_window_impl>
+	{
+		static WNDCLASSEX create()
+		{
+			WNDCLASSEX wcex;
+
+			wcex.cbSize = sizeof(WNDCLASSEX);
+			wcex.style = CS_HREDRAW | CS_VREDRAW;
+			wcex.lpfnWndProc = window_class::WindowProc;
+			wcex.cbClsExtra = 0;
+			wcex.cbWndExtra = sizeof(native_container_window_impl*);
+			wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
+			wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
+			wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+			wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
+			wcex.lpszMenuName = NULL;
+			wcex.lpszClassName = TEXT("native_container_window_impl");
+			wcex.hIconSm = NULL;
+
+			return wcex;
+		}
+	};
+
+	/// win32_window_impl用のwindow_class
+	static window_class g_window_class;
+};
+
+/*
+template <typename T>
+class native_window_impl_impl : public win32_window_impl
+{
+
+};
+*/
 /**
  * @brief コントロール・ウィンドウ
  * @details
  *    - native_control_window_implにtypedefされます。
  */
+/*
 class win32_control_window_impl : public win32_window_impl
 {
 public:
@@ -126,12 +265,13 @@ public:
 	typedef window_class class_type;
 	typedef window window_type;
 };
-
+*/
 /**
  * @brief コンテナ・ウィンドウ
  * @details
  *    - win32_container_window_implにtypedefされます。
  */
+/*
 class win32_container_window_impl : public win32_control_window_impl
 {
 public:
@@ -159,15 +299,17 @@ class win32_button_window_impl : public win32_window_impl
 public:
 	virtual void create(window* parent);
 };
+*/
+/** window.cppで使用 */
+//typedef win32_window_impl native_window_impl;
 
+//typedef win32_window_impl_impl native_window_impl_impl;
 /** window.cppで使用 */
-typedef win32_window_impl native_window_impl;
+//typedef win32_control_window_impl native_control_window_impl;
 /** window.cppで使用 */
-typedef win32_control_window_impl native_control_window_impl;
+//typedef win32_container_window_impl native_container_window_impl;
 /** window.cppで使用 */
-typedef win32_container_window_impl native_container_window_impl;
-/** window.cppで使用 */
-typedef win32_button_window_impl native_button_window_impl;
+//typedef win32_button_window_impl native_button_window_impl;
 
 
 

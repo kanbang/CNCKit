@@ -74,36 +74,40 @@ public:
 	/** @brief ウィンドウを作成します
 	 *  @details 子ウィンドウは作成時に親ウィンドウが必要です。
 	 */
-	virtual void create(window * parent);
+	void create(window * parent);
 	/// ウィンドウを最小化します
-	virtual void close();
+	void close();
 	/// ウィンドウを破棄します
-	virtual void destroy();
+	void destroy();
 
 	/// 親ウィンドウを取得します
-	virtual window* get_parent();
+	window* get_parent();
 	/// 親ウィンドウを設定します
-	virtual void set_parent(window* parent);
+	void set_parent(window* parent);
 
 	/// ウィンドウの大きさを設定します
-	virtual void set_size(size_int size);
+	void set_size(size_int size);
 	/// ウィンドウの大きさを取得します
-	virtual size_int get_size() const;
+	size_int get_size() const;
 	/** @brief ウィンドウの位置を設定します
 	 *  @details 親ウィンドウあるいはデスクトップからの相対位置です。
 	 */
-	virtual void set_position(point_int point);
+	void set_position(point_int point);
 	/// ウィンドウの位置を返します
-	virtual point_int get_position() const;
+	point_int get_position() const;
 
 	/// メッセージ・ハンドラ
-	virtual bool onCreate();
-	/// メッセージ・ハンドラ
-	virtual bool on_click();
-	/// メッセージ・ハンドラ
-	//virtual bool on_click();
+	bool onCreate();
 
 protected:
+};
+
+class window_impl : public window
+{
+public:
+	window_impl();
+
+	bool onCreate();
 };
 
 // control_window -------------------------------------------------------------
@@ -168,17 +172,6 @@ class container_window : public control_window<T, container_window_>
 {
 public:
 	container_window() { }
-};
-
-
-template <typename T>
-class form_window : public container_window<T>
-{
-public:
-	//form_window(T* f) : m_form(f) { }
-	//void set_form(T* f) { m_form = f; }
-
-	//virtual bool on_click() { return m_form->on_click(); }
 };
 
 class button_window : public window

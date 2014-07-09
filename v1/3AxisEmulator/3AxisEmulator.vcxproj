@@ -106,6 +106,7 @@
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_service.h" />
     <ClInclude Include="..\include\wordring\gui\window.h" />
     <ClInclude Include="..\include\wordring\gui\window_service.h" />
+    <ClInclude Include="..\include\wordring\wordring.h" />
     <ClInclude Include="..\index.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

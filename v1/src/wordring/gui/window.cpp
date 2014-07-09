@@ -18,6 +18,7 @@
  */
 
 #include <wordring/gui/window.h>
+#include <wordring/gui/container.h>
 
 #ifdef _WIN32
 #include <wordring/gui/detail/win32/win32_window.h>
@@ -31,7 +32,7 @@ using namespace wordring::gui;
 
 // window ---------------------------------------------------------------------
 
-window::window() : m_native_window(new detail::native_window_impl)
+window::window() : m_native_window(new detail::native_container_window_impl<window>)
 {
 	m_native_window->set_window(this);
 }
@@ -98,11 +99,22 @@ bool window::onCreate()
 	return true;
 }
 
-/// メッセージ・ハンドラ
-bool window::on_click()
+/*
+// window_impl ----------------------------------------------------------------
+
+window_impl::window_impl()
+	: window(new detail::native_window_impl_impl<window_impl>())
 {
-	return true;
 }
+
+
+inline bool window_impl::onCreate()
+{
+	form* pT = static_cast<form*>(this);
+	return pT->onCreate();
+}
+
+
 
 // control_window -------------------------------------------------------------
 
@@ -123,4 +135,4 @@ button_window::button_window()
 	: window(new wordring::gui::detail::native_button_window_impl)
 {
 
-}
+}*/

@@ -20,10 +20,15 @@
 
 #ifdef _WIN32
 
+#include <wordring/wordring.h>
 #include <wordring/gui/detail/win32/win32_window_service.h>
+
 #include <Windows.h>
 
 using namespace wordring::gui::detail;
+
+__declspec(thread) win32_window_service_impl*
+	win32_window_service_impl::tls_window_service = nullptr;
 
 void win32_window_service_impl::run()
 {

@@ -41,14 +41,13 @@ public:
 	//void remove(control* child);
 };
 
-class form : public container
+class form : public container, public window
 {
 protected:
-	/// 内部でウィンドウを使用します
-	std::unique_ptr<form_window<form> > m_window;
-
 public:
-	form();
+	form(){}
+
+	bool onCreate(){ return true; }
 
 	/// 子コントロールから呼び出され、自身を返します
 	virtual form* get_form();

@@ -45,14 +45,49 @@ namespace detail
  */
 class win32_window_service_impl : public native_window_service
 {
-	typedef wordring::gui::detail::native_window window_type;
-
 private:
+	/// マップ
+	std::map<HWND, window*> m_map;
 
-	void append(window_type* window_ptr);
-	void remove();
+public:
+	win32_window_service_impl()
+	{
+		win32_window_service_impl::tls_window_service = this;
+	}
 
 	virtual void run();
+
+
+public:
+	/// ハンドルとウィンドウ・オブジェクトのセットをマップに追加します
+	static void assign(HWND hwnd, window* pwin)
+	{
+		win32_window_service_impl::tls_window_service->m_map[hwnd] = pwin;
+	}
+
+	/// ハンドルからウィンドウ・オブジェクトを検索します
+	static window* find(HWND hwnd)
+	{
+		std::map<HWND, window*>& map =
+			win32_window_service_impl::tls_window_service->m_map;
+
+		std::map<HWND, window*>::iterator it = map.find(hwnd);
+		if (it == map.end()) { return nullptr; }
+
+		return it->second;
+	}
+
+	/// ハンドルを指定してウィンドウ・オブジェクトとのセットを削除します
+	static void remove(HWND hwnd)
+	{
+		std::map<HWND, window*>& map =
+			win32_window_service_impl::tls_window_service->m_map;
+
+		size_t n = map.erase(hwnd);
+		assert(n == 1);
+	}
+
+	static __declspec(thread) win32_window_service_impl* tls_window_service;
 };
 
 typedef win32_window_service_impl native_window_service_impl;

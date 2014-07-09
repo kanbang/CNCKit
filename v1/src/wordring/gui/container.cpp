@@ -23,11 +23,9 @@
 
 using namespace wordring::gui;
 
-form::form() : m_window(new form_window<form>())
-{
-	m_window->set_control(this);
-	m_window->create(NULL);
-}
+//form::form()
+//{
+//}
 
 form* form::get_form()
 {
@@ -36,28 +34,27 @@ form* form::get_form()
 
 window* form::get_window()
 {
-	return m_window.get();
+	return static_cast<window*>(this);
 }
 
 void form::set_size(size_int size)
 {
-	m_window->set_size(size);
-
+	window::set_size(size);
 }
 
 size_int form::get_size() const
 {
-	return m_window->get_size();
+	return window::get_size();
 }
 
 void form::set_position(point_int point)
 {
-	m_window->set_position(point);
+	window::set_position(point);
 }
 
 point_int form::get_position() const
 {
-	return m_window->get_position();
+	return window::get_position();
 }
 /*
 bool form::on_click()

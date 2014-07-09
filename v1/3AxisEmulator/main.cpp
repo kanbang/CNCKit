@@ -46,6 +46,7 @@ int main()
 	//container_window w, w2;
 	//button_window b;
 	form f;
+	f.create(NULL);
 
 
 
