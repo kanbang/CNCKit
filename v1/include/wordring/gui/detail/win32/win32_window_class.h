@@ -62,7 +62,7 @@ struct win32_window_class
 		m_hinstance = wcex.hInstance;
 	}
 
-	/// win32のウィンドウ・クラス解除します
+	/// win32のウィンドウ・クラスを登録解除します
 	virtual ~win32_window_class()
 	{
 		assert(m_atom != (ATOM)NULL);
@@ -73,20 +73,37 @@ struct win32_window_class
 	static LRESULT CALLBACK WindowProc(
 		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		bool flg = false;
-
-		window* w = win32_window_service_impl::find(hwnd);
-		if(w)
+		if (uMsg == WM_NCCREATE)
 		{
-			ImplT* pT = static_cast<ImplT*>(w->get_native_window());
-			assert(pT);
-			return pT->WindowProc(&flg, hwnd, uMsg, wParam, lParam);
+			LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
+			native_window_impl* w =
+				static_cast<native_window_impl*>(cs->lpCreateParams);
+			assert(w);
+
+			win32_window_service_impl::assign(hwnd, w);
 		}
 
+		LRESULT result = 0;
+		bool handled = false;
+
+		ImplT* w = win32_window_service_impl::find(hwnd);
+		if(w)
+		{
+			result = w->WindowProc(hwnd, uMsg, wParam, lParam);
+			handled = w->get_message_handled();
+		}
+
+		if (uMsg == WM_NCDESTROY)
+		{
+			win32_window_service_impl::remove(hwnd);
+			assert(w);
+			w->m_hwnd = nullptr;
+		}
+
+		if (!handled) { result = ::DefWindowProc(hwnd, uMsg, wParam, lParam); }
+
+		return result;
 	}
-
-
-
 };
 
 } // namespace detail

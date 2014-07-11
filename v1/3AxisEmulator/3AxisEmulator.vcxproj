@@ -61,6 +61,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,6 +80,8 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MinimalRebuild>true</MinimalRebuild>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,6 +91,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\wordring\gui\canvas.cpp" />
+    <ClCompile Include="..\include\wordring\gui\detail\win32\win32_canvas.cpp" />
     <ClCompile Include="..\src\wordring\gui\container.cpp" />
     <ClCompile Include="..\src\wordring\gui\control.cpp" />
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window.cpp" />
@@ -99,11 +105,14 @@
     <ClInclude Include="..\include\wordring\geometry\shape.h" />
     <ClInclude Include="..\include\wordring\gui\container.h" />
     <ClInclude Include="..\include\wordring\gui\control.h" />
+    <ClInclude Include="..\include\wordring\gui\detail\native_canvas.h" />
     <ClInclude Include="..\include\wordring\gui\detail\native_window.h" />
     <ClInclude Include="..\include\wordring\gui\detail\native_window_service.h" />
+    <ClInclude Include="..\include\wordring\gui\detail\win32\win32_canvas.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_class.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_service.h" />
+    <ClInclude Include="..\include\wordring\gui\canvas.h" />
     <ClInclude Include="..\include\wordring\gui\window.h" />
     <ClInclude Include="..\include\wordring\gui\window_service.h" />
     <ClInclude Include="..\include\wordring\wordring.h" />

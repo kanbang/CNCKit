@@ -38,13 +38,14 @@
 #define WORDRING_WINDOW_H
 
 #include <memory>
-#include <functional>
+//#include <functional>
 
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/window_service.h>
+
 #include <wordring/geometry/shape.h>
 
-//#include <wordring/gui/container.h>
+#include <wordring/gui/canvas.h>
 
 namespace wordring
 {
@@ -80,10 +81,10 @@ public:
 	/// ウィンドウを破棄します
 	void destroy();
 
-	/// 親ウィンドウを取得します
-	window* get_parent();
 	/// 親ウィンドウを設定します
 	void set_parent(window* parent);
+	/// 親ウィンドウを取得します
+	window* get_parent();
 
 	/// ウィンドウの大きさを設定します
 	void set_size(size_int size);
@@ -96,8 +97,16 @@ public:
 	/// ウィンドウの位置を返します
 	point_int get_position() const;
 
+	/// 描画用のキャンバスを取得します
+	canvas get_canvas();
+
+
+
+
 	/// メッセージ・ハンドラ
-	bool onCreate();
+	virtual bool on_create();
+
+	virtual void on_paint(canvas& cv);
 
 protected:
 };

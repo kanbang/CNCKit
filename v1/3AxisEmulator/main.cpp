@@ -31,6 +31,15 @@
 #include <wordring/gui/window_service.h>
 #include <wordring/gui/container.h>
 
+class A
+{
+	virtual void a(){}
+};
+
+class B : public A
+{
+	virtual void a(){}
+};
 
 int main()
 {
@@ -47,7 +56,19 @@ int main()
 	//button_window b;
 	form f;
 	f.create(NULL);
+	f.onPaint = [](canvas& cv)
+	{
+		cv.draw(std::string(""), point_int(30, 30));
+	};
 
+
+	canvas cv = f.get_canvas();
+
+	A* a = new B;
+
+	std::unique_ptr<A> u(a);
+
+	B* b = dynamic_cast<B*>(u.get());
 
 
 

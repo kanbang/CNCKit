@@ -62,6 +62,11 @@ public:
 	virtual point_int get_position() const;
 
 	//virtual bool on_click();
+
+	virtual void on_paint(canvas& cv)
+	{
+		if (onPaint) { onPaint(cv); }
+	}
 };
 
 

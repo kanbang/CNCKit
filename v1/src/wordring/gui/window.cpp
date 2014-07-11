@@ -18,7 +18,8 @@
  */
 
 #include <wordring/gui/window.h>
-#include <wordring/gui/container.h>
+//#include <wordring/gui/container.h>
+#include <wordring/gui/canvas.h>
 
 #ifdef _WIN32
 #include <wordring/gui/detail/win32/win32_window.h>
@@ -32,8 +33,11 @@ using namespace wordring::gui;
 
 // window ---------------------------------------------------------------------
 
-window::window() : m_native_window(new detail::native_container_window_impl<window>)
+window::window() : m_native_window(nullptr)//new detail::native_window_impl)
 {
+	detail::native_window_impl* p = new detail::native_window_impl;
+	m_native_window.reset(p);
+
 	m_native_window->set_window(this);
 }
 
@@ -93,10 +97,19 @@ point_int window::get_position() const
 	return m_native_window->get_position();
 }
 
+canvas window::get_canvas()
+{
+	return canvas();
+}
+
 /// メッセージ・ハンドラ
-bool window::onCreate()
+bool window::on_create()
 {
 	return true;
+}
+
+void window::on_paint(canvas& cv)
+{
 }
 
 /*

@@ -16,13 +16,17 @@
  *          PDS
  */
 
-
 #ifdef _WIN32
+
+#include <wordring/gui/detail/win32/win32_window_service.h>
 
 #include <wordring/gui/detail/win32/win32_window.h>
 #include <wordring/gui/window.h>
-#include <wordring/gui/detail/win32/win32_window_service.h>
+
 #include <wordring/geometry/shape.h>
+
+#include <wordring/gui/detail/win32/win32_canvas.h>
+#include <wordring/gui/canvas.h>
 
 #include <Windows.h>
 #include <windowsx.h>
@@ -44,18 +48,23 @@ using namespace wordring::gui::detail;
 
 // 基本ウィンドウ -------------------------------------------------------------
 
-native_window_impl::native_window_impl()
+native_window_impl::native_window_impl() : m_hwnd(NULL), m_msg_handled(false)
 {
-	//native_window_impl::g_window_class.m_map.set_current(this);
+}
 
+native_window_impl::~native_window_impl()
+{
+	if(m_hwnd) { destroy(); }
+}
 
-	//native_window_impl::g_window_class.m_map.remove_current();
+inline void native_window_impl::set_message_handled(bool handled)
+{
+	m_msg_handled = handled;
+}
 
-	//native_window_impl::g_window_class.m_map.add(m_hwnd, this);
-
-	
-
-
+inline bool native_window_impl::get_message_handled() const
+{
+	return m_msg_handled;
 }
 
 void native_window_impl::create(window* parent)
@@ -97,7 +106,7 @@ void native_window_impl::destroy()
 native_window* native_window_impl::get_parent()
 {
 	HWND hwnd = ::GetAncestor(m_hwnd, GA_PARENT);
-	native_window* result = win32_window_service_impl::find(hwnd)->get_native_window();
+	native_window* result = win32_window_service_impl::find(hwnd);
 	assert(result != nullptr);
 
 	return result;
@@ -105,7 +114,7 @@ native_window* native_window_impl::get_parent()
 
 void native_window_impl::set_parent(native_window* parent)
 {
-	native_window_impl* p = dynamic_cast<native_window_impl*>(parent);
+	native_window_impl* p = static_cast<native_window_impl*>(parent);
 	::SetParent(m_hwnd, p->m_hwnd);
 }
 
@@ -140,10 +149,31 @@ point_int native_window_impl::get_position() const
 	return point_int(rect.left, rect.top);
 }
 
+// メッセージ・ハンドラ -------------------------------------------------------
+
+void native_window_impl::on_command(int id, UINT codeNotify) // 親ウィンドウからのコールバック
+{
+}
+
+bool native_window_impl::on_create()
+{
+	return get_window()->on_create();
+}
+
+void native_window_impl::on_paint(HDC hdc)
+{
+	std::unique_ptr<detail::native_canvas> cv(new native_canvas_impl(hdc));
+	get_window()->on_paint(canvas(std::move(cv)));
+}
+
+
+
 /// ウィンドウ・プロシージャの雛型です
 LRESULT native_window_impl::WindowProc(
 	HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	m_msg_handled = false;
+
 	switch (uMsg)
 	{
 		// マウス・メッセージ -------------------------------------------------
@@ -184,7 +214,7 @@ LRESULT native_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_ERASEBKGND, onEraseBkgnd);
 		HANDLE_MSG(hwnd, WM_KILLFOCUS, onKillFocus);
 		HANDLE_MSG(hwnd, WM_MOVE, onMove);
-		//HANDLE_MSG(hwnd, WM_PAINT, onPaint);
+		HANDLE_MSG(hwnd, WM_PAINT, onPaint);
 		HANDLE_MSG(hwnd, WM_POWER, onPower); // システム中断
 		HANDLE_MSG(hwnd, WM_QUERYENDSESSION, onQueryEndSession);
 		HANDLE_MSG(hwnd, WM_QUIT, onQuit);
@@ -197,16 +227,13 @@ LRESULT native_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_WINDOWPOSCHANGING, onWindowPosChanging);
 
 	}
-
-	return ::DefWindowProc(hwnd, uMsg, wParam, lParam);
-
 	return 0;
 }
 
 // マウス・メッセージ -----------------------------------------------------
 
 /// ファイルがドラッグ・アンド・ドロップされた
-void onDropFiles(HWND hwnd, HDROP hdrop)
+void native_window_impl::onDropFiles(HWND hwnd, HDROP hdrop)
 {
 	//WinT* pT = static_cast<WinT*>(win32_window_service_impl::find(hwnd));
 	//assert(pT);
@@ -231,125 +258,137 @@ void onDropFiles(HWND hwnd, HDROP hdrop)
 	}
 }
 
-void onLButtonDblClk(
+void native_window_impl::onLButtonDblClk(
 	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
 	int i = 0;
 }
 
-void onLButtonDown(
+void native_window_impl::onLButtonDown(
 	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
 }
 
-void onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){}
+void native_window_impl::onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){}
 
-int onMouseActivate(
+int native_window_impl::onMouseActivate(
 	HWND hwnd, HWND hwndTopLevel, UINT codeHitTest, UINT msg)
 {
 	return MA_ACTIVATE;
 }
 
-void onMouseMove(HWND hwnd, int x, int y, UINT keyFlags){}
+void native_window_impl::onMouseMove(HWND hwnd, int x, int y, UINT keyFlags){}
 
-void onMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
+void native_window_impl::onMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
 {
 
 }
 
-void onRButtonDblClk(
+void native_window_impl::onRButtonDblClk(
 	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags){}
 
-void onRButtonDown(
+void native_window_impl::onRButtonDown(
 	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags){}
 
-void onRButtonUp(HWND hwnd, int x, int y, UINT flags){}
+void native_window_impl::onRButtonUp(HWND hwnd, int x, int y, UINT flags){}
 
 // キーボード・メッセージ -------------------------------------------------
 
-void onChar(HWND hwnd, TCHAR ch, int cRepeat){}
+void native_window_impl::onChar(HWND hwnd, TCHAR ch, int cRepeat){}
 
-void onDeadChar(HWND hwnd, TCHAR ch, int cRepeat){}
+void native_window_impl::onDeadChar(HWND hwnd, TCHAR ch, int cRepeat){}
 
-void onHotKey(HWND hwnd, int idHotKey, UINT fuModifiers, UINT vk){}
+void native_window_impl::onHotKey(HWND hwnd, int idHotKey, UINT fuModifiers, UINT vk){}
 
-void onKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
+void native_window_impl::onKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
 
-void onKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
+void native_window_impl::onKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
 
-void onSysChar(HWND hwnd, TCHAR ch, int cRepeat){}
+void native_window_impl::onSysChar(HWND hwnd, TCHAR ch, int cRepeat){}
 
-void onSysDeadChar(HWND hwnd, TCHAR ch, int cRepeat){}
+void native_window_impl::onSysDeadChar(HWND hwnd, TCHAR ch, int cRepeat){}
 
-void onSysKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
+void native_window_impl::onSysKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
 
-void onSysKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
+void native_window_impl::onSysKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags){}
 
-// 一般メッセージ ---------------------------------------------------------
+// 一般メッセージ -------------------------------------------------------------
 
-void onActivate(HWND hwnd, UINT state, HWND hwndActDeact, BOOL fMinimized){}
+void native_window_impl::onActivate(HWND hwnd, UINT state, HWND hwndActDeact, BOOL fMinimized){}
 
-void onActivateApp(HWND hwnd, BOOL fActivate, DWORD dwThreadId){}
+void native_window_impl::onActivateApp(HWND hwnd, BOOL fActivate, DWORD dwThreadId){}
 
-void onClose(HWND hwnd){}
+void native_window_impl::onClose(HWND hwnd){}
 
-void onCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify){}
+// 子ウィンドウで発生したコマンド(ボタンが押された等)は、親ウィンドウに送られ
+// ます。
+// このライブラリでは、子ウィンドウ自身にコマンドを処理させるので、子ウィンドウ
+// のラッパーを呼び出します。
+void native_window_impl::onCommand(
+	HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
+{
+	native_window_impl* w = win32_window_service_impl::find(hwndCtl);
+	assert(w);
+	w->on_command(id, codeNotify);
 
-void onCompacting(HWND hwnd, UINT compactRatio){}
+	set_message_handled(true);
+}
 
-BOOL onCopyData(HWND hwnd, HWND hwndFrom, PCOPYDATASTRUCT pcds)
+void native_window_impl::onCompacting(HWND hwnd, UINT compactRatio){}
+
+BOOL native_window_impl::onCopyData(HWND hwnd, HWND hwndFrom, PCOPYDATASTRUCT pcds)
 {
 	return 0;
 }
 
-BOOL onCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
+BOOL native_window_impl::onCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
-	/*
-	WinT* pT = (WinT*)lpCreateStruct->lpCreateParams;
-
-	win32_message_map::assign(hwnd, pT);
-	static_cast<ImplT*>(pT->get_native_window())->m_hwnd = hwnd;
-
-	pT->onCreate();
-	*/
-	return 0;
+	return on_create();
 }
 
-void onDestroy(HWND hwnd){}
+void native_window_impl::onDestroy(HWND hwnd){}
 
-BOOL onEraseBkgnd(HWND hwnd, HDC hdc)
+BOOL native_window_impl::onEraseBkgnd(HWND hwnd, HDC hdc)
 {
 	return 0;
 }
 
-void onKillFocus(HWND hwnd, HWND hwndNewFocus){}
+void native_window_impl::onKillFocus(HWND hwnd, HWND hwndNewFocus){}
 
-void onMove(HWND hwnd, int x, int y){}
+void native_window_impl::onMove(HWND hwnd, int x, int y){}
 
-void onPaint(HWND hwnd){}
+void native_window_impl::onPaint(HWND hwnd)
+{
+	PAINTSTRUCT ps;
 
-void onPower(HWND hwnd, int code){}
+	HDC hdc = ::BeginPaint(hwnd, &ps);
+	assert(hdc);
+	on_paint(hdc);
+	::EndPaint(hwnd, &ps);
+}
 
-BOOL onQueryEndSession(HWND hwnd)
+void native_window_impl::onPower(HWND hwnd, int code){}
+
+BOOL native_window_impl::onQueryEndSession(HWND hwnd)
 {
 	return 0;
 }
 
-void onQuit(HWND hwnd, int exitCode){}
+void native_window_impl::onQuit(HWND hwnd, int exitCode){}
 
-void onSetFocus(HWND hwnd, HWND hwndOldFocus){}
+void native_window_impl::onSetFocus(HWND hwnd, HWND hwndOldFocus){}
 
-void onShowWindow(HWND hwnd, BOOL fShow, UINT status){}
+void native_window_impl::onShowWindow(HWND hwnd, BOOL fShow, UINT status){}
 
-void onSize(HWND hwnd, UINT state, int cx, int cy){}
+void native_window_impl::onSize(HWND hwnd, UINT state, int cx, int cy){}
 
-void onSysCommand(HWND hwnd, UINT cmd, int x, int y){}
+void native_window_impl::onSysCommand(HWND hwnd, UINT cmd, int x, int y){}
 
-void onTimer(HWND hwnd, UINT id){}
+void native_window_impl::onTimer(HWND hwnd, UINT id){}
 
-void onWindowPosChanged(HWND hwnd, const LPWINDOWPOS lpwpos){}
+void native_window_impl::onWindowPosChanged(HWND hwnd, const LPWINDOWPOS lpwpos){}
 
-BOOL onWindowPosChanging(HWND hwnd, LPWINDOWPOS lpwpos)
+BOOL native_window_impl::onWindowPosChanging(HWND hwnd, LPWINDOWPOS lpwpos)
 {
 	return 0;
 }
@@ -361,7 +400,8 @@ WNDCLASSEX native_window_impl::window_class::create()
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = win32_window_class<window_class, native_window_impl>::WindowProc;
+	wcex.lpfnWndProc =
+		win32_window_class<window_class, native_window_impl>::WindowProc;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = sizeof(native_window_impl*);
 	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
@@ -374,7 +414,6 @@ WNDCLASSEX native_window_impl::window_class::create()
 
 	return wcex;
 }
-
 native_window_impl::window_class native_window_impl::g_window_class;
 
 

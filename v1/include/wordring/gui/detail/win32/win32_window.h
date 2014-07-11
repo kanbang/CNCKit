@@ -56,23 +56,43 @@ class native_window_impl : public native_window
 {
 public:
 	HWND m_hwnd;
+	bool m_msg_handled; /// true: メッセージの処理を完了した
 
 public:
 	native_window_impl();
+	virtual ~native_window_impl();
 
+protected:
+	void set_message_handled(bool handled);
+public:
+	bool get_message_handled() const;
+
+public:
 	virtual void create(window* parent);
 	/// ウィンドウを最小化します
-	void close();
+	virtual void close();
+	virtual void destroy();
 
-	void destroy();
+	virtual void set_parent(native_window* parent);
+	virtual native_window* get_parent();
 
-	native_window* get_parent();
-	void set_parent(native_window* parent);
+	virtual void set_size(size_int size);
+	virtual size_int get_size() const;
 
-	void set_size(size_int size);
-	size_int get_size() const;
-	void set_position(point_int point);
-	point_int get_position() const;
+	virtual void set_position(point_int point);
+	virtual point_int get_position() const;
+
+protected:
+	virtual void on_command(int id, UINT codeNotify); // 親ウィンドウからのコールバック
+
+	virtual bool on_create();
+
+	virtual void on_paint(HDC hdc);
+
+
+
+
+
 
 
 protected:
@@ -131,6 +151,7 @@ protected:
 
 	void onClose(HWND hwnd);
 
+	/// 子ウィンドウでコマンドが発生した
 	void onCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
 	void onCompacting(HWND hwnd, UINT compactRatio);
@@ -171,11 +192,11 @@ protected:
 
 public:
 	/** ウィンドウ・プロシージャの雛型です
-	 * @param flg 
+	 * @param handled true: それ以上処理を行わない。false: デフォルトの処理を行う。 
 	 *    
 	 */
 	LRESULT CALLBACK WindowProc(
-		bool& flg, HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	/// win32_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
@@ -184,11 +205,9 @@ public:
 	{
 		static WNDCLASSEX create();
 	};
-
-	/// win32_window_impl用のwindow_class
 	static window_class g_window_class;
 };
-
+/*
 template <typename T>
 class native_container_window_impl : public native_window_impl
 {
@@ -228,7 +247,7 @@ public:
 	/// win32_window_impl用のwindow_class
 	static window_class g_window_class;
 };
-
+*/
 /*
 template <typename T>
 class native_window_impl_impl : public win32_window_impl

@@ -5,7 +5,7 @@
  *
  * @details
  *          このファイルには、pimplの公開されるインターフェースを宣言します。
- *          window関連クラスの実装に使われます。
+ *          window関連クラスの実装に継承されます。
  *          
  *          
  *
@@ -52,20 +52,17 @@ public:
 	virtual void close() = 0;
 	virtual void destroy() = 0;
 
-	virtual native_window* get_parent() = 0;
 	virtual void set_parent(native_window* parent) = 0;
+	virtual native_window* get_parent() = 0;
 
 	virtual void set_size(size_int size) = 0;
 	virtual size_int get_size() const = 0;
 
 	virtual void set_position(point_int point) = 0;
 	virtual point_int get_position() const = 0;
-
-
-	//virtual void set_parent() = 0;
 };
 
-
+/*
 class native_control_window : public native_window
 {
 
@@ -80,7 +77,7 @@ class native_button_window : public native_window
 {
 
 };
-
+*/
 
 
 

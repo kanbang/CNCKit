@@ -34,7 +34,8 @@ form* form::get_form()
 
 window* form::get_window()
 {
-	return static_cast<window*>(this);
+	//todo
+	return dynamic_cast<window*>(this);
 }
 
 void form::set_size(size_int size)

@@ -22,6 +22,7 @@
 
 #include <wordring/geometry/shape.h>
 //#include <wordring/gui/window_service.h>
+#include <wordring/gui/canvas.h>
 
 #include <cstdint>
 #include <functional>
@@ -30,7 +31,6 @@ namespace wordring
 {
 namespace gui
 {
-
 
 class container; // 前方宣言
 class form; // 前方宣言
@@ -68,6 +68,8 @@ public:
 	std::function<bool()> onKeyDown;
 	/// イベント・ハンドラ
 	std::function<bool()> onKeyUp;
+	/// イベント・ハンドラ
+	std::function<void(canvas&)> onPaint;
 
 public:
 	control();
@@ -94,6 +96,8 @@ public:
 		if (onClick) { return onClick(); }
 		return false;
 	}
+
+	virtual void on_paint(canvas& cv) { }
 };
 
 
