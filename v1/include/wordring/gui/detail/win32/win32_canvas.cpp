@@ -20,6 +20,8 @@
 
 #ifdef _WIN32
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/detail/win32/win32_canvas.h>
 #include <wordring/geometry/shape.h>
 
@@ -44,9 +46,16 @@ native_canvas_impl::~native_canvas_impl()
 }
 
 
-void native_canvas_impl::draw(std::string str, point_int pt)
+void native_canvas_impl::draw_string(std::string str, point_int pt)
 {
-	::TextOut(m_hdc, pt.x, pt.y, TEXT("test"), 4);
+	BOOL result = ::TextOutA(m_hdc, pt.x, pt.y, str.c_str(), str.size());
+	assert(result != 0);
+}
+
+void native_canvas_impl::draw_string(std::wstring str, point_int pt)
+{
+	BOOL result = ::TextOutW(m_hdc, pt.x, pt.y, str.c_str(), str.size());
+	assert(result != 0);
 }
 
 native_memory_canvas_impl::native_memory_canvas_impl()

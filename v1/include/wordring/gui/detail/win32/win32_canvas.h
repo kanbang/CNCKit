@@ -21,6 +21,8 @@
 #ifndef WORDRING_WIN32_CANVAS_H
 #define WORDRING_WIN32_CANVAS_H
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/detail/native_canvas.h>
 
 #include <Windows.h>
@@ -42,7 +44,8 @@ public:
 	native_canvas_impl(HDC hdc);
 	virtual ~native_canvas_impl();
 
-	virtual void draw(std::string str, point_int pt);
+	virtual void draw_string(std::string str, point_int pt);
+	virtual void draw_string(std::wstring str, point_int pt);
 };
 
 class native_memory_canvas_impl : public native_canvas_impl

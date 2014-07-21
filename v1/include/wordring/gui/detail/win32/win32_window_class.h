@@ -21,6 +21,8 @@
 #ifndef WORDRING_WIN32_WINDOW_CLASS_H
 #define WORDRING_WIN32_WINDOW_CLASS_H
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/detail/native_window.h>
 
 #include <Windows.h>
@@ -76,27 +78,31 @@ struct win32_window_class
 		if (uMsg == WM_NCCREATE)
 		{
 			LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
-			native_window_impl* w =
+			native_window_impl* nw =
 				static_cast<native_window_impl*>(cs->lpCreateParams);
-			assert(w);
+			assert(nw);
 
-			win32_window_service_impl::assign(hwnd, w);
+			win32_window_service_impl::assign(hwnd, nw);
 		}
 
 		LRESULT result = 0;
 		bool handled = false;
 
 		ImplT* w = win32_window_service_impl::find(hwnd);
-		if(w)
+		if(w) // WM_NCCREATE以前は登録されていない
 		{
 			result = w->WindowProc(hwnd, uMsg, wParam, lParam);
 			handled = w->get_message_handled();
+		}
+		else
+		{
+			// TODO: ウィンドウに配送できないメッセージの処理
 		}
 
 		if (uMsg == WM_NCDESTROY)
 		{
 			win32_window_service_impl::remove(hwnd);
-			assert(w);
+			assert(w); // 登録されていないウィンドウを消すことはできない
 			w->m_hwnd = nullptr;
 		}
 

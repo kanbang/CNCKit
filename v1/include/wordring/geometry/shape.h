@@ -21,14 +21,14 @@
 #ifndef WORDRING_SHAPE_H
 #define WORDRING_SHAPE_H
 
+#include <wordring/debug.h>
+
 #include <cstdint>
 
 namespace wordring
 {
 namespace geometry
 {
-	
-class dammy;
 
 struct size_int
 {
@@ -48,13 +48,15 @@ struct point_int
 /**
  * @brief 形状を表す基本クラス
  */
-class shape
+struct shape
 {
 
 };
 
-
-//class 
+struct linesegment_int : shape
+{
+	
+};
 
 
 } // namespace geometry
@@ -64,6 +66,8 @@ namespace gui
 
 typedef wordring::geometry::size_int size_int;
 typedef wordring::geometry::point_int point_int;
+
+typedef wordring::geometry::linesegment_int line_int;
 
 } // namespace gui
 

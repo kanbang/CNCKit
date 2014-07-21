@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClCompile Include="..\include\wordring\gui\canvas.cpp" />
     <ClCompile Include="..\include\wordring\gui\detail\win32\win32_canvas.cpp" />
+    <ClCompile Include="..\src\wordring\debug.cpp" />
     <ClCompile Include="..\src\wordring\gui\container.cpp" />
     <ClCompile Include="..\src\wordring\gui\control.cpp" />
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\wordring\debug.h" />
     <ClInclude Include="..\include\wordring\geometry\shape.h" />
     <ClInclude Include="..\include\wordring\gui\container.h" />
     <ClInclude Include="..\include\wordring\gui\control.h" />
@@ -117,6 +119,7 @@
     <ClInclude Include="..\include\wordring\gui\window_service.h" />
     <ClInclude Include="..\include\wordring\wordring.h" />
     <ClInclude Include="..\index.h" />
+    <ClInclude Include="..\src\wordring\graphics\color.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

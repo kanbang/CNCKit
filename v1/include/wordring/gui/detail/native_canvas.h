@@ -18,12 +18,14 @@
 *          PDS
 */
 
+#ifndef WORDRING_NATIVE_CANVAS_H
+#define WORDRING_NATIVE_CANVAS_H
+
+#include <wordring/debug.h>
+
 #include <wordring/geometry/shape.h>
 
 #include <string>
-
-#ifndef WORDRING_NATIVE_CANVAS_H
-#define WORDRING_NATIVE_CANVAS_H
 
 namespace wordring
 {
@@ -39,7 +41,10 @@ public:
 	native_canvas() { }
 	virtual ~native_canvas() { }
 
-	virtual void draw(std::string str, point_int pt) = 0;
+	virtual void draw_string(std::string str, point_int pt) = 0;
+	virtual void draw_string(std::wstring str, point_int pt) = 0;
+
+	//virtual void draw_line() = 0;
 };
 
 

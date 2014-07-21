@@ -21,8 +21,7 @@
 #ifndef WORDRING_NATIVE_WINDOW_SERVICE_H
 #define WORDRING_NATIVE_WINDOW_SERVICE_H
 
-#include <cstdint>
-#include <map>
+#include <wordring/debug.h>
 
 namespace wordring
 {
@@ -34,8 +33,10 @@ namespace detail
 class native_window_service
 {
 public:
+	virtual ~native_window_service() { }
 
 	virtual void run() = 0;
+	virtual void quit() = 0;
 };
 
 

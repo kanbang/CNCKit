@@ -18,6 +18,8 @@
  *          PDS
  */
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/window_service.h>
 
 #ifdef _WIN32
@@ -46,3 +48,9 @@ void window_service::run()
 {
 	m_native->run();
 }
+
+void window_service::quit()
+{
+	m_native->quit();
+}
+

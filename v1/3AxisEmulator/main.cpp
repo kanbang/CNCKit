@@ -18,64 +18,40 @@
  *          PDS
  */
 
-#include <crtdbg.h>
-
-
-#include <Windows.h>
-#include <gl/GL.h>
-
-#include <cstdint>
-#include <iostream>
+#include <wordring/debug.h>
 
 #include <wordring/gui/window.h>
 #include <wordring/gui/window_service.h>
 #include <wordring/gui/container.h>
 
-class A
-{
-	virtual void a(){}
-};
+#include <Windows.h>
+#include <gl/GL.h>
 
-class B : public A
-{
-	virtual void a(){}
-};
+//#include <cstdint>
+//#include <iostream>
 
 int main()
 {
 	using namespace wordring::gui;
-#ifdef _DEBUG
-	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
-#endif // _DEBUG
 
-	std::cout << sizeof(window);
+	wordring::debug::debug_memory_leak();
 
 	window_service ws;
 
-	//container_window w, w2;
-	//button_window b;
 	form f;
-	f.create(NULL);
-	f.onPaint = [](canvas& cv)
+	f.on_paint = [](canvas& cv)
 	{
-		cv.draw(std::string(""), point_int(30, 30));
+		cv.draw_string(std::wstring(L"テスト文字列"), point_int(30, 30));
 	};
+	f.on_destroy = [&]() { ws.quit(); };
 
+	f.set_size(size_int(500, 500));
+	f.set_position(point_int(0, 0));
+	f.set_title(std::wstring(L"3AxisEmulator"));
 
-	canvas cv = f.get_canvas();
-
-	A* a = new B;
-
-	std::unique_ptr<A> u(a);
-
-	B* b = dynamic_cast<B*>(u.get());
-
-
+	f.show();
 
 	ws.run();
-
-	//std::cout << sizeof(int32_t);
-	//new int;
 
 	return 0;
 }

@@ -21,10 +21,13 @@
 #ifndef WORDRING_CONTAINER_H
 #define WORDRING_CONTAINER_H
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/control.h>
 #include <wordring/gui/window.h>
 
 #include <vector>
+#include <string>
 
 namespace wordring
 {
@@ -45,14 +48,17 @@ class form : public container, public window
 {
 protected:
 public:
-	form(){}
+	form();
+	virtual ~form();
 
-	bool onCreate(){ return true; }
+	virtual void set_title(std::string title);
+	virtual void set_title(std::wstring title);
 
 	/// 子コントロールから呼び出され、自身を返します
 	virtual form* get_form();
 	/// 関連付けられたウィンドウを返します
 	virtual window* get_window();
+
 	/// コントロールの大きさを設定する
 	virtual void set_size(size_int size);
 	/// コントロールの大きさを取得する
@@ -63,9 +69,14 @@ public:
 
 	//virtual bool on_click();
 
-	virtual void on_paint(canvas& cv)
+	virtual void do_destroy()
 	{
-		if (onPaint) { onPaint(cv); }
+		if (on_destroy) { on_destroy(); }
+	}
+
+	virtual void do_paint(canvas& cv)
+	{
+		if (on_paint) { on_paint(cv); }
 	}
 };
 

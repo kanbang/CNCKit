@@ -21,11 +21,18 @@
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
 
+#include <string>
+
 using namespace wordring::gui;
 
-//form::form()
-//{
-//}
+form::form()
+{
+	create(nullptr);
+}
+
+form::~form()
+{
+}
 
 form* form::get_form()
 {
@@ -35,7 +42,17 @@ form* form::get_form()
 window* form::get_window()
 {
 	//todo
-	return dynamic_cast<window*>(this);
+	return static_cast<window*>(this);
+}
+
+void form::set_title(std::string title)
+{
+	m_native_window->set_text(title);
+}
+
+void form::set_title(std::wstring title)
+{
+	m_native_window->set_text(title);
 }
 
 void form::set_size(size_int size)
@@ -57,6 +74,7 @@ point_int form::get_position() const
 {
 	return window::get_position();
 }
+
 /*
 bool form::on_click()
 {

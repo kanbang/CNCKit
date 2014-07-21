@@ -8,9 +8,6 @@
  *          ライブラリ利用者は、このヘッダー・ファイルを使用しません。\n
  *          pimplによって実装を隠ぺいします。
  *        - このファイルはwindow.cpp内に読み込まれます。 
- *        - メッセージ・マップはスレッドに対応していません。
- *          VC++がthread_localに対応した時点で対応を考えます。
- *          gcc4.8以降はthread_localに対応しているそうです。
  *          
  * @author  Kouichi Minami
  * @date    2014
@@ -24,6 +21,8 @@
 #ifndef WORDRING_WIN32_WINDOW_H
 #define WORDRING_WIN32_WINDOW_H
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/geometry/shape.h>
 #include <wordring/gui/detail/win32/win32_window_class.h>
@@ -32,6 +31,7 @@
 
 #include <utility>
 #include <map>
+#include <string>
 #include <cassert>
 
 #ifdef _DEBUG
@@ -73,6 +73,9 @@ public:
 	virtual void close();
 	virtual void destroy();
 
+	virtual void show();
+	virtual void hide();
+
 	virtual void set_parent(native_window* parent);
 	virtual native_window* get_parent();
 
@@ -82,12 +85,16 @@ public:
 	virtual void set_position(point_int point);
 	virtual point_int get_position() const;
 
+	virtual void set_text(std::string text);
+	virtual void set_text(std::wstring text);
+
 protected:
-	virtual void on_command(int id, UINT codeNotify); // 親ウィンドウからのコールバック
+	virtual void do_command(int id, UINT codeNotify); // 親ウィンドウからのコールバック
 
-	virtual bool on_create();
+	virtual void do_create();
+	virtual void do_destroy();
 
-	virtual void on_paint(HDC hdc);
+	virtual void do_paint(HDC hdc);
 
 
 
@@ -192,8 +199,6 @@ protected:
 
 public:
 	/** ウィンドウ・プロシージャの雛型です
-	 * @param handled true: それ以上処理を行わない。false: デフォルトの処理を行う。 
-	 *    
 	 */
 	LRESULT CALLBACK WindowProc(
 		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

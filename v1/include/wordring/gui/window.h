@@ -37,8 +37,7 @@
 #ifndef WORDRING_WINDOW_H
 #define WORDRING_WINDOW_H
 
-#include <memory>
-//#include <functional>
+#include <wordring/debug.h>
 
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/window_service.h>
@@ -46,6 +45,8 @@
 #include <wordring/geometry/shape.h>
 
 #include <wordring/gui/canvas.h>
+
+#include <memory>
 
 namespace wordring
 {
@@ -61,8 +62,6 @@ class window
 {
 protected:
 	std::unique_ptr<detail::native_window> m_native_window; // pimpl
-
-public:
 
 public:
 	explicit window(detail::native_window* nw);
@@ -81,6 +80,11 @@ public:
 	/// ウィンドウを破棄します
 	void destroy();
 
+	/// ウィンドウを表示します
+	void show();
+	/// ウィンドウを非表示にします
+	void hide();
+
 	/// 親ウィンドウを設定します
 	void set_parent(window* parent);
 	/// 親ウィンドウを取得します
@@ -97,26 +101,13 @@ public:
 	/// ウィンドウの位置を返します
 	point_int get_position() const;
 
-	/// 描画用のキャンバスを取得します
-	canvas get_canvas();
 
-
-
-
-	/// メッセージ・ハンドラ
-	virtual bool on_create();
-
-	virtual void on_paint(canvas& cv);
-
-protected:
-};
-
-class window_impl : public window
-{
-public:
-	window_impl();
-
-	bool onCreate();
+	/// ウィンドウ作成時に呼び出されます
+	virtual void do_create();
+	/// ウィンドウが破棄されるとき呼び出されます
+	virtual void do_destroy();
+	/// ウィンドウの描画更新が必要なとき呼び出されます
+	virtual void do_paint(canvas& cv);
 };
 
 // control_window -------------------------------------------------------------

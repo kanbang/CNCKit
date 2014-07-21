@@ -21,9 +21,11 @@
 #ifndef WORDRING_NATIVE_WINDOW_H
 #define WORDRING_NATIVE_WINDOW_H
 
-//#include <wordring/gui/window.h>
-//#include <wordring/gui/window_service.h>
+#include <wordring/debug.h>
+
 #include <wordring/geometry/shape.h>
+
+#include <string>
 
 namespace wordring
 {
@@ -44,6 +46,7 @@ protected:
 
 public:
 	native_window() { }
+	virtual ~native_window() { }
 
 	void set_window(wordring::gui::window* w) { m_window = w; }
 	wordring::gui::window* get_window() { return m_window; }
@@ -51,6 +54,9 @@ public:
 	virtual void create(wordring::gui::window* parent) = 0;
 	virtual void close() = 0;
 	virtual void destroy() = 0;
+
+	virtual void show() = 0;
+	virtual void hide() = 0;
 
 	virtual void set_parent(native_window* parent) = 0;
 	virtual native_window* get_parent() = 0;
@@ -60,6 +66,9 @@ public:
 
 	virtual void set_position(point_int point) = 0;
 	virtual point_int get_position() const = 0;
+
+	virtual void set_text(std::string text) = 0;
+	virtual void set_text(std::wstring text) = 0;
 };
 
 /*

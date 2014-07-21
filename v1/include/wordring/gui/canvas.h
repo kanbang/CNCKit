@@ -21,6 +21,8 @@
 #ifndef WORDRING_CANVAS_H
 #define WORDRING_CANVAS_H
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/detail/native_canvas.h>
 #include <wordring/geometry/shape.h>
 
@@ -40,9 +42,14 @@ protected:
 public:
 	canvas();
 
-	canvas(std::unique_ptr<detail::native_canvas>&& cv);
+	explicit canvas(std::unique_ptr<detail::native_canvas>&& cv);
 
-	void draw(std::string str, point_int pt);
+	canvas(canvas&& cv);
+
+	void operator=(canvas&& cv);
+
+	void draw_string(std::string str, point_int pt);
+	void draw_string(std::wstring str, point_int pt);
 
 };
 

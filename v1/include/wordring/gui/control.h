@@ -20,6 +20,8 @@
 #ifndef WORDRING_CONTROL_H
 #define WORDRING_CONTROL_H
 
+#include <wordring/debug.h>
+
 #include <wordring/geometry/shape.h>
 //#include <wordring/gui/window_service.h>
 #include <wordring/gui/canvas.h>
@@ -45,9 +47,9 @@ private:
 
 public:
 	/// イベント・ハンドラ
-	std::function<bool()> onCreate;
+	std::function<bool()> on_create;
 	/// イベント・ハンドラ
-	std::function<bool()> onDestroy;
+	std::function<void()> on_destroy;
 	/// イベント・ハンドラ
 	std::function<bool()> onClick;
 	/// イベント・ハンドラ
@@ -69,7 +71,7 @@ public:
 	/// イベント・ハンドラ
 	std::function<bool()> onKeyUp;
 	/// イベント・ハンドラ
-	std::function<void(canvas&)> onPaint;
+	std::function<void(canvas&)> on_paint;
 
 public:
 	control();
@@ -91,13 +93,18 @@ public:
 	virtual void set_position(point_int point) = 0;
 	virtual point_int get_position() const = 0;
 
-	virtual bool on_click()
+	virtual void do_destroy()
+	{
+		if (on_destroy) { on_destroy(); }
+	}
+
+	virtual bool do_click()
 	{
 		if (onClick) { return onClick(); }
 		return false;
 	}
 
-	virtual void on_paint(canvas& cv) { }
+	virtual void do_paint(canvas& cv) { }
 };
 
 

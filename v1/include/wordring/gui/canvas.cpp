@@ -28,14 +28,27 @@ canvas::canvas() : m_native(new detail::native_canvas_impl)
 {
 }
 
-canvas::canvas(std::unique_ptr<detail::native_canvas>&& cv)
+canvas::canvas(std::unique_ptr<detail::native_canvas>&& cv) : m_native(std::move(cv))
 {
-	m_native = std::move(cv);
 }
 
-void canvas::draw(std::string str, point_int pt)
+canvas::canvas(canvas&& cv) : m_native(std::move(cv.m_native))
 {
-	m_native->draw(str, pt);
+}
+
+void canvas::operator=(canvas&& cv)
+{
+	m_native = std::move(cv.m_native);
+}
+
+void canvas::draw_string(std::string str, point_int pt)
+{
+	m_native->draw_string(str, pt);
+}
+
+void canvas::draw_string(std::wstring str, point_int pt)
+{
+	m_native->draw_string(str, pt);
 }
 
 

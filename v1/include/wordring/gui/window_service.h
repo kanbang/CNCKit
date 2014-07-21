@@ -21,12 +21,12 @@
 #ifndef WORDRING_WINDOW_SERVICE_H
 #define WORDRING_WINDOW_SERVICE_H
 
-
-#include <cstdint>
-#include <memory>
+#include <wordring/debug.h>
 
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/detail/native_window_service.h>
+
+#include <memory>
 
 namespace wordring
 {
@@ -40,8 +40,12 @@ private:
 
 public:
 	window_service();
+	virtual ~window_service() { }
+
 	detail::native_window_service* get_native_window_service();
+
 	void run();
+	void quit();
 };
 
 

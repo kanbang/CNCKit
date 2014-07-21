@@ -17,8 +17,9 @@
  *          PDS
  */
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/window.h>
-//#include <wordring/gui/container.h>
 #include <wordring/gui/canvas.h>
 
 #ifdef _WIN32
@@ -33,10 +34,10 @@ using namespace wordring::gui;
 
 // window ---------------------------------------------------------------------
 
-window::window() : m_native_window(nullptr)//new detail::native_window_impl)
+window::window() : m_native_window(new detail::native_window_impl)
 {
-	detail::native_window_impl* p = new detail::native_window_impl;
-	m_native_window.reset(p);
+	//detail::native_window_impl* p = new detail::native_window_impl;
+	//m_native_window.reset(p);
 
 	m_native_window->set_window(this);
 }
@@ -46,7 +47,10 @@ window::window(detail::native_window* p) : m_native_window(p)
 	m_native_window->set_window(this);
 }
 
-window::~window(){}
+window::~window()
+{
+
+}
 
 void window::create(window * parent)
 {
@@ -65,7 +69,17 @@ void window::close()
 
 void window::destroy()
 {
-	return m_native_window->destroy();
+	m_native_window->destroy();
+}
+
+void window::show()
+{
+	m_native_window->show();
+}
+
+void window::hide()
+{
+	m_native_window->hide();
 }
 
 window* window::get_parent()
@@ -97,18 +111,16 @@ point_int window::get_position() const
 	return m_native_window->get_position();
 }
 
-canvas window::get_canvas()
-{
-	return canvas();
-}
-
 /// メッセージ・ハンドラ
-bool window::on_create()
+void window::do_create()
 {
-	return true;
 }
 
-void window::on_paint(canvas& cv)
+void window::do_destroy()
+{
+}
+
+void window::do_paint(canvas& cv)
 {
 }
 

@@ -21,6 +21,8 @@
 #ifndef WORDRING_WIN32_WINDOW_SERVICE_H
 #define WORDRING_WIN32_WINDOW_SERVICE_H
 
+#include <wordring/debug.h>
+
 #include <wordring/gui/detail/native_window_service.h>
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/detail/win32/win32_window.h>
@@ -51,13 +53,11 @@ private:
 	std::map<HWND, native_window_impl*> m_map;
 
 public:
-	win32_window_service_impl()
-	{
-		win32_window_service_impl::tls_window_service = this;
-	}
+	win32_window_service_impl();
+	virtual ~win32_window_service_impl();
 
 	virtual void run();
-
+	virtual void quit();
 
 public:
 	/// ハンドルとウィンドウ・オブジェクトのセットをマップに追加します
