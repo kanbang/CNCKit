@@ -68,12 +68,16 @@ public:
 	bool get_message_handled() const;
 
 public:
+	/// ウィンドウを作成します
 	virtual void create(window* parent);
 	/// ウィンドウを最小化します
 	virtual void close();
+	/// ウィンドウを破棄します
 	virtual void destroy();
 
+	/// ウィンドウを表示します
 	virtual void show();
+	/// ウィンドウを非表示にします
 	virtual void hide();
 
 	virtual void set_parent(native_window* parent);
@@ -204,7 +208,7 @@ public:
 		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-	/// win32_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
+	/// native_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
 	struct window_class
 		: public win32_window_class<window_class, native_window_impl>
 	{
@@ -212,130 +216,6 @@ public:
 	};
 	static window_class g_window_class;
 };
-/*
-template <typename T>
-class native_container_window_impl : public native_window_impl
-{
-public:
-
-	LRESULT CALLBACK WindowProc(
-		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-
-	}
-
-	struct window_class
-		: public win32_window_class<
-			window_class, native_container_window_impl>
-	{
-		static WNDCLASSEX create()
-		{
-			WNDCLASSEX wcex;
-
-			wcex.cbSize = sizeof(WNDCLASSEX);
-			wcex.style = CS_HREDRAW | CS_VREDRAW;
-			wcex.lpfnWndProc = window_class::WindowProc;
-			wcex.cbClsExtra = 0;
-			wcex.cbWndExtra = sizeof(native_container_window_impl*);
-			wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
-			wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
-			wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-			wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
-			wcex.lpszMenuName = NULL;
-			wcex.lpszClassName = TEXT("native_container_window_impl");
-			wcex.hIconSm = NULL;
-
-			return wcex;
-		}
-	};
-
-	/// win32_window_impl用のwindow_class
-	static window_class g_window_class;
-};
-*/
-/*
-template <typename T>
-class native_window_impl_impl : public win32_window_impl
-{
-
-};
-*/
-/**
- * @brief コントロール・ウィンドウ
- * @details
- *    - native_control_window_implにtypedefされます。
- */
-/*
-class win32_control_window_impl : public win32_window_impl
-{
-public:
-	win32_control_window_impl();
-
-	void create(window* parent);
-
-	/// win32_control_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
-	struct window_class
-		: public win32_window_class<window_class, window, win32_control_window_impl>
-	{
-		window_class() { }
-		virtual ~window_class() { }
-		static WNDCLASSEX create();
-	};
-
-	/// win32_control_window_impl用のwindow_class
-	static window_class g_window_class;
-
-public:
-	typedef window_class class_type;
-	typedef window window_type;
-};
-*/
-/**
- * @brief コンテナ・ウィンドウ
- * @details
- *    - win32_container_window_implにtypedefされます。
- */
-/*
-class win32_container_window_impl : public win32_control_window_impl
-{
-public:
-	void create(window* parent);
-
-	/// win32_container_window_impl用にカスタマイズされたwin32ウィンドウ・クラスです
-	struct window_class
-		: public win32_window_class<window_class, window, win32_container_window_impl>
-	{
-		window_class() { }
-		virtual ~window_class() { }
-		static WNDCLASSEX create();
-	};
-
-	/// win32_container_window_impl用のwindow_class
-	static window_class g_window_class;
-
-public:
-	typedef window_class class_type;
-	typedef window window_type;
-};
-
-class win32_button_window_impl : public win32_window_impl
-{
-public:
-	virtual void create(window* parent);
-};
-*/
-/** window.cppで使用 */
-//typedef win32_window_impl native_window_impl;
-
-//typedef win32_window_impl_impl native_window_impl_impl;
-/** window.cppで使用 */
-//typedef win32_control_window_impl native_control_window_impl;
-/** window.cppで使用 */
-//typedef win32_container_window_impl native_container_window_impl;
-/** window.cppで使用 */
-//typedef win32_button_window_impl native_button_window_impl;
-
-
 
 
 } // namespace detail

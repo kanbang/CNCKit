@@ -109,78 +109,14 @@ public:
 	/// ウィンドウの描画更新が必要なとき呼び出されます
 	virtual void do_paint(canvas& cv);
 };
-
-// control_window -------------------------------------------------------------
-
-/** 
- * @brief native_control_window_impl初期化用のダミー・クラス
- * @details
- *    コンストラクタでnative_control_window_implを初期化します。
- */
-class control_window_ : public window
-{
-public:
-	control_window_();
-};
-
-/**
- * @brief コントロール・ウィンドウ
- * @details
- *    コントロールとして使う基底ウィンドウです。
- *    ここから派生します。
- * @param ControlT メッセージ配送先となるcontrol派生クラスを指定します。
- * @param WindowT  継承するwindowクラスを指定します。
- */
-template <typename ControlT, typename WindowT = control_window_>
-class control_window : public WindowT
-{
-protected:
-	/// メッセージ配送先のcontrol派生オブジェクト
-	ControlT* m_control;
-
-public:
-	control_window() : m_control(nullptr) { }
-
-	/// control派生クラスのコンストラクタ内からcontrolのthisを設定します
-	void set_control(ControlT* c) { m_control = c; }
-	/// 
-	virtual bool on_click() { return m_control->on_click(); }
-};
-
-// container_window -----------------------------------------------------------
-
-/**
- * @brief native_container_window_impl初期化用のダミー・クラス
- * @details
- *    コンストラクタでnative_container_window_implを初期化します。
- */
-class container_window_ : public window
-{
-public:
-	container_window_();
-};
-
-/**
- * @brief コンテナ・ウィンドウ
- * @details
- *    コンテナとして使う基底ウィンドウです。
- *    ここから派生します。
- * @param T メッセージ配送先となるcontainer派生クラスを指定します。
- */
-template <typename T>
-class container_window : public control_window<T, container_window_>
-{
-public:
-	container_window() { }
-};
-
+/*
 class button_window : public window
 {
 public:
 	button_window();
 
 };
-
+*/
 } // namespace gui
 } // namespace wordring
 

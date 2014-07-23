@@ -41,7 +41,7 @@ int main()
 	form f;
 	f.on_paint = [](canvas& cv)
 	{
-		cv.draw_string(std::wstring(L"テスト文字列"), point_int(30, 30));
+		cv.draw_string(L"テスト文字列", point_int(30, 30));
 	};
 	f.on_destroy = [&]() { ws.quit(); };
 

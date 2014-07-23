@@ -125,37 +125,6 @@ void window::do_paint(canvas& cv)
 }
 
 /*
-// window_impl ----------------------------------------------------------------
-
-window_impl::window_impl()
-	: window(new detail::native_window_impl_impl<window_impl>())
-{
-}
-
-
-inline bool window_impl::onCreate()
-{
-	form* pT = static_cast<form*>(this);
-	return pT->onCreate();
-}
-
-
-
-// control_window -------------------------------------------------------------
-
-control_window_::control_window_()
-	: window(new detail::native_control_window_impl)
-{
-}
-
-// container_window -----------------------------------------------------------
-
-container_window_::container_window_()
-	: window(new detail::native_container_window_impl)
-{
-
-}
-
 button_window::button_window()
 	: window(new wordring::gui::detail::native_button_window_impl)
 {

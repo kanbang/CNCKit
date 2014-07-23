@@ -5,8 +5,8 @@
  *
  * @details
  *          ボタン、スクロールバーなどのGUIコントロールです。
- *          
- *          
+ *          controlクラスはインタフェースとして宣言されます。
+ *          ただし、共通部分は一部実装されます。
  *          
  *
  * @author  Kouichi Minami
@@ -17,16 +17,16 @@
  * @par     ライセンス
  *          PDS
  */
+
 #ifndef WORDRING_CONTROL_H
 #define WORDRING_CONTROL_H
 
 #include <wordring/debug.h>
 
 #include <wordring/geometry/shape.h>
-//#include <wordring/gui/window_service.h>
 #include <wordring/gui/canvas.h>
 
-#include <cstdint>
+//#include <cstdint>
 #include <functional>
 
 namespace wordring

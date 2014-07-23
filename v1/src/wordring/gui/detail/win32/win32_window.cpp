@@ -365,7 +365,8 @@ void native_window_impl::onCommand(
 	HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
 	// wはコントロール自身、thisはコントロールを載せているウィンドウ
-	native_window_impl* w = win32_window_service_impl::find(hwndCtl);
+	native_window_impl* w = static_cast<native_window_impl*>(
+		win32_window_service_impl::find(hwndCtl));
 	assert(w);
 	// wは自分自身の機能を知っているので適切に処理できる
 	w->do_command(id, codeNotify);

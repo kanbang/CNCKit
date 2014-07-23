@@ -30,7 +30,7 @@
 #include <Windows.h>
 
 #include <utility>
-#include <vector>
+#include <map>
 
 #include <cassert>
 
@@ -50,7 +50,7 @@ class win32_window_service_impl : public native_window_service
 {
 private:
 	/// マップ
-	std::map<HWND, native_window_impl*> m_map;
+	std::map<HWND, native_window*> m_map;
 
 public:
 	win32_window_service_impl();
@@ -61,18 +61,18 @@ public:
 
 public:
 	/// ハンドルとウィンドウ・オブジェクトのセットをマップに追加します
-	static void assign(HWND hwnd, native_window_impl* pwin)
+	static void assign(HWND hwnd, native_window* pwin)
 	{
 		win32_window_service_impl::tls_window_service->m_map[hwnd] = pwin;
 	}
 
 	/// ハンドルからウィンドウ・オブジェクトを検索します
-	static native_window_impl* find(HWND hwnd)
+	static native_window* find(HWND hwnd)
 	{
-		std::map<HWND, native_window_impl*>& map =
+		std::map<HWND, native_window*>& map =
 			win32_window_service_impl::tls_window_service->m_map;
 
-		std::map<HWND, native_window_impl*>::iterator it = map.find(hwnd);
+		std::map<HWND, native_window*>::iterator it = map.find(hwnd);
 		if (it == map.end()) { return nullptr; }
 
 		return it->second;
@@ -81,7 +81,7 @@ public:
 	/// ハンドルを指定してウィンドウ・オブジェクトとのセットを削除します
 	static void remove(HWND hwnd)
 	{
-		std::map<HWND, native_window_impl*>& map =
+		std::map<HWND, native_window*>& map =
 			win32_window_service_impl::tls_window_service->m_map;
 
 		size_t n = map.erase(hwnd);

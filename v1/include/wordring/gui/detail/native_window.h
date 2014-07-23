@@ -71,25 +71,6 @@ public:
 	virtual void set_text(std::wstring text) = 0;
 };
 
-/*
-class native_control_window : public native_window
-{
-
-};
-
-class native_container_window : public native_window
-{
-
-};
-
-class native_button_window : public native_window
-{
-
-};
-*/
-
-
-
 } // namespace detail
 } // namespace gui
 } // namespace wordring

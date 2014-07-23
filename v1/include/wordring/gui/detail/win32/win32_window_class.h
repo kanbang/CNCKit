@@ -23,6 +23,7 @@
 
 #include <wordring/debug.h>
 
+#include <wordring/gui/detail/win32/win32_window_service.h>
 #include <wordring/gui/detail/native_window.h>
 
 #include <Windows.h>
@@ -78,8 +79,8 @@ struct win32_window_class
 		if (uMsg == WM_NCCREATE)
 		{
 			LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
-			native_window_impl* nw =
-				static_cast<native_window_impl*>(cs->lpCreateParams);
+			native_window* nw =
+				static_cast<native_window*>(cs->lpCreateParams);
 			assert(nw);
 
 			win32_window_service_impl::assign(hwnd, nw);
@@ -88,11 +89,11 @@ struct win32_window_class
 		LRESULT result = 0;
 		bool handled = false;
 
-		ImplT* w = win32_window_service_impl::find(hwnd);
-		if(w) // WM_NCCREATEˆÈ‘O‚Í“o˜^‚³‚ê‚Ä‚¢‚È‚¢
+		ImplT* iw = static_cast<ImplT*>(win32_window_service_impl::find(hwnd));
+		if(iw) // WM_NCCREATEˆÈ‘O‚Í“o˜^‚³‚ê‚Ä‚¢‚È‚¢
 		{
-			result = w->WindowProc(hwnd, uMsg, wParam, lParam);
-			handled = w->get_message_handled();
+			result = iw->WindowProc(hwnd, uMsg, wParam, lParam);
+			handled = iw->get_message_handled();
 		}
 		else
 		{
@@ -102,8 +103,8 @@ struct win32_window_class
 		if (uMsg == WM_NCDESTROY)
 		{
 			win32_window_service_impl::remove(hwnd);
-			assert(w); // “o˜^‚³‚ê‚Ä‚¢‚È‚¢ƒEƒBƒ“ƒhƒE‚ðÁ‚·‚±‚Æ‚Í‚Å‚«‚È‚¢
-			w->m_hwnd = nullptr;
+			assert(iw); // “o˜^‚³‚ê‚Ä‚¢‚È‚¢ƒEƒBƒ“ƒhƒE‚ðÁ‚·‚±‚Æ‚Í‚Å‚«‚È‚¢
+			iw->m_hwnd = nullptr;
 		}
 
 		if (!handled) { result = ::DefWindowProc(hwnd, uMsg, wParam, lParam); }

@@ -5,7 +5,7 @@
  *
  * @details
  *          ボタンやスクロールバーなど、GUIのコントロールを載せるコンテナです。
- *          
+ *          containerクラスはインターフェースとして宣言されます。
  *          
  *          
  *
@@ -24,7 +24,7 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/control.h>
-#include <wordring/gui/window.h>
+#include <wordring/gui/container_window.h>
 
 #include <vector>
 #include <string>
@@ -37,14 +37,14 @@ namespace gui
 class container : public control
 {
 private:
-	std::vector<control*> m_children;
+	//std::vector<control*> m_children;
 
 public:
 	//void add(control* child);
 	//void remove(control* child);
 };
 
-class form : public container, public window
+class form : public container, public container_window
 {
 protected:
 public:
