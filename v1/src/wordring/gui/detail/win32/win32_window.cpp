@@ -246,7 +246,7 @@ LRESULT native_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_COMMAND, onCommand);
 		HANDLE_MSG(hwnd, WM_COMPACTING, onCompacting); // メモリー不足
 		HANDLE_MSG(hwnd, WM_COPYDATA, onCopyData);
-		//HANDLE_MSG(hwnd, WM_CREATE, onCreate);
+		HANDLE_MSG(hwnd, WM_CREATE, onCreate);
 		HANDLE_MSG(hwnd, WM_DESTROY, onDestroy);
 		HANDLE_MSG(hwnd, WM_ERASEBKGND, onEraseBkgnd);
 		HANDLE_MSG(hwnd, WM_KILLFOCUS, onKillFocus);
@@ -394,7 +394,8 @@ void native_window_impl::onDestroy(HWND hwnd)
 
 BOOL native_window_impl::onEraseBkgnd(HWND hwnd, HDC hdc)
 {
-	return 0;
+	set_message_handled(true);
+	return TRUE;
 }
 
 void native_window_impl::onKillFocus(HWND hwnd, HWND hwndNewFocus){}

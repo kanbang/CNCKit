@@ -47,7 +47,7 @@ private:
 
 public:
 	/// イベント・ハンドラ
-	std::function<bool()> on_create;
+	std::function<void()> on_create;
 	/// イベント・ハンドラ
 	std::function<void()> on_destroy;
 	/// イベント・ハンドラ
@@ -75,7 +75,7 @@ public:
 
 public:
 	control();
-	//virtual void set_parent(container* parent);
+	virtual void set_parent(container* parent) = 0;
 	virtual container* get_parent();
 	virtual form* get_form();
 	
@@ -92,6 +92,8 @@ public:
 
 	virtual void set_position(point_int point) = 0;
 	virtual point_int get_position() const = 0;
+
+	virtual void do_create() {	}
 
 	virtual void do_destroy()
 	{

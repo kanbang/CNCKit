@@ -39,13 +39,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <NuGetPackageImportStamp>8ab8335e</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>bece72ea</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(IncludePath);$(SolutionDir)include</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
+    <Linkage-glew>
+    </Linkage-glew>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="..\include\wordring\gui\detail\win32\win32_canvas.cpp" />
     <ClCompile Include="..\src\wordring\debug.cpp" />
+    <ClCompile Include="..\src\wordring\detail\win32\exception.cpp" />
     <ClCompile Include="..\src\wordring\gui\canvas.cpp" />
     <ClCompile Include="..\src\wordring\gui\container.cpp" />
     <ClCompile Include="..\src\wordring\gui\container_window.cpp" />
@@ -104,11 +107,16 @@
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window_service.cpp" />
     <ClCompile Include="..\src\wordring\gui\window.cpp" />
     <ClCompile Include="..\src\wordring\gui\window_service.cpp" />
+    <ClCompile Include="..\src\wordring\opengl\detail\win32\win32_gl_canvas.cpp" />
+    <ClCompile Include="..\src\wordring\opengl\detail\win32\win32_gl_context.cpp" />
+    <ClCompile Include="..\src\wordring\opengl\gl_canvas.cpp" />
+    <ClCompile Include="..\src\wordring\opengl\gl_context.cpp" />
     <ClCompile Include="..\src\wordring\opengl\gl_window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\wordring\debug.h" />
+    <ClInclude Include="..\include\wordring\exception.h" />
     <ClInclude Include="..\include\wordring\geometry\shape.h" />
     <ClInclude Include="..\include\wordring\gui\container.h" />
     <ClInclude Include="..\include\wordring\gui\container_window.h" />
@@ -126,8 +134,14 @@
     <ClInclude Include="..\include\wordring\gui\canvas.h" />
     <ClInclude Include="..\include\wordring\gui\window.h" />
     <ClInclude Include="..\include\wordring\gui\window_service.h" />
+    <ClInclude Include="..\include\wordring\opengl\detail\native_gl_canvas.h" />
+    <ClInclude Include="..\include\wordring\opengl\detail\native_gl_context.h" />
     <ClInclude Include="..\include\wordring\opengl\detail\native_gl_window.h" />
+    <ClInclude Include="..\include\wordring\opengl\detail\win32\win32_gl_canvas.h" />
+    <ClInclude Include="..\include\wordring\opengl\detail\win32\win32_gl_context.h" />
     <ClInclude Include="..\include\wordring\opengl\detail\win32\win32_gl_window.h" />
+    <ClInclude Include="..\include\wordring\opengl\gl_canvas.h" />
+    <ClInclude Include="..\include\wordring\opengl\gl_context.h" />
     <ClInclude Include="..\include\wordring\opengl\gl_window.h" />
     <ClInclude Include="..\include\wordring\wordring.h" />
     <ClInclude Include="..\index.h" />
@@ -138,14 +152,14 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets" Condition="Exists('..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets')" />
-    <Import Project="..\packages\glew.1.9.0.1\build\native\glew.targets" Condition="Exists('..\packages\glew.1.9.0.1\build\native\glew.targets')" />
+    <Import Project="..\packages\rxd_glew.redist.1.10.0.1\build\native\rxd_glew.redist.targets" Condition="Exists('..\packages\rxd_glew.redist.1.10.0.1\build\native\rxd_glew.redist.targets')" />
+    <Import Project="..\packages\rxd_glew.1.10.0.1\build\native\rxd_glew.targets" Condition="Exists('..\packages\rxd_glew.1.10.0.1\build\native\rxd_glew.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>このプロジェクトは、このコンピューターにはない NuGet パッケージを参照しています。これらをダウンロードするには、NuGet パッケージの復元を有効にしてください。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。不足しているファイルは {0} です。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\glew.1.9.0.1\build\native\glew.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew.1.9.0.1\build\native\glew.targets'))" />
+    <Error Condition="!Exists('..\packages\rxd_glew.redist.1.10.0.1\build\native\rxd_glew.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\rxd_glew.redist.1.10.0.1\build\native\rxd_glew.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\rxd_glew.1.10.0.1\build\native\rxd_glew.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\rxd_glew.1.10.0.1\build\native\rxd_glew.targets'))" />
   </Target>
 </Project>

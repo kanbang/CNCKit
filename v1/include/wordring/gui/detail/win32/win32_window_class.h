@@ -23,8 +23,8 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/detail/win32/win32_window_service.h>
 #include <wordring/gui/detail/native_window.h>
+#include <wordring/gui/detail/win32/win32_window_service.h>
 
 #include <Windows.h>
 #include <windowsx.h>
@@ -82,7 +82,8 @@ struct win32_window_class
 			native_window* nw =
 				static_cast<native_window*>(cs->lpCreateParams);
 			assert(nw);
-
+			ImplT* iw = static_cast<ImplT*>(nw);
+			iw->m_hwnd = hwnd;
 			win32_window_service_impl::assign(hwnd, nw);
 		}
 

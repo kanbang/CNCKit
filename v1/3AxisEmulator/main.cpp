@@ -24,34 +24,140 @@
 #include <wordring/gui/window_service.h>
 #include <wordring/gui/container.h>
 
-#include <Windows.h>
-#include <gl/GL.h>
+#include <wordring/opengl/gl_canvas.h>
+#include <wordring/opengl/gl_context.h>
 
+#include <Windows.h>
+
+#include <GL/glew.h>
+#include <gl/GL.h>
+#include <GL/GLU.h>
 //#include <cstdint>
-//#include <iostream>
+#include <iostream>
 
 int main()
 {
 	using namespace wordring::gui;
+	using namespace wordring::opengl;
 
 	wordring::debug::debug_memory_leak();
 
 	window_service ws;
 
 	form f;
-	f.on_paint = [](canvas& cv)
+	gl_context ctx;
+
+		f.on_create = [&]()
+		{
+			ctx.assign(f, gl_context::flag::WINDOW, 24, 24);
+			//ctx.make_current();
+			//ctx.unmake_current();
+		};
+
+		f.on_paint = [&](canvas& cv)
+		{
+			size_int size = f.get_size();
+			double dx = double(size.w) / size.h;
+			ctx.make_current(cv);
+
+			glViewport(0, 0, size.w, size.h);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(-dx, dx, -1, 1, 0, 3);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			gluLookAt(
+				1.0, 1.0, 1.0,
+				0.0, 0.0, 0.0,
+				0.0, 1.0, 0.0);
+
+			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			glBegin(GL_LINES);
+
+			glPushMatrix();
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glVertex3f(0.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, 0.0f, 3.0f);
+
+			//glColor3f(1.0f, 0.0f, 0.0f); // 赤
+			glVertex3f(0.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, 3.0f, 0.0f);
+
+			//glColor3f(0.0f, 1.0f, 0.0f); // 緑
+			glVertex3f(0.0f, 0.0f, 0.0f);
+			glVertex3f(3.0f, 0.0f, 0.0f);
+			glPopMatrix();
+
+			// 座標線
+			glPushMatrix();
+			glColor3f(1.0f, 0.0f, 0.0f); // 赤
+
+			// xz
+			glVertex3f(0.5f, 0.0f, 0.5f);
+			glVertex3f(0.5f, 0.5f, 0.5f);
+			// yz
+			glVertex3f(0.0f, 0.5f, 0.5f);
+			glVertex3f(0.5f, 0.5f, 0.5f);
+			// xy
+			glVertex3f(0.5f, 0.5f, 0.0f);
+			glVertex3f(0.5f, 0.5f, 0.5f);
+
+
+			glPopMatrix();
+
+			glEnd();
+
+			glFlush();
+
+			GLUquadricObj* obj = gluNewQuadric();
+			glPushMatrix();
+			glRotatef(90.0f, -1.0f, 0.0f, 0.0f);
+			glTranslatef(0.5f, -0.5f, 0.5f);
+
+			glColor3f(0.5f, 0.5f, 0.5f);
+			gluQuadricDrawStyle(obj, GLU_FILL);
+			gluQuadricNormals(obj, GLU_SMOOTH);
+			gluQuadricTexture(obj, GLU_FALSE);
+			gluQuadricOrientation(obj, GLU_OUTSIDE);
+			gluCylinder(obj, 0.02, 0.02, 0.2, 8, 4);
+			glPopMatrix();
+
+			gluDeleteQuadric(obj);
+			
+			//glVertex2d(0.9, -0.9);
+			//glVertex2d(0.9, 0.9);
+			//glVertex2d(-0.9, 0.9);
+
+
+			ctx.unmake_current(cv);
+			cv.draw_string(L"テスト文字列", point_int(30, 30));
+		};
+		f.on_destroy = [&]() { ws.quit(); };
+
+		f.set_parent(nullptr);
+
+		f.set_size(size_int(500, 500));
+		f.set_position(point_int(0, 0));
+		f.set_title(std::wstring(L"3AxisEmulator"));
+
+		//control* c = &f;
+		//c->set_size(size_int(100, 100));
+
+		f.show();
+
+		ws.run();
+
+	try
+	{	}
+	catch (std::runtime_error const& e)
 	{
-		cv.draw_string(L"テスト文字列", point_int(30, 30));
-	};
-	f.on_destroy = [&]() { ws.quit(); };
+		std::cout << e.what() << std::endl;
+	}
 
-	f.set_size(size_int(500, 500));
-	f.set_position(point_int(0, 0));
-	f.set_title(std::wstring(L"3AxisEmulator"));
 
-	f.show();
-
-	ws.run();
 
 	return 0;
 }

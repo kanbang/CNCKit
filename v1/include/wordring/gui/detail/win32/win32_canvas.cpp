@@ -45,6 +45,10 @@ native_canvas_impl::~native_canvas_impl()
 
 }
 
+HDC native_canvas_impl::get_dc()
+{
+	return m_hdc;
+}
 
 void native_canvas_impl::draw_string(std::string str, point_int pt)
 {

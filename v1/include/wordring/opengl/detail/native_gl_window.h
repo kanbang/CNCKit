@@ -36,7 +36,15 @@ class dummy;
 
 class native_gl_window : public wordring::gui::detail::native_window
 {
+public:
+	native_gl_window() { }
+	virtual ~native_gl_window() { }
 
+	virtual void make_current() = 0;
+	virtual void unmake_current() = 0;
+
+	virtual void create_context() = 0;
+	virtual void delete_context() = 0;
 };
 
 

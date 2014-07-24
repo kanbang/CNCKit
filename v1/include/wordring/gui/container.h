@@ -54,6 +54,8 @@ public:
 	virtual void set_title(std::string title);
 	virtual void set_title(std::wstring title);
 
+	virtual void set_parent(container* c);
+
 	/// 子コントロールから呼び出され、自身を返します
 	virtual form* get_form();
 	/// 関連付けられたウィンドウを返します
@@ -68,6 +70,11 @@ public:
 	virtual point_int get_position() const;
 
 	//virtual bool on_click();
+
+	virtual void do_create()
+	{
+		if (on_create) { on_create(); }
+	}
 
 	virtual void do_destroy()
 	{

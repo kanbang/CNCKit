@@ -22,8 +22,10 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/detail/win32/win32_container_window.h>
 #include <wordring/gui/window.h>
+
+#include <wordring/gui/detail/win32/win32_container_window.h>
+#include <wordring/gui/detail/win32/win32_window_class.h>
 
 #include <Windows.h>
 #include <windowsx.h>

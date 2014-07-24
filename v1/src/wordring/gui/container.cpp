@@ -22,12 +22,13 @@
 #include <wordring/gui/container.h>
 
 #include <string>
+#include <cassert>
 
 using namespace wordring::gui;
 
 form::form()
 {
-	create(nullptr);
+	//create(nullptr);
 }
 
 form::~form()
@@ -53,6 +54,12 @@ void form::set_title(std::string title)
 void form::set_title(std::wstring title)
 {
 	m_native_window->set_text(title);
+}
+
+void form::set_parent(container* c)
+{
+	assert(c == nullptr);
+	create(nullptr);
 }
 
 void form::set_size(size_int size)

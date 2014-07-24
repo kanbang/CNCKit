@@ -19,6 +19,7 @@
  */
 
 #include <wordring/gui/canvas.h>
+#include <wordring/gui/detail/native_canvas.h>
 #include <wordring/gui/detail/win32/win32_canvas.h>
 
 using namespace wordring::gui;
@@ -39,6 +40,11 @@ canvas::canvas(canvas&& cv) : m_native(std::move(cv.m_native))
 void canvas::operator=(canvas&& cv)
 {
 	m_native = std::move(cv.m_native);
+}
+
+detail::native_canvas& canvas::get_native_canvas()
+{
+	return *m_native;
 }
 
 void canvas::draw_string(std::string str, point_int pt)

@@ -48,6 +48,8 @@ public:
 
 	void operator=(canvas&& cv);
 
+	detail::native_canvas& get_native_canvas();
+
 	void draw_string(std::string str, point_int pt);
 	void draw_string(std::wstring str, point_int pt);
 

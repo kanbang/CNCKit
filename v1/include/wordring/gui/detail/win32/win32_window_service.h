@@ -25,7 +25,6 @@
 
 #include <wordring/gui/detail/native_window_service.h>
 #include <wordring/gui/detail/native_window.h>
-#include <wordring/gui/detail/win32/win32_window.h>
 
 #include <Windows.h>
 

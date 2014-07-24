@@ -44,6 +44,8 @@ public:
 	native_canvas_impl(HDC hdc);
 	virtual ~native_canvas_impl();
 
+	HDC get_dc();
+
 	virtual void draw_string(std::string str, point_int pt);
 	virtual void draw_string(std::wstring str, point_int pt);
 };

@@ -24,6 +24,7 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/detail/win32/win32_window.h>
+#include <wordring/gui/detail/win32/win32_window_class.h>
 
 namespace wordring
 {

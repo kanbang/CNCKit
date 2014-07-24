@@ -23,7 +23,8 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/detail/win32/win32_window.h>
+#include <wordring/gui/detail/win32/win32_control_window.h>
+#include <wordring/gui/detail/win32/win32_window_class.h>
 
 namespace wordring
 {
@@ -36,7 +37,7 @@ class dummy;
 
 // native_container_window_impl -----------------------------------------------
 
-class native_container_window_impl : public native_window_impl
+class native_container_window_impl : public native_control_window_impl
 {
 public:
 	native_container_window_impl();
