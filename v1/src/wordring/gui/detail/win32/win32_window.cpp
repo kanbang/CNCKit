@@ -30,6 +30,8 @@
 #include <wordring/gui/detail/win32/win32_canvas.h>
 #include <wordring/gui/canvas.h>
 
+#include <wordring/exception.h>
+
 #include <Windows.h>
 #include <windowsx.h>
 
@@ -47,7 +49,7 @@ native_window_impl::native_window_impl() : m_hwnd(NULL), m_msg_handled(false)
 
 native_window_impl::~native_window_impl()
 {
-	if(m_hwnd) { destroy(); }
+	if(m_hwnd) { destroy_window(); }
 }
 
 inline void native_window_impl::set_message_handled(bool handled)
@@ -60,7 +62,7 @@ inline bool native_window_impl::get_message_handled() const
 	return m_msg_handled;
 }
 
-void native_window_impl::create(window* parent)
+void native_window_impl::create_window(window* parent)
 {
 	HWND hparent = nullptr;
 	if (parent)
@@ -83,14 +85,14 @@ void native_window_impl::create(window* parent)
 }
 
 /// ウィンドウを最小化（アイコン化）する
-void native_window_impl::close()
+void native_window_impl::close_window()
 {
 	assert(m_hwnd);
 	BOOL result = ::CloseWindow(m_hwnd);
 	assert(result != 0);
 }
 
-void native_window_impl::destroy()
+void native_window_impl::destroy_window()
 {
 	assert(m_hwnd);
 	BOOL result = ::DestroyWindow(m_hwnd);
@@ -98,20 +100,20 @@ void native_window_impl::destroy()
 	m_hwnd = nullptr;
 }
 
-void native_window_impl::show()
+void native_window_impl::show_window()
 {
 	assert(m_hwnd);
 	::ShowWindow(m_hwnd, SW_SHOW);
 	::UpdateWindow(m_hwnd);
 }
 
-void native_window_impl::hide()
+void native_window_impl::hide_window()
 {
 	assert(m_hwnd);
 	::ShowWindow(m_hwnd, SW_HIDE);
 }
 
-native_window* native_window_impl::get_parent()
+native_window* native_window_impl::get_native_parent_window()
 {
 	assert(m_hwnd);
 	HWND hwnd = ::GetAncestor(m_hwnd, GA_PARENT);
@@ -121,7 +123,7 @@ native_window* native_window_impl::get_parent()
 	return result;
 }
 
-void native_window_impl::set_parent(native_window* parent)
+void native_window_impl::set_native_parent_window(native_window* parent)
 {
 	assert(m_hwnd);
 	assert(parent);
@@ -129,15 +131,32 @@ void native_window_impl::set_parent(native_window* parent)
 	::SetParent(m_hwnd, p->m_hwnd);
 }
 
-void native_window_impl::set_size(size_int size)
+/// ウィンドウ全体を再描画します
+void native_window_impl::repaint_window()
+{
+		wordring::check_assertion(
+	::InvalidateRect(m_hwnd, NULL, FALSE) != 0);
+}
+
+/// 指定の範囲を再描画します
+void native_window_impl::repaint_window(point_int pt, size_int size)
+{
+	RECT rc; rc.top = pt.y; rc.left = pt.x;
+	rc.bottom = pt.y + size.cy; rc.right = pt.x + size.cx;
+
+	wordring::check_assertion(
+		::InvalidateRect(m_hwnd, &rc, FALSE) != 0);
+}
+
+void native_window_impl::set_window_size(size_int size)
 {
 	assert(m_hwnd);
 	UINT flags = SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER;
-	BOOL result = ::SetWindowPos(m_hwnd, 0, 0, 0, size.w, size.h, flags);
+	BOOL result = ::SetWindowPos(m_hwnd, 0, 0, 0, size.cx, size.cy, flags);
 	assert(result != 0);
 }
 
-size_int native_window_impl::get_size() const
+size_int native_window_impl::get_window_size() const
 {
 	assert(m_hwnd);
 	RECT rect;
@@ -146,7 +165,7 @@ size_int native_window_impl::get_size() const
 	return size_int(rect.right, rect.bottom);
 }
 
-void native_window_impl::set_position(point_int point)
+void native_window_impl::set_window_position(point_int point)
 {
 	assert(m_hwnd);
 	UINT flags = SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER;
@@ -154,7 +173,7 @@ void native_window_impl::set_position(point_int point)
 	assert(result != 0);
 }
 
-point_int native_window_impl::get_position() const
+point_int native_window_impl::get_window_position() const
 {
 	assert(m_hwnd);
 	RECT rect;
@@ -164,14 +183,14 @@ point_int native_window_impl::get_position() const
 	return point_int(rect.left, rect.top);
 }
 
-void native_window_impl::set_text(std::string text)
+void native_window_impl::set_window_text(std::string text)
 {
 	assert(false);
 	BOOL result = ::SetWindowTextA(m_hwnd, text.c_str());
 	assert(result != 0);
 }
 
-void native_window_impl::set_text(std::wstring text)
+void native_window_impl::set_window_text(std::wstring text)
 {
 	BOOL result = ::SetWindowTextW(m_hwnd, text.c_str());
 	assert(result != 0);
@@ -201,7 +220,10 @@ void native_window_impl::do_paint(HDC hdc)
 	get_window()->do_paint(canvas(std::move(cv)));
 }
 
-
+void native_window_impl::do_size(size_int size)
+{
+	get_window()->do_size(size);
+}
 
 /// ウィンドウ・プロシージャの雛型です
 LRESULT native_window_impl::WindowProc(
@@ -425,7 +447,10 @@ void native_window_impl::onSetFocus(HWND hwnd, HWND hwndOldFocus){}
 
 void native_window_impl::onShowWindow(HWND hwnd, BOOL fShow, UINT status){}
 
-void native_window_impl::onSize(HWND hwnd, UINT state, int cx, int cy){}
+void native_window_impl::onSize(HWND hwnd, UINT state, int cx, int cy)
+{
+	do_size(size_int(cx, cy));
+}
 
 void native_window_impl::onSysCommand(HWND hwnd, UINT cmd, int x, int y){}
 

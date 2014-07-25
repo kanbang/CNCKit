@@ -106,6 +106,7 @@
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window.cpp" />
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window_service.cpp" />
     <ClCompile Include="..\src\wordring\gui\window.cpp" />
+    <ClCompile Include="..\src\wordring\gui\window_control.cpp" />
     <ClCompile Include="..\src\wordring\gui\window_service.cpp" />
     <ClCompile Include="..\src\wordring\opengl\detail\win32\win32_gl_canvas.cpp" />
     <ClCompile Include="..\src\wordring\opengl\detail\win32\win32_gl_context.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_service.h" />
     <ClInclude Include="..\include\wordring\gui\canvas.h" />
     <ClInclude Include="..\include\wordring\gui\window.h" />
+    <ClInclude Include="..\include\wordring\gui\window_control.h" />
     <ClInclude Include="..\include\wordring\gui\window_service.h" />
     <ClInclude Include="..\include\wordring\opengl\detail\native_gl_canvas.h" />
     <ClInclude Include="..\include\wordring\opengl\detail\native_gl_context.h" />
@@ -146,6 +148,7 @@
     <ClInclude Include="..\include\wordring\wordring.h" />
     <ClInclude Include="..\index.h" />
     <ClInclude Include="..\src\wordring\graphics\color.h" />
+    <ClInclude Include="a3e_control.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

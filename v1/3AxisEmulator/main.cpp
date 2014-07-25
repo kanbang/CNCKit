@@ -54,13 +54,18 @@ int main()
 			//ctx.unmake_current();
 		};
 
+		f.on_size = [&](size_int size)
+		{
+			int i = 0;
+		};
+
 		f.on_paint = [&](canvas& cv)
 		{
 			size_int size = f.get_size();
-			double dx = double(size.w) / size.h;
+			double dx = double(size.cx) / size.cy;
 			ctx.make_current(cv);
 
-			glViewport(0, 0, size.w, size.h);
+			glViewport(0, 0, size.cx, size.cy);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glOrtho(-dx, dx, -1, 1, 0, 3);
@@ -93,17 +98,17 @@ int main()
 
 			// 座標線
 			glPushMatrix();
-			glColor3f(1.0f, 0.0f, 0.0f); // 赤
+			glColor3f(1.0f, 1.0f, 0.0f); // 黄
 
 			// xz
-			glVertex3f(0.5f, 0.0f, 0.5f);
-			glVertex3f(0.5f, 0.5f, 0.5f);
+			glVertex3f(0.5f, 0.0f, 0.3f);
+			glVertex3f(0.5f, 0.5f, 0.3f);
 			// yz
-			glVertex3f(0.0f, 0.5f, 0.5f);
-			glVertex3f(0.5f, 0.5f, 0.5f);
+			glVertex3f(0.0f, 0.5f, 0.3f);
+			glVertex3f(0.5f, 0.5f, 0.3f);
 			// xy
 			glVertex3f(0.5f, 0.5f, 0.0f);
-			glVertex3f(0.5f, 0.5f, 0.5f);
+			glVertex3f(0.5f, 0.5f, 0.3f);
 
 
 			glPopMatrix();
@@ -114,8 +119,8 @@ int main()
 
 			GLUquadricObj* obj = gluNewQuadric();
 			glPushMatrix();
-			glRotatef(90.0f, -1.0f, 0.0f, 0.0f);
-			glTranslatef(0.5f, -0.5f, 0.5f);
+			glTranslatef(0.5f, 0.5f, 0.3f);
+			glRotatef(270.0f, 1.0f, 0.0f, 0.0f);
 
 			glColor3f(0.5f, 0.5f, 0.5f);
 			gluQuadricDrawStyle(obj, GLU_FILL);
@@ -139,15 +144,16 @@ int main()
 
 		f.set_parent(nullptr);
 
-		f.set_size(size_int(500, 500));
+		f.set_size(size_int(640, 480));
 		f.set_position(point_int(0, 0));
 		f.set_title(std::wstring(L"3AxisEmulator"));
 
 		//control* c = &f;
 		//c->set_size(size_int(100, 100));
 
-		f.show();
+		f.show_window();
 
+		rect_int rc = f.get_rect();
 		ws.run();
 
 	try

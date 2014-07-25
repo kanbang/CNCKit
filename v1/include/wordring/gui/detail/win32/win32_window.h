@@ -69,28 +69,33 @@ public:
 
 public:
 	/// ウィンドウを作成します
-	virtual void create(window* parent);
+	virtual void create_window(window* parent);
 	/// ウィンドウを最小化します
-	virtual void close();
+	virtual void close_window();
 	/// ウィンドウを破棄します
-	virtual void destroy();
+	virtual void destroy_window();
 
 	/// ウィンドウを表示します
-	virtual void show();
+	virtual void show_window();
 	/// ウィンドウを非表示にします
-	virtual void hide();
+	virtual void hide_window();
 
-	virtual void set_parent(native_window* parent);
-	virtual native_window* get_parent();
+	virtual void set_native_parent_window(native_window* parent);
+	virtual native_window* get_native_parent_window();
 
-	virtual void set_size(size_int size);
-	virtual size_int get_size() const;
+	/// ウィンドウ全体を再描画します
+	void repaint_window();
+	/// 指定の範囲を再描画します
+	void repaint_window(point_int pt, size_int size);
 
-	virtual void set_position(point_int point);
-	virtual point_int get_position() const;
+	virtual void set_window_size(size_int size);
+	virtual size_int get_window_size() const;
 
-	virtual void set_text(std::string text);
-	virtual void set_text(std::wstring text);
+	virtual void set_window_position(point_int point);
+	virtual point_int get_window_position() const;
+
+	virtual void set_window_text(std::string text);
+	virtual void set_window_text(std::wstring text);
 
 protected:
 	virtual void do_command(int id, UINT codeNotify); // 親ウィンドウからのコールバック
@@ -99,6 +104,8 @@ protected:
 	virtual void do_destroy();
 
 	virtual void do_paint(HDC hdc);
+
+	virtual void do_size(size_int size);
 
 
 

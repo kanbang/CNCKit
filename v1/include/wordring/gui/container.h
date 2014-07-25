@@ -28,6 +28,9 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+
+#include <cassert>
 
 namespace wordring
 {
@@ -36,57 +39,111 @@ namespace gui
 
 class container : public control
 {
-private:
-	//std::vector<control*> m_children;
+public:
+	typedef std::unique_ptr<control> store;
 
 public:
-	//void add(control* child);
-	//void remove(control* child);
+	virtual void add(store&& child);
+
+protected:
+	std::vector<store> m_children;
 };
 
-class form : public container, public container_window
+template <typename T>
+class window_container_tmpl : public container, public T
 {
+public:
+	typedef typename T window_type;
+
 protected:
 public:
-	form();
-	virtual ~form();
+	window_container_tmpl() { }
 
-	virtual void set_title(std::string title);
-	virtual void set_title(std::wstring title);
+	virtual ~window_container_tmpl() { }
 
-	virtual void set_parent(container* c);
+	virtual window* find_window() { return this; }
 
-	/// 子コントロールから呼び出され、自身を返します
-	virtual form* get_form();
-	/// 関連付けられたウィンドウを返します
-	virtual window* get_window();
+	virtual void set_parent(container* parent)
+	{
+		window* w = parent->find_window();
+		point_int pt = query_position_from_window(); // 親ウィンドウからの相対
+		T::create_window(w); // ウィンドウ作成
+		T::set_window_position(pt);
+		T::set_parent_window(this);
+	}
+
 
 	/// コントロールの大きさを設定する
-	virtual void set_size(size_int size);
+	virtual void set_size(size_int size)
+	{
+		T::set_window_size(size);
+		m_size = size;
+	}
 	/// コントロールの大きさを取得する
-	virtual size_int get_size() const;
-
-	virtual void set_position(point_int point);
-	virtual point_int get_position() const;
-
-	//virtual bool on_click();
-
-	virtual void do_create()
+	virtual size_int get_size() const
 	{
-		if (on_create) { on_create(); }
+		size_int result = T::get_window_size();
+		//assert(m_size == result);
+		return result;
 	}
 
-	virtual void do_destroy()
+	virtual void set_position(point_int point)
 	{
-		if (on_destroy) { on_destroy(); }
+		T::set_window_position(point);
+		m_position = point;
 	}
 
-	virtual void do_paint(canvas& cv)
+	virtual point_int get_position() const
 	{
-		if (on_paint) { on_paint(cv); }
+		point_int result = T::get_window_position();
+		assert(m_position == result);
+		return result;
 	}
+
+protected:
+	virtual point_int query_position_from_window() const
+	{
+		return point_int(0, 0);
+	}
+
+	virtual void do_create() { if (on_create) { on_create(); } }
+
+	virtual void do_destroy() { if (on_destroy) { on_destroy(); } }
+
+	virtual void do_paint(canvas& cv) { if (on_paint) { on_paint(cv); } }
+
+	virtual void do_size(size_int size) { if (on_size) { on_size(size); } }
 };
 
+class form : public window_container_tmpl<container_window>
+{
+public:
+	virtual window* find_window() { return this;  }
+	/// 子コントロールから呼び出され、自身を返します
+	virtual form* find_form() { return this; }
+
+	virtual void set_parent(container* parent)
+	{
+		assert(parent == nullptr); // フォームは親を持たない
+		create_window(nullptr);
+	}
+
+	/// 先祖への問い合わせ連鎖によってフォームからの相対位置を求めます
+	virtual point_int query_position_from_form() const
+	{
+		return point_int(0, 0);
+	}
+
+	virtual void set_title(std::string title)
+	{
+		m_native_window->set_window_text(title);
+	}
+
+	virtual void set_title(std::wstring title)
+	{
+		m_native_window->set_window_text(title);
+	}
+};
 
 } // namespace gui
 } // namespace wordring

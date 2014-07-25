@@ -68,38 +68,43 @@ public:
 	window();
 	virtual ~window();
 
+	/// @brief ウィンドウを作成します
+	/// @details 子ウィンドウは作成時に親ウィンドウが必要です。
+	void create_window(window * parent);
+	/// ウィンドウを最小化します
+	void close_window();
+	/// ウィンドウを破棄します
+	void destroy_window();
+
+	/// ウィンドウを表示します
+	void show_window();
+	/// ウィンドウを非表示にします
+	void hide_window();
+
 	/// pimplの実装側インターフェースを返します
 	detail::native_window* get_native_window();
 
-	/** @brief ウィンドウを作成します
-	 *  @details 子ウィンドウは作成時に親ウィンドウが必要です。
-	 */
-	void create(window * parent);
-	/// ウィンドウを最小化します
-	void close();
-	/// ウィンドウを破棄します
-	void destroy();
-
-	/// ウィンドウを表示します
-	void show();
-	/// ウィンドウを非表示にします
-	void hide();
-
 	/// 親ウィンドウを設定します
-	void set_parent(window* parent);
+	void set_parent_window(window* parent);
 	/// 親ウィンドウを取得します
-	window* get_parent();
+	window* get_parent_window();
+	/// 親ウィンドウを取得します
+	window const* get_parent_window() const;
+
+	/// ウィンドウ全体を再描画します
+	void repaint_window();
+	/// 指定の範囲を再描画します
+	void repaint_window(point_int pt, size_int size);
 
 	/// ウィンドウの大きさを設定します
-	void set_size(size_int size);
+	void set_window_size(size_int size);
 	/// ウィンドウの大きさを取得します
-	size_int get_size() const;
-	/** @brief ウィンドウの位置を設定します
-	 *  @details 親ウィンドウあるいはデスクトップからの相対位置です。
-	 */
-	void set_position(point_int point);
+	size_int get_window_size() const;
+	/// @brief ウィンドウの位置を設定します
+	/// @details 親ウィンドウあるいはデスクトップからの相対位置です。
+	void set_window_position(point_int point);
 	/// ウィンドウの位置を返します
-	point_int get_position() const;
+	point_int get_window_position() const;
 
 
 	/// ウィンドウ作成時に呼び出されます
@@ -108,15 +113,11 @@ public:
 	virtual void do_destroy();
 	/// ウィンドウの描画更新が必要なとき呼び出されます
 	virtual void do_paint(canvas& cv);
+	/// ウィンドウの大きさが変更されるとき呼び出されます
+	virtual void do_size(size_int size);
 };
-/*
-class button_window : public window
-{
-public:
-	button_window();
 
-};
-*/
+
 } // namespace gui
 } // namespace wordring
 

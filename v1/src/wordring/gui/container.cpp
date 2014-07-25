@@ -21,70 +21,19 @@
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
 
-#include <string>
 #include <cassert>
+#include <memory>
+
 
 using namespace wordring::gui;
 
-form::form()
+void container::add(store&& child)
 {
-	//create(nullptr);
+	control* c = child.get();
+	m_children.push_back(std::move(child));
+	c->set_parent(this);
+	c->repaint();
 }
 
-form::~form()
-{
-}
 
-form* form::get_form()
-{
-	return this;
-}
 
-window* form::get_window()
-{
-	//todo
-	return static_cast<window*>(this);
-}
-
-void form::set_title(std::string title)
-{
-	m_native_window->set_text(title);
-}
-
-void form::set_title(std::wstring title)
-{
-	m_native_window->set_text(title);
-}
-
-void form::set_parent(container* c)
-{
-	assert(c == nullptr);
-	create(nullptr);
-}
-
-void form::set_size(size_int size)
-{
-	window::set_size(size);
-}
-
-size_int form::get_size() const
-{
-	return window::get_size();
-}
-
-void form::set_position(point_int point)
-{
-	window::set_position(point);
-}
-
-point_int form::get_position() const
-{
-	return window::get_position();
-}
-
-/*
-bool form::on_click()
-{
-	return true;
-}
-*/
