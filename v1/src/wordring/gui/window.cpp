@@ -34,14 +34,14 @@ using namespace wordring::gui;
 
 // window ---------------------------------------------------------------------
 
-window::window() : m_native_window(new detail::native_window_impl)
+window::window() : m_native(new detail::native_window_impl)
 {
-	m_native_window->set_window(this);
+	m_native->set_window(this);
 }
 
-window::window(detail::native_window* p) : m_native_window(p)
+window::window(detail::native_window* p) : m_native(p)
 {
-	m_native_window->set_window(this);
+	m_native->set_window(this);
 }
 
 window::~window()
@@ -49,11 +49,22 @@ window::~window()
 
 }
 
+detail::native_window* window::get_native()
+{
+	return m_native.get();
+}
+
+detail::native_window const* window::get_native() const
+{
+	return m_native.get();
+}
+
+/*
 // ----------------------------------------------------------------------------
 
-void window::create_window(window * parent)
+void window::create_window(window * parent, rect_int rc)
 {
-	m_native_window->create_window(parent);
+	m_native_window->create_window(parent, rc);
 }
 
 void window::close_window()
@@ -105,12 +116,12 @@ void window::set_parent_window(window* parent)
 
 void window::repaint_window()
 {
-	m_native_window->get_native_parent_window();
+	m_native_window->repaint_window();
 }
 
-void window::repaint_window(point_int pt, size_int size)
+void window::repaint_window(rect_int rc)
 {
-
+	m_native_window->repaint_window(rc);
 }
 
 // ----------------------------------------------------------------------------
@@ -135,22 +146,36 @@ point_int window::get_window_position() const
 	return m_native_window->get_window_position();
 }
 
+/// ウィンドウの位置と大きさを設定します
+void window::set_window_rect(rect_int rc)
+{
+	m_native_window->set_window_rect(rc);
+}
+
+/// ウィンドウの位置と大きさを取得します
+rect_int window::get_window_rect() const
+{
+	return m_native_window->get_window_rect();
+}
+
 // ----------------------------------------------------------------------------
-
+*/
 /// メッセージ・ハンドラ
-void window::do_create()
+void window::do_create_w()
 {
 }
 
-void window::do_destroy()
+void window::do_destroy_w()
 {
 }
 
-void window::do_paint(canvas& cv)
+void window::do_paint_w(canvas& cv)
 {
+	cv.draw_string(
+		"window::do_paint()", point_int(0, 0), rgb_color(), nullptr);
 }
 
-void window::do_size(size_int size)
+void window::do_size_w(size_int size)
 {
 }
 

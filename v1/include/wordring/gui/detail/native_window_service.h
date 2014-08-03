@@ -27,13 +27,42 @@ namespace wordring
 {
 namespace gui
 {
+
+class window_service;
+
 namespace detail
 {
 
 class native_window_service
 {
+protected:
+	window_service *m_public;
+
 public:
-	virtual ~native_window_service() { }
+	native_window_service() : m_public(nullptr)
+	{
+	}
+
+	virtual ~native_window_service()
+	{
+	}
+
+	/**
+	 * @brief   コールバック用にpimplの公開側を登録します
+	 *
+	 * @param   ws ウィンドウ・サービス
+	 */
+	void set_public(window_service *ws)
+	{
+		m_public = ws;
+	}
+
+	window_service* get_public()
+	{
+		return m_public;
+	}
+
+	virtual void post_tick_message() =0;
 
 	virtual void run() = 0;
 	virtual void quit() = 0;

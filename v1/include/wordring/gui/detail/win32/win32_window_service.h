@@ -50,6 +50,7 @@ class win32_window_service_impl : public native_window_service
 private:
 	/// マップ
 	std::map<HWND, native_window*> m_map;
+	HANDLE m_events[64];
 
 public:
 	win32_window_service_impl();
@@ -58,12 +59,31 @@ public:
 	virtual void run();
 	virtual void quit();
 
+	/**
+	 * @brief   空のメッセージを送信します
+	 *
+	 * @details このメンバは、ライブラリが実装するメッセージキューの処理を開始
+	 *          するタイミングを提供するために用意されています。
+	 *
+	 *          ウィンドウ・サービスは二つのメッセージキューを管理しています。
+	 *          ウィンドウ・システムのメッセージキューとライブラリのメッセージ
+	 *          キューの二つです。
+	 *
+	 *          ライブラリのメッセージキューへメッセージをポストするタイミング
+	 *          でこのメンバを呼び出すと、ウィンドウ・システムのメッセージ
+	 *          キューに空のメッセージが積まれます。
+	 *          ウィンドウ・システムのメッセージキューからメッセージを取り出す
+	 *          ときに空のメッセージがあるとwindow_service::do_tick_message()が
+	 *          呼び出され、この中からライブラリのメッセージキューの処理を開始
+	 *          します。
+	 *
+	 *          以上の仕組みによって二つのメッセージキューが同期されます。
+	 */
+	virtual void post_tick_message();
+
 public:
 	/// ハンドルとウィンドウ・オブジェクトのセットをマップに追加します
-	static void assign(HWND hwnd, native_window* pwin)
-	{
-		win32_window_service_impl::tls_window_service->m_map[hwnd] = pwin;
-	}
+	static void assign(HWND hwnd, native_window* pwin);
 
 	/// ハンドルからウィンドウ・オブジェクトを検索します
 	static native_window* find(HWND hwnd)

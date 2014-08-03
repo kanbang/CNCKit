@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * @file    wordring/opengl/detail/win32/win32_gl_canvas.h
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 #ifndef WORDRING_WIN32_GL_CANVAS_H

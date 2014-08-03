@@ -24,8 +24,9 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/control.h>
-#include <wordring/gui/container_window.h>
+#include <wordring/gui/layout.h>
 
+#include <list>
 #include <vector>
 #include <string>
 #include <memory>
@@ -41,108 +42,93 @@ class container : public control
 {
 public:
 	typedef std::unique_ptr<control> store;
-
-public:
-	virtual void add(store&& child);
-
-protected:
-	std::vector<store> m_children;
-};
-
-template <typename T>
-class window_container_tmpl : public container, public T
-{
-public:
-	typedef typename T window_type;
+	typedef std::vector<store> storage_type;
+	typedef storage_type::iterator iterator;
+	typedef storage_type::const_iterator const_iterator;
 
 protected:
+	std::unique_ptr<layout> m_layout;
+	storage_type m_children;
+
+	// 構築・破棄 -------------------------------------------------------------
 public:
-	window_container_tmpl() { }
+	/// コンテナを構築します
+	container();
 
-	virtual ~window_container_tmpl() { }
+	explicit container(layout *l);
 
-	virtual window* find_window() { return this; }
+	/// コンテナを破棄します
+	virtual ~container();
 
-	virtual void set_parent(container* parent)
+	template <typename T>
+	T* assign(T* pT)
 	{
-		window* w = parent->find_window();
-		point_int pt = query_position_from_window(); // 親ウィンドウからの相対
-		T::create_window(w); // ウィンドウ作成
-		T::set_window_position(pt);
-		T::set_parent_window(this);
+		m_children.push_back(store(pT));
+		pT->T::create(this, pT->T::get_rect());
+		return pT;
 	}
 
+	/// レイアウトを設定します
+	void set_layout(std::unique_ptr<layout>&& l);
 
-	/// コントロールの大きさを設定する
-	virtual void set_size(size_int size)
-	{
-		T::set_window_size(size);
-		m_size = size;
-	}
-	/// コントロールの大きさを取得する
-	virtual size_int get_size() const
-	{
-		size_int result = T::get_window_size();
-		//assert(m_size == result);
-		return result;
-	}
+	// 情報 -------------------------------------------------------------------
 
-	virtual void set_position(point_int point)
-	{
-		T::set_window_position(point);
-		m_position = point;
-	}
+	/// コントロールがコンテナの場合、trueを返します
+	virtual bool is_container() const;
 
-	virtual point_int get_position() const
-	{
-		point_int result = T::get_window_position();
-		assert(m_position == result);
-		return result;
-	}
+	/// コントロール名を返します
+	virtual char const* get_control_name() const;
 
-protected:
-	virtual point_int query_position_from_window() const
-	{
-		return point_int(0, 0);
-	}
+	/**
+	 * @brief   一番近いコンテナを返します
+	 *
+	 * @details thisがコンテナの場合、thisを返します。
+	 */
+	virtual container* find_container();
 
-	virtual void do_create() { if (on_create) { on_create(); } }
+	bool including(control *c) const;
 
-	virtual void do_destroy() { if (on_destroy) { on_destroy(); } }
+	// 親子関係 ---------------------------------------------------------------
 
-	virtual void do_paint(canvas& cv) { if (on_paint) { on_paint(cv); } }
+	/// 子コントロールの配列を返します
+	storage_type& get_children();
 
-	virtual void do_size(size_int size) { if (on_size) { on_size(size); } }
-};
+//	iterator begin();
 
-class form : public window_container_tmpl<container_window>
-{
-public:
-	virtual window* find_window() { return this;  }
-	/// 子コントロールから呼び出され、自身を返します
-	virtual form* find_form() { return this; }
+//	const_iterator begin() const;
 
-	virtual void set_parent(container* parent)
-	{
-		assert(parent == nullptr); // フォームは親を持たない
-		create_window(nullptr);
-	}
+//	iterator end();
 
-	/// 先祖への問い合わせ連鎖によってフォームからの相対位置を求めます
-	virtual point_int query_position_from_form() const
-	{
-		return point_int(0, 0);
-	}
+//	const_iterator end() const;
 
-	virtual void set_title(std::string title)
-	{
-		m_native_window->set_window_text(title);
-	}
+	// 描画 -------------------------------------------------------------------
 
-	virtual void set_title(std::wstring title)
-	{
-		m_native_window->set_window_text(title);
-	}
+	virtual void do_paint_internal(canvas& cv);
+
+	/**
+	 * @brief   大きさが変更された時に呼び出されます
+	 *
+	 * @details 大きさが変更された時に、メッセージの伝搬を行います。
+	 *          コントロール内部専用です。
+	 *
+	 * @param   need_layout 再レイアウトが必要ない場合、falseに設定します。
+	 *                      ループを防ぐために必要です。
+	 */
+
+	// 大きさ・位置 -----------------------------------------------------------
+
+	/// 子コントロールの再配置を行います
+	virtual void perform_layout();
+	
+	/// レイアウトを要求します
+	void request_layout();
+
+	// テンプレート用のスタブです
+	//virtual void request_layout(container *c);
+
+	virtual container* perform_layout_internal(container *c);
+
+	virtual void do_size_internal(size_int size);
 };
 
 } // namespace gui

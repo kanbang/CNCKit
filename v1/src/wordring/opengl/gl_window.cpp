@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * @file    wordring/opengl/gl_window.cpp
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 

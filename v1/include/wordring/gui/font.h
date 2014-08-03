@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/opengl/detail/win32/win32_gl_canvas.cpp
+ * @file    wordring/gui/font.h
  *
  * @brief   
  *
@@ -18,13 +18,23 @@
  *          PDS
  */
 
-#ifdef _WIN32
+#ifndef WORDRING_FONT_H
+#define WORDRING_FONT_H
 
-#include <wordring/opengl/detail/win32/win32_gl_canvas.h>
+namespace wordring
+{
+namespace gui
+{
+
+class dummy;
+
+class font
+{
+
+};
 
 
+} // namespace gui
+} // namespace wordring
 
-
-
-
-#endif // _WIN32
+#endif // WORDRING_FONT_H

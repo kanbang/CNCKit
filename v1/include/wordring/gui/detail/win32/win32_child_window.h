@@ -1,7 +1,7 @@
-/**
+ï»¿/**
  * @file    wordring/gui/detail/win32/win32_control_window.h
  *
- * @brief   
+ * @brief   ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
  *
  * @details
  *          
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 
@@ -23,13 +23,20 @@
 
 #include <wordring/debug.h>
 
+#include <wordring/geometry/shape.h>
+
 #include <wordring/gui/detail/win32/win32_window.h>
 #include <wordring/gui/detail/win32/win32_window_class.h>
+
+#include <Windows.h>
 
 namespace wordring
 {
 namespace gui
 {
+
+class window;
+
 namespace detail
 {
 
@@ -37,19 +44,22 @@ class dummy;
 
 // native_control_window_impl -----------------------------------------------
 
+/// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 class native_control_window_impl : public native_window_impl
 {
 public:
 	native_control_window_impl();
 	virtual ~native_control_window_impl();
 
+	/// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆã—ã¾ã™
+	virtual void create_window(window* parent, rect_int rc);
 public:
-	/// ƒEƒBƒ“ƒhƒEEƒvƒƒV[ƒWƒƒ‚Ì—Œ^‚Å‚·
+	/// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã®é››å‹ã§ã™
 	LRESULT CALLBACK WindowProc(
 		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
-	/// native_control_window_impl—p‚ÉƒJƒXƒ^ƒ}ƒCƒY‚³‚ê‚½win32ƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX‚Å‚·
+	/// native_control_window_implç”¨ã«ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚ºã•ã‚ŒãŸwin32ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹ã§ã™
 	struct window_class
 		: public win32_window_class<window_class, native_control_window_impl>
 	{
@@ -57,21 +67,6 @@ public:
 	};
 	static window_class g_window_class;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 } // namespace detail

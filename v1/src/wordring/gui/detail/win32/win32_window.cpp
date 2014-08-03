@@ -62,26 +62,31 @@ inline bool native_window_impl::get_message_handled() const
 	return m_msg_handled;
 }
 
-void native_window_impl::create_window(window* parent)
+// ----------------------------------------------------------------------------
+
+void native_window_impl::create_window(window* parent, rect_int rc)
 {
 	HWND hparent = nullptr;
 	if (parent)
 	{
-		hparent = static_cast<native_window_impl*>(parent->get_native_window())->m_hwnd;
+		hparent = static_cast<
+			native_window_impl*>(parent->get_native())->m_hwnd;
 	}
 
-	m_hwnd = ::CreateWindow(
+	m_hwnd = ::CreateWindowEx(
+		WS_EX_TRANSPARENT,
 		(LPCTSTR)(DWORD)native_window_impl::g_window_class.m_atom,
-		L"Test", WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		L"native_window_impl",
+		WS_OVERLAPPEDWINDOW,
+		rc.pt.x,
+		rc.pt.y,
+		rc.size.cx,
+		rc.size.cy,
 		hparent,
 		NULL,
 		(HINSTANCE)0,
 		this);
-	assert(m_hwnd);
+	wordring::check_assertion(m_hwnd != NULL);
 }
 
 /// ウィンドウを最小化（アイコン化）する
@@ -99,6 +104,8 @@ void native_window_impl::destroy_window()
 	assert(result != 0);
 	m_hwnd = nullptr;
 }
+
+// ----------------------------------------------------------------------------
 
 void native_window_impl::show_window()
 {
@@ -131,6 +138,8 @@ void native_window_impl::set_native_parent_window(native_window* parent)
 	::SetParent(m_hwnd, p->m_hwnd);
 }
 
+// ----------------------------------------------------------------------------
+
 /// ウィンドウ全体を再描画します
 void native_window_impl::repaint_window()
 {
@@ -139,14 +148,16 @@ void native_window_impl::repaint_window()
 }
 
 /// 指定の範囲を再描画します
-void native_window_impl::repaint_window(point_int pt, size_int size)
+void native_window_impl::repaint_window(rect_int rc_)
 {
-	RECT rc; rc.top = pt.y; rc.left = pt.x;
-	rc.bottom = pt.y + size.cy; rc.right = pt.x + size.cx;
+	RECT rc; rc.top = rc_.pt.y; rc.left = rc_.pt.x;
+	rc.bottom = rc_.pt.y + rc_.size.cy; rc.right = rc_.pt.x + rc_.size.cx;
 
-	wordring::check_assertion(
-		::InvalidateRect(m_hwnd, &rc, FALSE) != 0);
+		wordring::check_assertion(
+	::InvalidateRect(m_hwnd, &rc, FALSE) != 0);
 }
+
+// ----------------------------------------------------------------------------
 
 void native_window_impl::set_window_size(size_int size)
 {
@@ -179,9 +190,67 @@ point_int native_window_impl::get_window_position() const
 	RECT rect;
 	BOOL result = ::GetWindowRect(m_hwnd, &rect);
 	assert(result != 0);
-	//return size_int(rect.right, rect.bottom);
 	return point_int(rect.left, rect.top);
 }
+
+// ウィンドウの位置と大きさを設定します
+void native_window_impl::set_window_rect(rect_int rc)
+{
+	assert(m_hwnd);
+
+	UINT flags = SWP_NOOWNERZORDER | SWP_NOZORDER;
+	BOOL result = ::SetWindowPos(
+		m_hwnd,
+		0,
+		rc.pt.x,
+		rc.pt.y,
+		rc.size.cx,
+		rc.size.cy,
+		flags);
+	assert(result != 0);
+
+	/*
+	RECT rc0;
+	rc0.left = rc.pt.x;
+	rc0.right = rc.pt.x + rc.size.cx;
+	rc0.top = rc.pt.y;
+	rc0.bottom = rc.pt.y + rc.size.cy;
+
+	DWORD style = ::GetWindowLongPtrW(m_hwnd, GWL_STYLE);
+	assert(style != 0);
+
+	DWORD exstyle = ::GetWindowLongPtrW(m_hwnd, GWL_EXSTYLE);
+	assert(exstyle != 0);
+
+	BOOL result = ::AdjustWindowRectEx(&rc0, style, FALSE, exstyle);
+	assert(result != 0);
+
+	UINT flags = SWP_NOOWNERZORDER | SWP_NOZORDER;
+	result = ::SetWindowPos(
+		m_hwnd,
+		0,
+		rc0.left,
+		rc0.top,
+		rc0.right - rc0.left,
+		rc0.bottom - rc0.top,
+		flags);
+	assert(result != 0);
+	*/
+}
+
+// ウィンドウの位置と大きさを取得します
+rect_int native_window_impl::get_window_rect() const
+{
+	assert(m_hwnd);
+	RECT rc;
+	BOOL result = ::GetClientRect(m_hwnd, &rc);
+	assert(result != 0);
+	return rect_int(
+		  point_int(rc.left, rc.top)
+		, size_int(rc.right - rc.left, rc.bottom - rc.top));
+}
+
+// ----------------------------------------------------------------------------
 
 void native_window_impl::set_window_text(std::string text)
 {
@@ -199,30 +268,32 @@ void native_window_impl::set_window_text(std::wstring text)
 // メッセージ・ハンドラ -------------------------------------------------------
 
 /// 親ウィンドウからコールバックされる（プロシージャから直接のハンドラではない）
-void native_window_impl::do_command(int id, UINT codeNotify)
+void native_window_impl::do_command_nw(int id, UINT codeNotify)
 {
 
 }
 
-void native_window_impl::do_create()
+void native_window_impl::do_create_nw()
 {
-	get_window()->do_create();
+	get_window()->do_create_w();
 }
 
-void native_window_impl::do_destroy()
+void native_window_impl::do_destroy_nw()
 {
-	get_window()->do_destroy();
+	get_window()->do_destroy_w();
 }
 
-void native_window_impl::do_paint(HDC hdc)
+void native_window_impl::do_paint_nw(HDC hdc)
 {
-	std::unique_ptr<detail::native_canvas> cv(new native_canvas_impl(hdc));
-	get_window()->do_paint(canvas(std::move(cv)));
+	std::unique_ptr<detail::native_canvas> ncv(new native_canvas_impl(hdc));
+	canvas cv(std::move(ncv));
+	window* w = get_window();
+	w->do_paint_w(cv);
 }
 
-void native_window_impl::do_size(size_int size)
+void native_window_impl::do_size_nw(size_int size)
 {
-	get_window()->do_size(size);
+	get_window()->do_size_w(size);
 }
 
 /// ウィンドウ・プロシージャの雛型です
@@ -391,7 +462,7 @@ void native_window_impl::onCommand(
 		win32_window_service_impl::find(hwndCtl));
 	assert(w);
 	// wは自分自身の機能を知っているので適切に処理できる
-	w->do_command(id, codeNotify);
+	w->do_command_nw(id, codeNotify);
 
 	set_message_handled(true);
 }
@@ -405,13 +476,13 @@ BOOL native_window_impl::onCopyData(HWND hwnd, HWND hwndFrom, PCOPYDATASTRUCT pc
 
 BOOL native_window_impl::onCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
-	do_create();
+	do_create_nw();
 	return 0; // 0を返すとウィンドウを生成する。生成しない場合、-1を返す。
 }
 
 void native_window_impl::onDestroy(HWND hwnd)
 {
-	do_destroy();
+	do_destroy_nw();
 }
 
 BOOL native_window_impl::onEraseBkgnd(HWND hwnd, HDC hdc)
@@ -430,7 +501,7 @@ void native_window_impl::onPaint(HWND hwnd)
 
 	HDC hdc = ::BeginPaint(hwnd, &ps);
 	assert(hdc);
-	do_paint(hdc);
+	do_paint_nw(hdc);
 	::EndPaint(hwnd, &ps);
 }
 
@@ -449,7 +520,7 @@ void native_window_impl::onShowWindow(HWND hwnd, BOOL fShow, UINT status){}
 
 void native_window_impl::onSize(HWND hwnd, UINT state, int cx, int cy)
 {
-	do_size(size_int(cx, cy));
+	do_size_nw(size_int(cx, cy));
 }
 
 void native_window_impl::onSysCommand(HWND hwnd, UINT cmd, int x, int y){}
@@ -469,7 +540,7 @@ WNDCLASSEX native_window_impl::window_class::create()
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.style = 0;
 	wcex.lpfnWndProc =
 		win32_window_class<window_class, native_window_impl>::WindowProc;
 	wcex.cbClsExtra = 0;

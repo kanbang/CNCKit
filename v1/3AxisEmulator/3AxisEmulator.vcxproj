@@ -65,6 +65,7 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MinimalRebuild>true</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,62 +94,52 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\include\wordring\gui\detail\win32\win32_canvas.cpp" />
     <ClCompile Include="..\src\wordring\debug.cpp" />
     <ClCompile Include="..\src\wordring\detail\win32\exception.cpp" />
     <ClCompile Include="..\src\wordring\gui\canvas.cpp" />
     <ClCompile Include="..\src\wordring\gui\container.cpp" />
-    <ClCompile Include="..\src\wordring\gui\container_window.cpp" />
     <ClCompile Include="..\src\wordring\gui\control.cpp" />
-    <ClCompile Include="..\src\wordring\gui\control_window.cpp" />
-    <ClCompile Include="..\src\wordring\gui\detail\win32\win32_control_window.cpp" />
-    <ClCompile Include="..\src\wordring\gui\detail\win32\win32_container_window.cpp" />
+    <ClCompile Include="..\src\wordring\gui\detail\win32\win32_canvas.cpp" />
+    <ClCompile Include="..\src\wordring\gui\detail\win32\win32_child_window.cpp" />
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window.cpp" />
     <ClCompile Include="..\src\wordring\gui\detail\win32\win32_window_service.cpp" />
+    <ClCompile Include="..\src\wordring\gui\layout.cpp" />
+    <ClCompile Include="..\src\wordring\gui\root_window.cpp" />
     <ClCompile Include="..\src\wordring\gui\window.cpp" />
-    <ClCompile Include="..\src\wordring\gui\window_control.cpp" />
     <ClCompile Include="..\src\wordring\gui\window_service.cpp" />
-    <ClCompile Include="..\src\wordring\opengl\detail\win32\win32_gl_canvas.cpp" />
     <ClCompile Include="..\src\wordring\opengl\detail\win32\win32_gl_context.cpp" />
-    <ClCompile Include="..\src\wordring\opengl\gl_canvas.cpp" />
-    <ClCompile Include="..\src\wordring\opengl\gl_context.cpp" />
-    <ClCompile Include="..\src\wordring\opengl\gl_window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\wordring\debug.h" />
     <ClInclude Include="..\include\wordring\exception.h" />
     <ClInclude Include="..\include\wordring\geometry\shape.h" />
+    <ClInclude Include="..\include\wordring\graphics\color.h" />
     <ClInclude Include="..\include\wordring\gui\container.h" />
-    <ClInclude Include="..\include\wordring\gui\container_window.h" />
     <ClInclude Include="..\include\wordring\gui\control.h" />
-    <ClInclude Include="..\include\wordring\gui\control_window.h" />
     <ClInclude Include="..\include\wordring\gui\detail\native_canvas.h" />
     <ClInclude Include="..\include\wordring\gui\detail\native_window.h" />
     <ClInclude Include="..\include\wordring\gui\detail\native_window_service.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_canvas.h" />
-    <ClInclude Include="..\include\wordring\gui\detail\win32\win32_container_window.h" />
-    <ClInclude Include="..\include\wordring\gui\detail\win32\win32_control_window.h" />
+    <ClInclude Include="..\include\wordring\gui\detail\win32\win32_child_window.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_class.h" />
     <ClInclude Include="..\include\wordring\gui\detail\win32\win32_window_service.h" />
     <ClInclude Include="..\include\wordring\gui\canvas.h" />
+    <ClInclude Include="..\include\wordring\gui\font.h" />
+    <ClInclude Include="..\include\wordring\gui\form.h" />
+    <ClInclude Include="..\include\wordring\gui\layout.h" />
+    <ClInclude Include="..\include\wordring\gui\message.h" />
+    <ClInclude Include="..\include\wordring\gui\root_window.h" />
     <ClInclude Include="..\include\wordring\gui\window.h" />
-    <ClInclude Include="..\include\wordring\gui\window_control.h" />
+    <ClInclude Include="..\include\wordring\gui\window_container_tmpl.h" />
+    <ClInclude Include="..\include\wordring\gui\window_control_tmpl.h" />
     <ClInclude Include="..\include\wordring\gui\window_service.h" />
-    <ClInclude Include="..\include\wordring\opengl\detail\native_gl_canvas.h" />
     <ClInclude Include="..\include\wordring\opengl\detail\native_gl_context.h" />
-    <ClInclude Include="..\include\wordring\opengl\detail\native_gl_window.h" />
-    <ClInclude Include="..\include\wordring\opengl\detail\win32\win32_gl_canvas.h" />
     <ClInclude Include="..\include\wordring\opengl\detail\win32\win32_gl_context.h" />
-    <ClInclude Include="..\include\wordring\opengl\detail\win32\win32_gl_window.h" />
-    <ClInclude Include="..\include\wordring\opengl\gl_canvas.h" />
     <ClInclude Include="..\include\wordring\opengl\gl_context.h" />
-    <ClInclude Include="..\include\wordring\opengl\gl_window.h" />
     <ClInclude Include="..\include\wordring\wordring.h" />
     <ClInclude Include="..\index.h" />
-    <ClInclude Include="..\src\wordring\graphics\color.h" />
-    <ClInclude Include="a3e_control.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

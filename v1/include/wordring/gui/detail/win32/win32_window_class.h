@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * @file    wordring/gui/detail/win32/win32_window_class.h
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 
@@ -42,47 +42,53 @@ namespace gui
 namespace detail
 {
 
-// ƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX ---------------------------------------------------------
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹ ---------------------------------------------------------
 
 /**
-* @brief Šî’êƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX
-* @details
-*    win32‚ÌƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX‚ğì‚é–Ú“I‚ÌŠî’êƒNƒ‰ƒX‚Å‚·B
-*    C++‚ÌƒNƒ‰ƒX‚Æwin32‚ÌƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX‚ğŒ‹‚Ñ‚Â‚¯‚Ü‚·B
-*    ‰¼‘zŠÖ”‚ğg‚í‚¸‚ÉƒƒbƒZ[ƒW‚ğ”z‘—‚·‚é”\—Í‚ª‚ ‚è‚Ü‚·B
-*/
-template <typename ClsT, typename ImplT>
+ * @brief   åŸºåº•ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹
+ * @details 
+ *          win32ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹ã‚’ä½œã‚‹ç›®çš„ã®åŸºåº•ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
+ *
+ * @param   T1 ç¶™æ‰¿ã•ã‚ŒãŸã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹
+ * @param   T2 ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å®Ÿè£…
+ */
+template <typename T1, typename T2>
 struct win32_window_class
 {
+	typedef typename T1 class_type;
+	typedef typename T2 window_type;
+
 	HINSTANCE m_hinstance;
 	ATOM m_atom;
 
-	/// win32‚ÌƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX‚ğ“o˜^‚µ‚Ü‚·
+	/// win32ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹ã‚’ç™»éŒ²ã—ã¾ã™
 	win32_window_class() : m_hinstance((HINSTANCE)NULL), m_atom((ATOM)NULL)
 	{
-		WNDCLASSEX wcex = ClsT::create();
+		WNDCLASSEX wcex = T1::create();
 		m_atom = ::RegisterClassEx(&wcex);
 		m_hinstance = wcex.hInstance;
 	}
 
-	/// win32‚ÌƒEƒBƒ“ƒhƒEEƒNƒ‰ƒX‚ğ“o˜^‰ğœ‚µ‚Ü‚·
+	/// win32ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ã‚¯ãƒ©ã‚¹ã‚’ç™»éŒ²è§£é™¤ã—ã¾ã™
 	virtual ~win32_window_class()
 	{
 		assert(m_atom != (ATOM)NULL);
 		::UnregisterClass((LPCTSTR)(DWORD)m_atom, m_hinstance);
 	}
 
-	/// ƒEƒBƒ“ƒhƒEEƒvƒƒV[ƒWƒƒ‚Ì—Œ^‚Å‚·
+	/// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ»ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã®é››å‹ã§ã™
 	static LRESULT CALLBACK WindowProc(
 		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		native_window* nw = nullptr;
+		window_type* iw = nullptr;
+
 		if (uMsg == WM_NCCREATE)
 		{
 			LPCREATESTRUCT cs = (LPCREATESTRUCT)lParam;
-			native_window* nw =
-				static_cast<native_window*>(cs->lpCreateParams);
+			nw = static_cast<native_window*>(cs->lpCreateParams);
 			assert(nw);
-			ImplT* iw = static_cast<ImplT*>(nw);
+			iw = static_cast<window_type*>(nw);
 			iw->m_hwnd = hwnd;
 			win32_window_service_impl::assign(hwnd, nw);
 		}
@@ -90,21 +96,22 @@ struct win32_window_class
 		LRESULT result = 0;
 		bool handled = false;
 
-		ImplT* iw = static_cast<ImplT*>(win32_window_service_impl::find(hwnd));
-		if(iw) // WM_NCCREATEˆÈ‘O‚Í“o˜^‚³‚ê‚Ä‚¢‚È‚¢
+		iw = static_cast<window_type*>(
+			win32_window_service_impl::find(hwnd));
+		if(iw) // WM_NCCREATEä»¥å‰ã¯ç™»éŒ²ã•ã‚Œã¦ã„ãªã„
 		{
 			result = iw->WindowProc(hwnd, uMsg, wParam, lParam);
 			handled = iw->get_message_handled();
 		}
 		else
 		{
-			// TODO: ƒEƒBƒ“ƒhƒE‚É”z‘—‚Å‚«‚È‚¢ƒƒbƒZ[ƒW‚Ìˆ—
+			// TODO: ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«é…é€ã§ããªã„ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‡¦ç†
 		}
 
 		if (uMsg == WM_NCDESTROY)
 		{
 			win32_window_service_impl::remove(hwnd);
-			assert(iw); // “o˜^‚³‚ê‚Ä‚¢‚È‚¢ƒEƒBƒ“ƒhƒE‚ğÁ‚·‚±‚Æ‚Í‚Å‚«‚È‚¢
+			assert(iw); // ç™»éŒ²ã•ã‚Œã¦ã„ãªã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ¶ˆã™ã“ã¨ã¯ã§ããªã„
 			iw->m_hwnd = nullptr;
 		}
 

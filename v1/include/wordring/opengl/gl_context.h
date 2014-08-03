@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file    wordring/opengl/gl_context.h
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     �z�[��
+ * @par     ホーム
  *          https://github.com/wordring/
- * @par     ���C�Z���X
+ * @par     ライセンス
  *          PDS
  */
 
@@ -53,40 +53,40 @@ public:
 	virtual ~gl_context();
 
 	/**
-	 * �E�B���h�E�ƌ݊��������R���e�L�X�g���쐬���܂�
+	 * ウィンドウと互換性を持つコンテキストを作成します
 	 * 
-	 * �����ɏo���邾���߂��R���e�L�X�g���쐬����܂��B
+	 * 引数に出来るだけ近いコンテキストが作成されます。
 	 * 
-	 * @param w �E�B���h�E
-	 * @param flg �`��Ώۂ�\���t���O�iWINDOW���邢��MEMORY�j
-	 * @param depth z�o�b�t�@�̐[�x�i16�A24�A32���j
-	 * @param bpp �s�N�Z��������̃r�b�g���i24�A32���j
+	 * @param w ウィンドウ
+	 * @param flg 描画対象を表すフラグ（WINDOWあるいはMEMORY）
+	 * @param depth zバッファの深度（16、24、32等）
+	 * @param bpp ピクセルあたりのビット数（24、32等）
 	 */
 	virtual void assign(wordring::gui::window& w, int flg, int depth, int bpp);
 
 	/**
-	 * �L�����o�X�ƌ݊��������R���e�L�X�g���쐬���܂�
+	 * キャンバスと互換性を持つコンテキストを作成します
 	 *
-	 * �����ɏo���邾���߂��R���e�L�X�g���쐬����܂��B
+	 * 引数に出来るだけ近いコンテキストが作成されます。
 	 *
-	 * @param cv �L�����o�X
-	 * @param flg �`��Ώۂ�\���t���O�iWINDOW���邢��MEMORY�j
-	 * @param depth z�o�b�t�@�̐[�x�i16�A24�A32���j
-	 * @param bpp �s�N�Z��������̃r�b�g���i24�A32���j
+	 * @param cv キャンバス
+	 * @param flg 描画対象を表すフラグ（WINDOWあるいはMEMORY）
+	 * @param depth zバッファの深度（16、24、32等）
+	 * @param bpp ピクセルあたりのビット数（24、32等）
 	 */
 	virtual void assign(wordring::gui::canvas& cv, int flg, int depth, int bpp);
 
 	/**
-	 * �X���b�h�̃J�����g�E�R���e�L�X�g�ɑI�����܂�
+	 * スレッドのカレント・コンテキストに選択します
 	 * 
-	 * �J�����g�E�R���e�L�X�g�ɑI������Ă���ԁAOpenGL�̕`��͂��̃R���e�L�X�g
-	 * �̐ݒ肳�ꂽ�L�����o�X�ɑ΂��čs���܂��B
+	 * カレント・コンテキストに選択されている間、OpenGLの描画はこのコンテキスト
+	 * の設定されたキャンバスに対して行われます。
 	 * 
-	 * @param cv �`��ΏۂƂȂ�canvas
+	 * @param cv 描画対象となるcanvas
 	 */
 	virtual void make_current(wordring::gui::canvas& cv);
 	/**
-	 * �X���b�h�̃J�����g�E�R���e�L�X�g����O���܂�
+	 * スレッドのカレント・コンテキストから外します
 	 */
 	virtual void unmake_current(wordring::gui::canvas& cv);
 };

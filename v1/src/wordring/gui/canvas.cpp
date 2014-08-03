@@ -22,6 +22,10 @@
 #include <wordring/gui/detail/native_canvas.h>
 #include <wordring/gui/detail/win32/win32_canvas.h>
 
+#include <wordring/geometry/shape.h>
+#include <wordring/graphics/color.h>
+#include <wordring/gui/font.h>
+
 using namespace wordring::gui;
 
 
@@ -47,14 +51,37 @@ detail::native_canvas& canvas::get_native_canvas()
 	return *m_native;
 }
 
-void canvas::draw_string(std::string str, point_int pt)
+void canvas::set_viewport(rect_int rc)
 {
-	m_native->draw_string(str, pt);
+	m_native->set_viewport(rc);
 }
 
-void canvas::draw_string(std::wstring str, point_int pt)
+void canvas::draw_line(
+	point_int pt1, point_int pt2, int32_t width, rgb_color rgb)
 {
-	m_native->draw_string(str, pt);
+	m_native->draw_line(pt1, pt2, width, rgb);
+}
+
+void canvas::draw_rect(rect_int rc, int32_t width, rgb_color rgb)
+{
+	m_native->draw_rect(rc, width, rgb);
+}
+
+void canvas::fill_rect(rect_int rc, rgb_color rgb)
+{
+	m_native->fill_rect(rc, rgb);
+}
+
+void canvas::draw_string(
+	std::string str, point_int pt, rgb_color rgb, font* f)
+{
+	m_native->draw_string(str, pt, rgb, f);
+}
+
+void canvas::draw_string(
+	std::wstring str, point_int pt, rgb_color rgb, font* f)
+{
+	m_native->draw_string(str, pt, rgb, f);
 }
 
 

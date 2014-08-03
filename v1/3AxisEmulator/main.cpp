@@ -20,20 +20,24 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/window.h>
+//#include <wordring/gui/window.h>
 #include <wordring/gui/window_service.h>
-#include <wordring/gui/container.h>
+//#include <wordring/gui/container.h>
+
+#include <wordring/gui/root_window.h>
 
 #include <wordring/opengl/gl_canvas.h>
 #include <wordring/opengl/gl_context.h>
 
-#include <Windows.h>
+//#include <Windows.h>
 
 #include <GL/glew.h>
 #include <gl/GL.h>
 #include <GL/GLU.h>
 //#include <cstdint>
 #include <iostream>
+#include <memory>
+
 
 int main()
 {
@@ -44,7 +48,42 @@ int main()
 
 	window_service ws;
 
-	form f;
+	root_window f(ws, rect_int());
+	f.set_rect(rect_int(point_int(10, 10), size_int(150, 150)));
+	//std::unique_ptr<flow_layout> l(new flow_layout);
+	//f.set_layout(std::move(l));
+	
+	container* c1 = f.assign(new container);
+	std::unique_ptr<flow_layout> l(new flow_layout);
+	c1->set_layout(std::move(l));
+	c1->set_size(size_int(300, 220));
+	//a3e_control* a3e = f.assign(new a3e_control);
+	for (int i = 0; i < 10; i++)
+	{
+		control* ctrl = c1->assign(new control);
+		ctrl->set_size(size_int(100, 100));
+	}
+	
+	//a3e->set_position(point_int(0, 50));
+	//a3e->set_size(size_int(100, 100));
+	//a3e->show();
+	f.show();
+
+	//size_int s1 = f.get_size(),
+	//	s2 = a3e->get_size();
+
+
+
+
+	/*
+	a3e_control* ctrl = f.assign(new a3e_control);
+
+	ctrl->on_size = [&](size_int size)
+	{
+		size_int sz = size;
+	};
+	ctrl->set_size(size_int(100, 100));
+
 	gl_context ctx;
 
 		f.on_create = [&]()
@@ -141,8 +180,7 @@ int main()
 			cv.draw_string(L"テスト文字列", point_int(30, 30));
 		};
 		f.on_destroy = [&]() { ws.quit(); };
-
-		f.set_parent(nullptr);
+		//f.set_parent(nullptr);
 
 		f.set_size(size_int(640, 480));
 		f.set_position(point_int(0, 0));
@@ -151,9 +189,8 @@ int main()
 		//control* c = &f;
 		//c->set_size(size_int(100, 100));
 
-		f.show_window();
-
-		rect_int rc = f.get_rect();
+		f.show();
+		*/
 		ws.run();
 
 	try

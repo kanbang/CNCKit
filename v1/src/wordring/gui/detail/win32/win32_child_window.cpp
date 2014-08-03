@@ -1,72 +1,78 @@
-/**
- * @file    wordring/gui/detail/win32/win32_container_window.cpp
- *
- * @brief   
- *
- * @details
- *          
- *          
- *          
- *          
- *
- * @author  Kouichi Minami
- * @date    2014
- *
- * @par     ÉzÅ[ÉÄ
- *          https://github.com/wordring/
- * @par     ÉâÉCÉZÉìÉX
- *          PDS
- */
+Ôªø/**
+* @file    wordring/gui/detail/win32/win32_control_window.cpp
+*
+* @brief   „Ç≥„É≥„Éà„É≠„Éº„É´Áî®„ÅÆ„Ç¶„Ç£„É≥„Éâ„Ç¶
+*
+* @details
+*
+*
+*
+*
+*
+* @author  Kouichi Minami
+* @date    2014
+*
+* @par     „Éõ„Éº„É†
+*          https://github.com/wordring/
+* @par     „É©„Ç§„Çª„É≥„Çπ
+*          PDS
+*/
 
 #ifdef _WIN32
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/window.h>
+#include <wordring/exception.h>
 
-#include <wordring/gui/detail/win32/win32_container_window.h>
-#include <wordring/gui/detail/win32/win32_window_class.h>
+#include <wordring/geometry/shape.h>
+
+#include <wordring/gui/window.h>
+#include <wordring/gui/detail/win32/win32_child_window.h>
 
 #include <Windows.h>
 #include <windowsx.h>
 
+using namespace wordring::gui;
 using namespace wordring::gui::detail;
 
-native_container_window_impl::native_container_window_impl()
+native_control_window_impl::native_control_window_impl()
 {
 
 }
 
-native_container_window_impl::~native_container_window_impl()
+native_control_window_impl::~native_control_window_impl()
 {
 
 }
 
-void native_container_window_impl::create(wordring::gui::window* parent)
+void native_control_window_impl::create_window(window* parent, rect_int rc)
 {
 	HWND hparent = nullptr;
 	if (parent)
 	{
 		hparent = static_cast<native_window_impl*>(
-			parent->get_native_window())->m_hwnd;
+			parent->get_native())->m_hwnd;
 	}
 
-	m_hwnd = ::CreateWindow(
+	m_hwnd = ::CreateWindowEx(
+		WS_EX_TRANSPARENT,
 		(LPCTSTR)(DWORD)native_window_impl::g_window_class.m_atom,
-		L"native_container_window_impl", WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		L"native_control_window_impl",
+		WS_CHILD | WS_VISIBLE,
+		rc.pt.x,
+		rc.pt.y,
+		rc.size.cx,
+		rc.size.cy,
 		hparent,
 		NULL,
 		(HINSTANCE)0,
 		this);
-	assert(m_hwnd);
+	wordring::check_assertion(m_hwnd != NULL);
 }
 
-/// ÉEÉBÉìÉhÉEÅEÉvÉçÉVÅ[ÉWÉÉÇÃêóå^Ç≈Ç∑
-LRESULT native_container_window_impl::WindowProc(
+
+/// „Ç¶„Ç£„É≥„Éâ„Ç¶„Éª„Éó„É≠„Ç∑„Éº„Ç∏„É£„ÅÆÈõõÂûã„Åß„Åô
+LRESULT native_control_window_impl::WindowProc(
 	HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	assert(m_hwnd == hwnd || m_hwnd == nullptr);
@@ -75,7 +81,7 @@ LRESULT native_container_window_impl::WindowProc(
 
 	switch (uMsg)
 	{
-		// É}ÉEÉXÅEÉÅÉbÉZÅ[ÉW -------------------------------------------------
+		// „Éû„Ç¶„Çπ„Éª„É°„ÉÉ„Çª„Éº„Ç∏ -------------------------------------------------
 
 		HANDLE_MSG(hwnd, WM_DROPFILES, onDropFiles);
 		HANDLE_MSG(hwnd, WM_LBUTTONDBLCLK, onLButtonDblClk);
@@ -88,7 +94,7 @@ LRESULT native_container_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_RBUTTONDOWN, onRButtonDown);
 		HANDLE_MSG(hwnd, WM_RBUTTONUP, onRButtonUp);
 
-		// ÉLÅ[É{Å[Éh ---------------------------------------------------------
+		// „Ç≠„Éº„Éú„Éº„Éâ ---------------------------------------------------------
 
 		HANDLE_MSG(hwnd, WM_CHAR, onChar);
 		HANDLE_MSG(hwnd, WM_DEADCHAR, onDeadChar);
@@ -100,13 +106,13 @@ LRESULT native_container_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_SYSKEYDOWN, onSysKeyDown);
 		HANDLE_MSG(hwnd, WM_SYSKEYUP, onSysKeyUp);
 
-		// àÍî ÉÅÉbÉZÅ[ÉW -----------------------------------------------------
+		// ‰∏ÄËà¨„É°„ÉÉ„Çª„Éº„Ç∏ -----------------------------------------------------
 
 		HANDLE_MSG(hwnd, WM_ACTIVATE, onActivate);
 		HANDLE_MSG(hwnd, WM_ACTIVATEAPP, onActivateApp);
 		HANDLE_MSG(hwnd, WM_CLOSE, onClose);
 		HANDLE_MSG(hwnd, WM_COMMAND, onCommand);
-		HANDLE_MSG(hwnd, WM_COMPACTING, onCompacting); // ÉÅÉÇÉäÅ[ïsë´
+		HANDLE_MSG(hwnd, WM_COMPACTING, onCompacting); // „É°„É¢„É™„Éº‰∏çË∂≥
 		HANDLE_MSG(hwnd, WM_COPYDATA, onCopyData);
 		//HANDLE_MSG(hwnd, WM_CREATE, onCreate);
 		HANDLE_MSG(hwnd, WM_DESTROY, onDestroy);
@@ -114,7 +120,7 @@ LRESULT native_container_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_KILLFOCUS, onKillFocus);
 		HANDLE_MSG(hwnd, WM_MOVE, onMove);
 		HANDLE_MSG(hwnd, WM_PAINT, onPaint);
-		HANDLE_MSG(hwnd, WM_POWER, onPower); // ÉVÉXÉeÉÄíÜíf
+		HANDLE_MSG(hwnd, WM_POWER, onPower); // „Ç∑„Çπ„ÉÜ„É†‰∏≠Êñ≠
 		HANDLE_MSG(hwnd, WM_QUERYENDSESSION, onQueryEndSession);
 		HANDLE_MSG(hwnd, WM_QUIT, onQuit);
 		HANDLE_MSG(hwnd, WM_SETFOCUS, onSetFocus);
@@ -129,26 +135,27 @@ LRESULT native_container_window_impl::WindowProc(
 	return 0;
 }
 
-WNDCLASSEX native_container_window_impl::window_class::create()
+WNDCLASSEX native_control_window_impl::window_class::create()
 {
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = window_class::WindowProc;
+	wcex.lpfnWndProc =
+		win32_window_class<window_class, native_control_window_impl>::WindowProc;
 	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = sizeof(native_container_window_impl*);
+	wcex.cbWndExtra = sizeof(native_control_window_impl*);
 	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
 	wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
 	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = TEXT("native_container_window_impl");
+	wcex.lpszClassName = TEXT("native_control_window_impl");
 	wcex.hIconSm = NULL;
 
 	return wcex;
 }
-/// native_container_window_implópÇÃwindow_class
-native_container_window_impl::window_class g_window_class;
+/// native_control_window_implÁî®„ÅÆwindow_class
+native_control_window_impl::window_class g_window_class;
 
 #endif // _WIN32

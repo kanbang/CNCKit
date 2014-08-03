@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * @file    wordring/detail/win32/exception.cpp
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 
@@ -37,7 +37,7 @@ std::string exception_category::message(int ev) const
 		  FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM
 		, NULL
 		, (DWORD)ev
-		, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT) // ƒfƒtƒHƒ‹ƒg ƒ†[ƒU[Œ¾Œê 
+		, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT) // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ ãƒ¦ãƒ¼ã‚¶ãƒ¼è¨€èª 
 		, (LPSTR)&buf
 		, 0
 		, NULL);

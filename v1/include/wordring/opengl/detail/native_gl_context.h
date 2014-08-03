@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * @file    wordring/opengl/detail/native_gl_context.h
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ÉzÅ[ÉÄ
+ * @par     „Éõ„Éº„É†
  *          https://github.com/wordring/
- * @par     ÉâÉCÉZÉìÉX
+ * @par     „É©„Ç§„Çª„É≥„Çπ
  *          PDS
  */
 #ifndef WORDRING_NATIVE_GL_CONTEXT_H

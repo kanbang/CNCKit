@@ -57,6 +57,18 @@ struct point_int
 	}
 
 	void operator +=(point_int rhs) { x += rhs.x; y += rhs.y; }
+
+	void operator -=(point_int rhs) { x -= rhs.x, y -= rhs.y; }
+
+	point_int operator +(point_int rhs)
+	{
+		return point_int(x + rhs.x, y + rhs.y);
+	}
+
+	point_int operator -(point_int rhs)
+	{
+		return point_int(x - rhs.x, y - rhs.y);
+	}
 };
 
 
@@ -81,6 +93,11 @@ struct rect_int : shape
 	rect_int() { }
 	rect_int(point_int pt_, size_int size_) : pt(pt_), size(size_) { }
 
+	bool operator ==(rect_int const &rhs) const
+	{
+		return pt == rhs.pt && size == rhs.size;
+	}
+
 	rect_int operator +(rect_int const& rhs) const
 	{
 		int32_t x1, y1, x2, y2;
@@ -90,6 +107,51 @@ struct rect_int : shape
 		y2 = std::max(pt.y + size.cy, rhs.pt.y + rhs.size.cy);
 
 		return rect_int(point_int(x1, y1), size_int(x2 - x1, y2 - y1));
+	}
+
+	/// 重なる部分を返します
+	rect_int operator &(rect_int rhs) const { return intersects(rhs); }
+
+	/// 左上の点を返します
+	point_int top_left() const
+	{
+		return pt;
+	}
+
+	/// 左下の点を返します
+	point_int bottom_left() const
+	{
+		return point_int(pt.x, pt.y + size.cy);
+	}
+
+	/// 右上の点を返します
+	point_int top_right() const
+	{
+		return point_int(pt.x + size.cx, pt.y);
+	}
+
+	/// 右下の点を返す
+	point_int bottom_right() const
+	{
+		return point_int(pt.x + size.cx, pt.y + size.cy);
+	}
+
+	/// 重なる部分を返します
+	rect_int intersects(rect_int rhs) const
+	{
+		point_int pt1, pt2;
+
+		pt1.x = std::max(pt.x, rhs.pt.x);
+		pt1.y = std::max(pt.y, rhs.pt.y);
+		pt2.x = std::min(pt.x + size.cx, rhs.pt.x + rhs.size.cx);
+		pt2.y = std::min(pt.y + size.cy, rhs.pt.y + rhs.size.cx);
+
+		int32_t
+			cx = pt2.x - pt1.x,
+			cy = pt2.y - pt1.y;
+
+		return rect_int(
+			pt1, (0 < cx && 0 < cy) ? size_int(cx, cy) : size_int());
 	}
 };
 

@@ -1,21 +1,21 @@
-/**
+ï»¿/**
  * @file    wordring/exception.h
  *
- * @brief   ŠÂ‹«‚ÉˆË‘¶‚·‚é—áŠO‚ğ’ŠÛ‰»‚µ‚Ü‚·
+ * @brief   ç’°å¢ƒã«ä¾å­˜ã™ã‚‹ä¾‹å¤–ã‚’æŠ½è±¡åŒ–ã—ã¾ã™
  *
  * @details
- *          ‚±‚Ìƒtƒ@ƒCƒ‹“à‚ÌƒNƒ‰ƒX‚ÍŠÂ‹«ˆË‘¶‚ÌƒIƒuƒWƒFƒNƒg‚ğŠO•”‚ÉŒ©‚¹‚È‚¢‚Ì‚Å
- *          pimpl‚É‚È‚Á‚Ä‚¢‚Ü‚¹‚ñB
- *          detail/<ŠÂ‹«–¼>/ˆÈ‰º‚ÉÀ‘•ƒtƒ@ƒCƒ‹‚ğ’u‚¢‚Ä‚­‚¾‚³‚¢B
- *          y—ázsrc/wordring/detail/win32/exception.cpp
+ *          ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«å†…ã®ã‚¯ãƒ©ã‚¹ã¯ç’°å¢ƒä¾å­˜ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å¤–éƒ¨ã«è¦‹ã›ãªã„ã®ã§
+ *          pimplã«ãªã£ã¦ã„ã¾ã›ã‚“ã€‚
+ *          detail/\<ç’°å¢ƒå\>/ä»¥ä¸‹ã«å®Ÿè£…ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç½®ã„ã¦ãã ã•ã„ã€‚
+ *          ã€ä¾‹ã€‘src/wordring/detail/win32/exception.cpp
  *          
  *
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 #ifndef WORDRING_EXCEPTION_H

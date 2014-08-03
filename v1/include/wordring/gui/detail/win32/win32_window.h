@@ -69,7 +69,7 @@ public:
 
 public:
 	/// ウィンドウを作成します
-	virtual void create_window(window* parent);
+	virtual void create_window(window* parent, rect_int rc);
 	/// ウィンドウを最小化します
 	virtual void close_window();
 	/// ウィンドウを破棄します
@@ -86,26 +86,30 @@ public:
 	/// ウィンドウ全体を再描画します
 	void repaint_window();
 	/// 指定の範囲を再描画します
-	void repaint_window(point_int pt, size_int size);
+	void repaint_window(rect_int rc);
 
 	virtual void set_window_size(size_int size);
 	virtual size_int get_window_size() const;
 
 	virtual void set_window_position(point_int point);
 	virtual point_int get_window_position() const;
+	/// ウィンドウの位置と大きさを設定します
+	void set_window_rect(rect_int rc);
+	/// ウィンドウの位置と大きさを取得します
+	rect_int get_window_rect() const;
 
 	virtual void set_window_text(std::string text);
 	virtual void set_window_text(std::wstring text);
 
 protected:
-	virtual void do_command(int id, UINT codeNotify); // 親ウィンドウからのコールバック
+	virtual void do_command_nw(int id, UINT codeNotify); // 親ウィンドウからのコールバック
 
-	virtual void do_create();
-	virtual void do_destroy();
+	virtual void do_create_nw();
+	virtual void do_destroy_nw();
 
-	virtual void do_paint(HDC hdc);
+	virtual void do_paint_nw(HDC hdc);
 
-	virtual void do_size(size_int size);
+	virtual void do_size_nw(size_int size);
 
 
 

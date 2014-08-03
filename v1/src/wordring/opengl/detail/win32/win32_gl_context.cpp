@@ -1,7 +1,7 @@
-/**
+ï»¿/**
  * @file    wordring/opengl/detail/win32/win32_gl_context.cpp
  *
- * @brief   gl_context‚ÌŠÂ‹«ˆË‘¶À‘•ƒtƒ@ƒCƒ‹
+ * @brief   gl_contextã®ç’°å¢ƒä¾å­˜å®Ÿè£…ãƒ•ã‚¡ã‚¤ãƒ«
  *
  * @details
  *          
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 
@@ -47,7 +47,7 @@
 
 using namespace wordring::opengl::detail;
 
-// \’zE”jŠü -----------------------------------------------------------------
+// æ§‹ç¯‰ãƒ»ç ´æ£„ -----------------------------------------------------------------
 
 native_gl_context_impl::native_gl_context_impl() : m_hglrc(nullptr)
 {
@@ -72,7 +72,7 @@ native_gl_context_impl::~native_gl_context_impl()
 	if (m_hglrc) { ::wglDeleteContext(m_hglrc); }
 }
 
-// OpenGLƒRƒ“ƒeƒLƒXƒg‚Ìì¬ ---------------------------------------------------
+// OpenGLã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®ä½œæˆ ---------------------------------------------------
 
 void native_gl_context_impl::assign(
 	wordring::gui::window& w, int flg, int depth, int bpp)
@@ -94,15 +94,15 @@ void native_gl_context_impl::create(
 	using namespace wordring::gui::detail;
 
 	native_window_impl* nwi =
-		static_cast<native_window_impl*>(w.get_native_window());
-	assert(nwi); // ƒEƒBƒ“ƒhƒE‚ªì¬‚³‚ê‚Ä‚¢‚é‚©H
+		static_cast<native_window_impl*>(w.get_native());
+	assert(nwi); // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒä½œæˆã•ã‚Œã¦ã„ã‚‹ã‹ï¼Ÿ
 	HWND hwnd = nwi->m_hwnd;
 	assert(hwnd);
 	HDC hdc = ::GetDC(hwnd);
 	wordring::check_assertion(hdc != NULL);
 
 	create(hdc, flg, depth, bpp);
-	initialize(hdc); // ğŒ•Ï”‚ğŒ©‚Ä‰Šú‰»‚ğs‚¤
+	initialize(hdc); // æ¡ä»¶å¤‰æ•°ã‚’è¦‹ã¦åˆæœŸåŒ–ã‚’è¡Œã†
 
 		wordring::check_assertion(
 	::ReleaseDC(hwnd, hdc) == 1);
@@ -147,7 +147,7 @@ void native_gl_context_impl::create(HDC hdc, int flg, int depth, int bpp)
 	wordring::check_assertion(m_hglrc != NULL);	
 }
 
-// ƒRƒ“ƒeƒLƒXƒg‚ÌƒJƒŒƒ“ƒg‰»E”ñƒJƒŒƒ“ƒg‰» -------------------------------------
+// ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®ã‚«ãƒ¬ãƒ³ãƒˆåŒ–ãƒ»éã‚«ãƒ¬ãƒ³ãƒˆåŒ– -------------------------------------
 
 void native_gl_context_impl::make_current(wordring::gui::canvas& cv)
 {
@@ -187,7 +187,7 @@ void native_gl_context_impl::unmake_current(wordring::gui::canvas& cv)
 		::wglMakeCurrent(NULL, NULL) != FALSE);
 }
 
-// GLEWƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰» -------------------------------------------------------
+// GLEWãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ– -------------------------------------------------------
 
 void native_gl_context_impl::initialize(HDC hdc)
 {
@@ -205,7 +205,7 @@ void native_gl_context_impl::initialize(HDC hdc)
 	}
 }
 
-// ‰Šú‰»ƒtƒ‰ƒO ---------------------------------------------------------------
+// åˆæœŸåŒ–ãƒ•ãƒ©ã‚° ---------------------------------------------------------------
 
 std::atomic_bool native_gl_context_impl::g_initialized = { false };
 

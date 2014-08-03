@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * @file    wordring/opengl/detail/win32/win32_gl_context.h
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ƒz[ƒ€
+ * @par     ãƒ›ãƒ¼ãƒ 
  *          https://github.com/wordring/
- * @par     ƒ‰ƒCƒZƒ“ƒX
+ * @par     ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
  *          PDS
  */
 
@@ -71,11 +71,11 @@ public:
 	virtual void unmake_current();
 
 private:
-	/// glewInit()‚ª–¢ŒÄ‚Ño‚µ‚Å‚ ‚ê‚ÎAŒÄ‚Ño‚·
+	/// glewInit()ãŒæœªå‘¼ã³å‡ºã—ã§ã‚ã‚Œã°ã€å‘¼ã³å‡ºã™
 	virtual void initialize(HDC hdc);
 
 private:
-	/// glewInit()‚ªŒÄ‚Ño‚µÏ‚İ‚Å‚ ‚ê‚ÎtrueAŒÄ‚Ño‚µ‘O‚Ífalse
+	/// glewInit()ãŒå‘¼ã³å‡ºã—æ¸ˆã¿ã§ã‚ã‚Œã°trueã€å‘¼ã³å‡ºã—å‰ã¯false
 	static std::atomic_bool g_initialized;
 };
 

@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/debug.cpp
+ * @file    a3e_control.cpp
  *
  * @brief   
  *
@@ -20,15 +20,17 @@
 
 #include <wordring/debug.h>
 
-#ifdef _WIN32
+#include <wordring/geometry/shape.h>
+#include <wordring/gui/window_control_tmpl.h>
 
-void wordring::debug::debug_memory_leak()
+#include "a3e_control.h"
+
+void a3e_control::do_create()
 {
-#ifdef _DEBUG
-	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
-#endif
+	
 }
 
+void a3e_control::do_size(wordring::gui::size_int size)
+{
 
-
-#endif // _WIN32
+}

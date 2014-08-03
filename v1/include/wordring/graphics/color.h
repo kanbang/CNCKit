@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * @file    wordring/graphics/color.h
  *
  * @brief   
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     ÉzÅ[ÉÄ
+ * @par     „Éõ„Éº„É†
  *          https://github.com/wordring/
- * @par     ÉâÉCÉZÉìÉX
+ * @par     „É©„Ç§„Çª„É≥„Çπ
  *          PDS
  */
 
@@ -38,9 +38,15 @@ struct rgb_color
 		unsigned char a_ = 255) : r(r_), g(g_), b(b_), a(a_) { }
 };
 
-
-
 } // namespace graphics
+
+namespace gui
+{
+
+typedef wordring::graphics::rgb_color rgb_color;
+
+} // namespace gui
+
 } // namespace wordring
 
 #endif // WORDRING_COLOR_H
