@@ -4,8 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3AxisEmulator", "3AxisEmulator\3AxisEmulator.vcxproj", "{2CBADB7F-C720-4C08-B224-2FCB56ABB672}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED2985D1-5EA4-4D25-817C-C187C449B5BF} = {ED2985D1-5EA4-4D25-817C-C187C449B5BF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PostThreadMessage", "PostThreadMessage\PostThreadMessage.vcxproj", "{0A9C3A7A-98EA-44A7-849C-CFE60B355711}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library", "Library\Library.vcxproj", "{ED2985D1-5EA4-4D25-817C-C187C449B5BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{0A9C3A7A-98EA-44A7-849C-CFE60B355711}.Debug|Win32.Build.0 = Debug|Win32
 		{0A9C3A7A-98EA-44A7-849C-CFE60B355711}.Release|Win32.ActiveCfg = Release|Win32
 		{0A9C3A7A-98EA-44A7-849C-CFE60B355711}.Release|Win32.Build.0 = Release|Win32
+		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Debug|Win32.Build.0 = Debug|Win32
+		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Release|Win32.ActiveCfg = Release|Win32
+		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

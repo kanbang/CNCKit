@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\detail">
+      <UniqueIdentifier>{ba96226a-85ca-4c36-b3e6-7571a87892c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\geometry">
+      <UniqueIdentifier>{a128f44c-91f8-45ec-8568-b1a76fa9217b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gui">
+      <UniqueIdentifier>{ad1fcd8d-9b03-4fe2-8d79-552efbf190f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\graphics">
+      <UniqueIdentifier>{fd3cddd1-879b-425c-a7dc-f331ec56d451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\opengl">
+      <UniqueIdentifier>{f370f6ea-bb28-41df-b4b2-40948e163593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gui\detail">
+      <UniqueIdentifier>{a4df5392-3287-41a4-8d48-0870333be69a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gui\detail\win32">
+      <UniqueIdentifier>{3cb10fc8-74dc-4791-b6e6-14315408d120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\opengl\detail">
+      <UniqueIdentifier>{48c2a352-ea79-4c98-b6b4-bcedd74e1a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\opengl\detail\win32">
+      <UniqueIdentifier>{0858a050-edef-40e2-9372-805f55d16330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\detail">
+      <UniqueIdentifier>{d50b7766-e7ca-424b-9cbf-a19ebc716283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\detail\win32">
+      <UniqueIdentifier>{9ae56409-33c8-41e1-88d0-5681172c0e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\graphics">
+      <UniqueIdentifier>{c1914b64-2b46-4289-9701-009e4e3f7f6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\gui">
+      <UniqueIdentifier>{f243adf1-6e02-4762-a3b0-5c9ca3644269}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\opengl">
+      <UniqueIdentifier>{64655292-57a3-4779-8360-223f05ef8392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\gui\detail">
+      <UniqueIdentifier>{2dc4281b-486f-4359-9a2a-e936a2d6a49a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\gui\detail\win32">
+      <UniqueIdentifier>{25d43dbc-8ca8-4406-9aad-0c716a0252d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\opengl\detail">
+      <UniqueIdentifier>{ee4acb8f-3b26-4b61-b5bf-ec78d0fb3e3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\opengl\detail\win32">
+      <UniqueIdentifier>{724b8c5d-b267-4e9b-9607-e030b592c1a0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\wordring\wordring.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\debug.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\exception.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\geometry\shape.h">
+      <Filter>ヘッダー ファイル\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\graphics\color.h">
+      <Filter>ヘッダー ファイル\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\message.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\root_window.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\window.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\window_container_tmpl.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\window_control_tmpl.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\window_service.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\canvas.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\container.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\control.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\font.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\layout.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\native_canvas.h">
+      <Filter>ヘッダー ファイル\gui\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\native_window.h">
+      <Filter>ヘッダー ファイル\gui\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\native_window_service.h">
+      <Filter>ヘッダー ファイル\gui\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_canvas.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_child_window.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_window.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_window_class.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_window_service.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\opengl\gl_exception.h">
+      <Filter>ヘッダー ファイル\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\opengl\gl_service.h">
+      <Filter>ヘッダー ファイル\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\opengl\detail\native_gl_service.h">
+      <Filter>ヘッダー ファイル\opengl\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\opengl\detail\win32\win32_gl_service.h">
+      <Filter>ヘッダー ファイル\opengl\detail\win32</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\wordring\debug.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\detail\win32\exception.cpp">
+      <Filter>ソース ファイル\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\canvas.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\container.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\control.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\layout.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\root_window.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\window.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\window_service.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_canvas.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_child_window.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_window.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_window_service.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\opengl\gl_service.cpp">
+      <Filter>ソース ファイル\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_service.cpp">
+      <Filter>ソース ファイル\opengl\detail\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

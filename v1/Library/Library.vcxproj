@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2CBADB7F-C720-4C08-B224-2FCB56ABB672}</ProjectGuid>
+    <ProjectGuid>{ED2985D1-5EA4-4D25-817C-C187C449B5BF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>My3AxisEmulator</RootNamespace>
+    <RootNamespace>Library</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -39,21 +39,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <NuGetPackageImportStamp>bece72ea</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>0a510a1c</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(IncludePath);$(SolutionDir)Library/include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(SolutionDir)Debug</LibraryPath>
-    <Linkage-glew>
-    </Linkage-glew>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(IncludePath);$(SolutionDir)Library/include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(SolutionDir)Release</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -61,14 +53,11 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -80,28 +69,68 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <MinimalRebuild>true</MinimalRebuild>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cnc_3axis_emulator_control.cpp" />
-    <ClCompile Include="main.cpp" />
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cnc_3axis_emulator_control.h" />
+    <ClInclude Include="include\wordring\debug.h" />
+    <ClInclude Include="include\wordring\exception.h" />
+    <ClInclude Include="include\wordring\geometry\shape.h" />
+    <ClInclude Include="include\wordring\graphics\color.h" />
+    <ClInclude Include="include\wordring\gui\canvas.h" />
+    <ClInclude Include="include\wordring\gui\container.h" />
+    <ClInclude Include="include\wordring\gui\control.h" />
+    <ClInclude Include="include\wordring\gui\detail\native_canvas.h" />
+    <ClInclude Include="include\wordring\gui\detail\native_window.h" />
+    <ClInclude Include="include\wordring\gui\detail\native_window_service.h" />
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_canvas.h" />
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_child_window.h" />
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_window.h" />
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_window_class.h" />
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_window_service.h" />
+    <ClInclude Include="include\wordring\gui\font.h" />
+    <ClInclude Include="include\wordring\gui\layout.h" />
+    <ClInclude Include="include\wordring\gui\message.h" />
+    <ClInclude Include="include\wordring\gui\root_window.h" />
+    <ClInclude Include="include\wordring\gui\window.h" />
+    <ClInclude Include="include\wordring\gui\window_container_tmpl.h" />
+    <ClInclude Include="include\wordring\gui\window_control_tmpl.h" />
+    <ClInclude Include="include\wordring\gui\window_service.h" />
+    <ClInclude Include="include\wordring\opengl\detail\native_gl_service.h" />
+    <ClInclude Include="include\wordring\opengl\detail\win32\win32_gl_service.h" />
+    <ClInclude Include="include\wordring\opengl\gl_service.h" />
+    <ClInclude Include="include\wordring\opengl\gl_exception.h" />
+    <ClInclude Include="include\wordring\wordring.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\wordring\debug.cpp" />
+    <ClCompile Include="src\wordring\detail\win32\exception.cpp" />
+    <ClCompile Include="src\wordring\gui\canvas.cpp" />
+    <ClCompile Include="src\wordring\gui\container.cpp" />
+    <ClCompile Include="src\wordring\gui\control.cpp" />
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_canvas.cpp" />
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_child_window.cpp" />
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_window.cpp" />
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_window_service.cpp" />
+    <ClCompile Include="src\wordring\gui\layout.cpp" />
+    <ClCompile Include="src\wordring\gui\root_window.cpp" />
+    <ClCompile Include="src\wordring\gui\window.cpp" />
+    <ClCompile Include="src\wordring\gui\window_service.cpp" />
+    <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_service.cpp" />
+    <ClCompile Include="src\wordring\opengl\gl_service.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

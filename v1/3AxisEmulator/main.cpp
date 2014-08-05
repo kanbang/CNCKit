@@ -26,18 +26,21 @@
 
 #include <wordring/gui/root_window.h>
 
-#include <wordring/opengl/gl_canvas.h>
-#include <wordring/opengl/gl_context.h>
+#include "cnc_3axis_emulator_control.h"
 
 //#include <Windows.h>
 
-#include <GL/glew.h>
-#include <gl/GL.h>
-#include <GL/GLU.h>
 //#include <cstdint>
 #include <iostream>
 #include <memory>
 
+#ifdef _WIN32
+
+#ifdef _MSC_VER // TODO: 
+#pragma comment (lib, "Library.lib")
+#endif // _MSCVER
+
+#endif // _WIN32
 
 int main()
 {
@@ -47,27 +50,22 @@ int main()
 	wordring::debug::debug_memory_leak();
 
 	window_service ws;
+	gl_service gl;
 
-	root_window f(ws, rect_int());
-	f.set_rect(rect_int(point_int(10, 10), size_int(150, 150)));
-	//std::unique_ptr<flow_layout> l(new flow_layout);
-	//f.set_layout(std::move(l));
+
+
+	root_window rw(ws, rect_int(point_int(0, 0), size_int(640, 480)));
 	
-	container* c1 = f.assign(new container);
-	std::unique_ptr<flow_layout> l(new flow_layout);
-	c1->set_layout(std::move(l));
-	c1->set_size(size_int(300, 220));
-	//a3e_control* a3e = f.assign(new a3e_control);
-	for (int i = 0; i < 10; i++)
-	{
-		control* ctrl = c1->assign(new control);
-		ctrl->set_size(size_int(100, 100));
-	}
-	
+	control* e = rw.assign(cnc_3axis_emulator_control::create(gl));
+	cnc_3axis_emulator_control* emu =
+		static_cast<cnc_3axis_emulator_control*>(e);
+	gl.assign(*static_cast<window*>(emu), gl_service::flag::WINDOW, 24, 24);
 	//a3e->set_position(point_int(0, 50));
 	//a3e->set_size(size_int(100, 100));
 	//a3e->show();
-	f.show();
+
+	rw.show();
+	emu->show();
 
 	//size_int s1 = f.get_size(),
 	//	s2 = a3e->get_size();
