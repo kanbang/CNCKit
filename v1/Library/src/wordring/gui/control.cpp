@@ -29,6 +29,8 @@
 
 #include <wordring/gui/window.h>
 
+//#include <wordring/gui/message.h>
+
 #include <cassert>
 #include <string>
 

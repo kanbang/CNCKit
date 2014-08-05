@@ -24,12 +24,16 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/control.h>
-#include <wordring/gui/window_container_tmpl.h>
+#include <wordring/gui/window_control_tmpl.h>
 
 #include <wordring/opengl/gl_service.h>
 
 #include <atomic>
 #include <cassert>
+
+#include <GL/glew.h>
+#include <gl/GL.h>
+#include <GL/GLU.h>
 
 namespace wordring
 {
