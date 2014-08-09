@@ -25,8 +25,9 @@
 
 #include <wordring/gui/control.h>
 #include <wordring/gui/window_control_tmpl.h>
+#include <wordring/gui/window_container_tmpl.h>
 
-#include <wordring/opengl/gl_service.h>
+#include <wordring/opengl/gl_context.h>
 
 #include <atomic>
 #include <cassert>
@@ -40,21 +41,22 @@ namespace wordring
 namespace gui
 {
 
-class cnc_3axis_emulator_control : public window_control_tmpl <control, window>
+class cnc_3axis_emulator_control
+	: public window_container_tmpl <container, window>
 {
 public:
-	typedef wordring::opengl::gl_service gl_service;
+	typedef wordring::opengl::gl_context gl_context;
 
 protected:
-	gl_service &m_service;
+	gl_context &m_service;
 
 protected:
-	cnc_3axis_emulator_control(gl_service &sv);
+	cnc_3axis_emulator_control(rect_int rc, gl_context &sv);
 
 public:
 	virtual ~cnc_3axis_emulator_control();
 
-	static control::store create(gl_service &sv);
+	static control::store create(rect_int rc, gl_context &sv);
 
 	// 情報 -------------------------------------------------------------------
 

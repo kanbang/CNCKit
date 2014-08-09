@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/gui/native/win32/win32_canvas.cpp
+ * @file    wordring/gui/detail/win32/win32_canvas.cpp
  *
  * @brief   
  *

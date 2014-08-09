@@ -39,7 +39,7 @@ using namespace wordring::gui;
 
 // 構築・破棄 -----------------------------------------------------------------
 
-control::control() : m_parent(nullptr)
+control::control(rect_int rc) : m_parent(nullptr), m_pt(rc.pt), m_size(rc.size)
 {
 }
 
@@ -47,16 +47,47 @@ control::~control()
 {
 }
 
-control::store control::create()
+control::store control::create(rect_int rc)
 {
-	return store(new control);
+	return store(new control(rc));
 }
 
-void control::create(container* parent, rect_int rc)
-{
-	set_parent(parent);
+// 親子関係 -------------------------------------------------------------------
 
-	do_create();
+void control::attach_parent(container *parent)
+{
+	assert(parent);
+
+	m_parent = parent;
+	attach_window();
+}
+
+void  control::detach_parent()
+{
+	assert(m_parent);
+
+	find_service()->remove(this);
+	detach_window();
+
+	m_parent = nullptr;
+}
+
+void control::attach_window()
+{
+}
+
+void control::detach_window()
+{
+}
+
+container* control::get_parent()
+{
+	return m_parent;
+}
+
+container const* control::get_parent() const
+{
+	return m_parent;
 }
 
 // 情報 -----------------------------------------------------------------------
@@ -76,19 +107,21 @@ bool control::is_container() const
 	return false;
 }
 
-window& control::find_window()
+window* control::find_window()
 {
-	assert(get_parent());
+	assert(m_parent);
 	return get_parent()->find_window();
 }
 
 container* control::find_container()
 {
+	assert(m_parent);
 	return get_parent();
 }
 
 root_container* control::find_root_container()
 {
+	assert(m_parent);
 	return get_parent()->find_root_container();
 }
 
@@ -97,13 +130,13 @@ void control::set_root_window(root_window &rw)
 	assert(false); // ルート・ウィンドウ直下にこのコントロールを配置できません
 }
 
-root_window& control::find_root_window()
+root_window* control::find_root_window()
 {
 	assert(get_parent());
 	return get_parent()->find_root_window();
 }
 
-window_service& control::find_service()
+window_service* control::find_service()
 {
 	assert(get_parent());
 	return get_parent()->find_service();
@@ -125,23 +158,6 @@ void control::hide()
 
 }
 
-// 親子関係 -------------------------------------------------------------------
-
-void control::set_parent(container *parent)
-{
-	//assert(parent != nullptr);
-	m_parent = parent;
-}
-
-container* control::get_parent()
-{
-	return m_parent;
-}
-
-container const* control::get_parent() const
-{
-	return m_parent;
-}
 /*
 bool control::is_ancestor(container const *c) const
 {
@@ -158,20 +174,20 @@ bool control::is_ancestor(container const *c) const
 
 void control::repaint()
 {
-	window &w = find_window();
+	window *w = find_window();
 
 	point_int pt = query_position_from_window();
 
-	w.get_native()->repaint_window(rect_int(pt, get_size()));
+	w->get_native()->repaint_window(rect_int(pt, get_size()));
 }
 
 void control::repaint(rect_int rc)
 {
-	window &w = find_window();
+	window *w = find_window();
 
 	point_int pt = query_position_from_window();
 
-	w.get_native()->repaint_window(rect_int(pt, rc.size));
+	w->get_native()->repaint_window(rect_int(pt, rc.size));
 }
 
 void control::request_repaint(rect_int rc)
@@ -261,6 +277,13 @@ rect_int control::query_rect_from_window() const
 	return rc1 & rc2; // 重なる長方形
 }
 
+// タイマー ---------------------------------------------------------------
+
+void control::set_timer(int32_t ms)
+{
+	find_service();
+}
+
 // ライブラリ定義のメッセージ・ハンドラ ---------------------------------------
 
 void control::do_message_internal(message &m)
@@ -293,6 +316,11 @@ void control::do_mouse_out(point_int pt)
 
 void control::do_create()
 {
+}
+
+void control::do_create_internal()
+{
+	do_create();
 }
 
 void control::do_destroy()
@@ -335,4 +363,41 @@ void control::do_size(size_int size)
 {
 }
 
+// test_control ---------------------------------------------------------------
 
+test_control::test_control(rect_int rc) : control(rc)
+{
+
+}
+
+test_control::~test_control()
+{
+
+}
+
+control::store test_control::create(rect_int rc)
+{
+	return control::store(new test_control(rc));
+}
+
+void test_control::do_paint(canvas &cv)
+{
+	size_int size = get_size();
+	rect_int rc(point_int(0, 0), size_int(size.cx - 1, size.cy - 1));
+
+	rgb_color rgb(0x3F, 0x3F, 0x3F);
+
+	int32_t w = 3;
+
+	cv.fill_rect(rc, rgb_color(0xA0, 0xA0, 0xA0));
+
+	cv.draw_line(rc.top_left(), rc.top_right(), w, rgb);
+	cv.draw_line(rc.bottom_left(), rc.bottom_right(), w, rgb);
+	cv.draw_line(rc.top_left(), rc.bottom_left(), w, rgb);
+	cv.draw_line(rc.top_right(), rc.bottom_right(), w, rgb);
+	cv.draw_line(rc.top_left(), rc.bottom_right(), w, rgb);
+	cv.draw_line(rc.top_right(), rc.bottom_left(), w, rgb);
+
+	cv.draw_string(
+		get_control_name(), point_int(0, 0), rgb, nullptr);
+}

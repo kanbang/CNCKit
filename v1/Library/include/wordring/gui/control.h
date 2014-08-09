@@ -26,7 +26,10 @@
 #include <wordring/geometry/shape.h>
 #include <wordring/gui/canvas.h>
 
+#include <wordring/gui/message.h>
+
 #include <cstdint>
+#include <memory>
 #include <functional>
 
 namespace wordring
@@ -39,7 +42,6 @@ class window;         // 前方宣言
 class root_window;    // 前方宣言
 class container;      // 前方宣言
 class root_container; // 前方宣言
-struct message;       // 前方宣言
 
 /**
  * @brief   GUIコントロール基本クラス
@@ -61,7 +63,7 @@ protected:
 	// 構築・破棄 -------------------------------------------------------------
 protected:
 	/// コントロールを作成します
-	control();
+	explicit control(rect_int rc);
 
 public:
 	/// コントロールを破棄します
@@ -71,13 +73,43 @@ public:
 	 * @brief   コントロールを作成します
 	 *
 	 * @details 
-	 *          コントロールのメモリー管理を行うため、オブジェクトの生成は必ず
+	 *          オブジェクトのメモリー管理を行うため、オブジェクトの生成は必ず
 	 *          この関数を使います。
 	 */
-	static store create();
+	static store create(rect_int rc);
 
-	/// ウィンドウ作成、初期描画等のタイミングに使います
-	virtual void create(container *parent, rect_int rc);
+	// 親子関係 ---------------------------------------------------------------
+
+	/**
+	 * @brief   親コンテナを取り付けます
+	 *
+	 * @details 
+	 *          親コンテナから呼び出されます。
+	 */
+	virtual void attach_parent(container *parent);
+
+	/// 親コンテナを取り外します
+	virtual void detach_parent();
+
+	virtual void attach_window();
+
+	virtual void detach_window();
+
+	/**
+	 * @brief   親コンテナを取得します
+	 *
+	 * @details
+	 *          最上位のコンテナは親を持たないため、nullptrを返します。
+	 */
+	virtual container* get_parent();
+
+	/**
+	 * @brief   親コンテナを取得します
+	 *
+	 * @details
+	 *          最上位のコンテナは親を持たないため、nullptrを返します。
+	 */
+	virtual container const* get_parent() const;
 
 	// 情報 -------------------------------------------------------------------
 
@@ -97,7 +129,7 @@ public:
 	 *          コントロール自身がウィンドウの場合は、このメンバをオーバーライド
 	 *          してください。
 	 */
-	virtual window& find_window();
+	virtual window* find_window();
 
 	/**
 	 * @brief   一番近いコンテナを返します
@@ -126,14 +158,14 @@ public:
 	 * @details 
 	 *          ルート・ウィンドウはデスクトップ直下のウィンドウです。
 	 */
-	virtual root_window& find_root_window();
+	virtual root_window* find_root_window();
 
 	/**
 	 * @brief   スレッドのウィンドウ・サービスを検索します
 	 *
 	 * @return  ウィンドウ・サービス
 	 */
-	virtual window_service& find_service();
+	virtual window_service* find_service();
 
 	// 表示 -------------------------------------------------------------------
 
@@ -146,28 +178,6 @@ public:
 	/// コントロールを非表示にします
 	virtual void hide();
 
-	// 親子関係 ---------------------------------------------------------------
-protected:
-	/// 親コンテナを設定します
-	virtual void set_parent(container *parent);
-
-public:
-	/**
-	 * @brief   親コンテナを取得します
-	 *
-	 * @details 
-	 *          最上位のコンテナは親を持たないため、nullptrを返します。
-	 */
-	virtual container* get_parent();
-
-	/**
-	 * @brief   親コンテナを取得します
-	 *
-	 * @details
-	 *          最上位のコンテナは親を持たないため、nullptrを返します。
-	 */
-	virtual container const* get_parent() const;
-	
 	// 描画 -------------------------------------------------------------------
 
 	/// コントロール全体を再描画します
@@ -221,7 +231,7 @@ public:
 	/// 推奨される大きさを取得する
 	virtual size_int get_preferred_size() const;
 	
-	/// 最少の大きさを取得くする
+	/// 最少の大きさを取得する
 	virtual size_int get_min_size() const;
 	
 	/// 最大の大きさを取得する
@@ -235,6 +245,11 @@ public:
 
 	/// ウィンドウからの相対長方形を取得する
 	virtual rect_int query_rect_from_window() const;
+
+	// タイマー ---------------------------------------------------------------
+
+	/// msミリ秒後に発火するタイマーを設定します
+	virtual void set_timer(int32_t ms);
 
 	// ライブラリ定義のメッセージ・ハンドラ -----------------------------------
 
@@ -276,6 +291,8 @@ public:
 
 	virtual void do_create();
 
+	virtual void do_create_internal();
+
 	virtual void do_destroy();
 
 	/// 再描画要求で呼び出されます
@@ -287,7 +304,18 @@ public:
 	virtual void do_size(size_int size);
 };
 
+class test_control : public control
+{
+public:
+	test_control(rect_int rc);
 
+	virtual ~test_control();
+
+	static control::store create(rect_int rc);
+
+	/// 再描画要求で呼び出されます
+	virtual void do_paint(canvas& cv);
+};
 
 } // namespace gui
 } // namespace wordring

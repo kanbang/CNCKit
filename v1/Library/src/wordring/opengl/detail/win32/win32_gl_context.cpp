@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/opengl/detail/win32/win32_gl_service.cpp
+ * @file    wordring/opengl/detail/win32/win32_gl_context.cpp
  *
  * @brief   gl_contextの環境依存実装ファイル
  *
@@ -31,9 +31,9 @@
 #include <wordring/gui/window.h>
 #include <wordring/gui/detail/win32/win32_window.h>
 
-#include <wordring/opengl/detail/win32/win32_gl_service.h>
+#include <wordring/opengl/detail/win32/win32_gl_context.h>
 
-#include <wordring/opengl/gl_service.h>
+#include <wordring/opengl/gl_context.h>
 
 #include <wordring/exception.h>
 
@@ -49,46 +49,46 @@ using namespace wordring::opengl::detail;
 
 // 構築・破棄 -----------------------------------------------------------------
 
-native_gl_service_impl::native_gl_service_impl() : m_hglrc(nullptr)
+native_gl_context_impl::native_gl_context_impl() : m_hglrc(nullptr)
 {
 
 }
 
-native_gl_service_impl::native_gl_service_impl(
+native_gl_context_impl::native_gl_context_impl(
 	wordring::gui::window& w, int flg, int depth, int bpp)
 	: m_hglrc(nullptr)
 {
 	create(w, flg, depth, bpp);
 }
 
-native_gl_service_impl::native_gl_service_impl(
+native_gl_context_impl::native_gl_context_impl(
 	wordring::gui::canvas& cv, int flg, int depth, int bpp) : m_hglrc(nullptr)
 {
 	create(cv, flg, depth, bpp);
 }
 
-native_gl_service_impl::~native_gl_service_impl()
+native_gl_context_impl::~native_gl_context_impl()
 {
 	if (m_hglrc) { ::wglDeleteContext(m_hglrc); }
 }
 
 // OpenGLコンテキストの作成 ---------------------------------------------------
 
-void native_gl_service_impl::assign(
+void native_gl_context_impl::assign(
 	wordring::gui::window& w, int flg, int depth, int bpp)
 {
 	assert(m_hglrc == nullptr);
 	create(w, flg, depth, bpp);
 }
 
-void native_gl_service_impl::assign(
+void native_gl_context_impl::assign(
 	wordring::gui::canvas& cv, int flg, int depth, int bpp)
 {
 	assert(m_hglrc == nullptr);
 	create(cv, flg, depth, bpp);
 }
 
-void native_gl_service_impl::create(
+void native_gl_context_impl::create(
 	wordring::gui::window& w, int flg, int depth, int bpp)
 {
 	using namespace wordring::gui::detail;
@@ -108,7 +108,7 @@ void native_gl_service_impl::create(
 	::ReleaseDC(hwnd, hdc) == 1);
 }
 
-void native_gl_service_impl::create(
+void native_gl_context_impl::create(
 	wordring::gui::canvas& cv, int flg, int depth, int bpp)
 {
 	using namespace wordring::gui::detail;
@@ -121,7 +121,7 @@ void native_gl_service_impl::create(
 	create(hdc, flg, depth, bpp);
 }
 
-void native_gl_service_impl::create(HDC hdc, int flg, int depth, int bpp)
+void native_gl_context_impl::create(HDC hdc, int flg, int depth, int bpp)
 {
 	using namespace wordring::gui::detail;
 
@@ -134,8 +134,8 @@ void native_gl_service_impl::create(HDC hdc, int flg, int depth, int bpp)
 	pfd.cDepthBits = depth;
 	pfd.iLayerType = PFD_MAIN_PLANE;
 
-	if (flg == gl_service::flag::WINDOW) { pfd.dwFlags |= PFD_DRAW_TO_WINDOW; }
-	if (flg == gl_service::flag::MEMORY) { pfd.dwFlags |= PFD_DRAW_TO_BITMAP; }
+	if (flg == gl_context::flag::WINDOW) { pfd.dwFlags |= PFD_DRAW_TO_WINDOW; }
+	if (flg == gl_context::flag::MEMORY) { pfd.dwFlags |= PFD_DRAW_TO_BITMAP; }
 
 	int npf = ::ChoosePixelFormat(hdc, &pfd);
 	wordring::check_assertion(npf != 0);
@@ -149,7 +149,7 @@ void native_gl_service_impl::create(HDC hdc, int flg, int depth, int bpp)
 
 // コンテキストのカレント化・非カレント化 -------------------------------------
 
-void native_gl_service_impl::make_current(wordring::gui::canvas& cv)
+void native_gl_context_impl::make_current(wordring::gui::canvas& cv)
 {
 	using namespace wordring::gui::detail;
 
@@ -161,19 +161,19 @@ void native_gl_service_impl::make_current(wordring::gui::canvas& cv)
 	make_current(hdc);
 }
 
-void native_gl_service_impl::make_current(HDC hdc)
+void native_gl_context_impl::make_current(HDC hdc)
 {
 		wordring::check_assertion(
 	::wglMakeCurrent(hdc, m_hglrc) != FALSE);
 }
 
-void native_gl_service_impl::unmake_current()
+void native_gl_context_impl::unmake_current()
 {
 	wordring::check_assertion(
 		::wglMakeCurrent(NULL, NULL) != FALSE);
 }
 
-void native_gl_service_impl::unmake_current(wordring::gui::canvas& cv)
+void native_gl_context_impl::unmake_current(wordring::gui::canvas& cv)
 {
 	using namespace wordring::gui::detail;
 
@@ -189,7 +189,7 @@ void native_gl_service_impl::unmake_current(wordring::gui::canvas& cv)
 
 // GLEWライブラリ初期化 -------------------------------------------------------
 
-void native_gl_service_impl::initialize(HDC hdc)
+void native_gl_context_impl::initialize(HDC hdc)
 {
 	if (g_initialized == false)
 	{
@@ -207,6 +207,6 @@ void native_gl_service_impl::initialize(HDC hdc)
 
 // 初期化フラグ ---------------------------------------------------------------
 
-std::atomic_bool native_gl_service_impl::g_initialized = { false };
+std::atomic_bool native_gl_context_impl::g_initialized = { false };
 
 #endif // _WIN32

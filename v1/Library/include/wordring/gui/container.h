@@ -53,14 +53,14 @@ protected:
 	// 構築・破棄 -------------------------------------------------------------
 protected:
 	/// コンテナを構築します
-	container();
+	explicit container(rect_int rc);
 
 	/**
 	 * @brief   コンテナを構築します
 	 *
 	 * @param   l レイアウト
 	 */
-	explicit container(layout::store l);
+	container(rect_int rc, layout::store l);
 
 public:
 	/// コンテナを破棄します
@@ -73,18 +73,27 @@ public:
 	 *          コントロールのメモリー管理を行うため、オブジェクトの生成は必ず
 	 *          この関数を使います。
 	 */
-	static control::store create();
+	static control::store create(rect_int rc);
 
 	/**
-	 * @brief   コンテナに子コントロールを割り当てます
+	 * @brief   コントロールを作成します
+	 *
+	 * @details
+	 *          コントロールのメモリー管理を行うため、オブジェクトの生成は必ず
+	 *          この関数を使います。
+	 */
+	static control::store create(rect_int rc, layout::store l);
+
+	/**
+	 * @brief   コンテナの末尾に子コントロールを追加します
 	 *
 	 * @details
 	 *          control::storeはコピーできません。
 	 *          std::move()で所有権を移動させてください。
 	 *
-	 * @return  割り当てたコントロールへのポインタを返します。
+	 * @return  追加したコントロールへのポインタを返します。
 	 */
-	control* assign(control::store s);
+	control* push_back(control::store s);
 
 	/// レイアウトを設定します
 	void set_layout(layout::store l);
@@ -111,6 +120,10 @@ public:
 
 	/// 子コントロールの配列を返します
 	storage_type& get_children();
+
+	virtual void attach_window();
+
+	virtual void detach_window();
 
 //	iterator begin();
 

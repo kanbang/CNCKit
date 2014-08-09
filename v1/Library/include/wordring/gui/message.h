@@ -21,11 +21,13 @@
 #ifndef WORDRING_MESSAGE_H
 #define WORDRING_MESSAGE_H
 
-#include <wordring/gui/control.h>
+#include <cassert>
 
 #include <cstdint>
-#include <cassert>
 #include <memory>
+
+#include <functional>
+#include <chrono>
 
 namespace wordring
 {
@@ -40,33 +42,42 @@ struct message
 
 	enum
 	{
-		layout,
+		layout, timer
 	};
 
 	control *m_control;
 	int32_t m_type;
 
 protected:
-	message(control *c, int32_t type) : m_control(c), m_type(type)
-	{
-		
-	}
+	message(control *c, int32_t type);
 
 public:
-	virtual ~message()
-	{
-	}
+	virtual ~message();
 
-	static store create(control *c, int32_t type)
-	{
-		return std::move(store(new message(c, type)));
-	}
+	static store create(control *c, int32_t type);
 
-	control& get_control()
-	{
-		assert(m_control != nullptr);
-		return *m_control;
-	}
+	bool operator ==(control const* c) const;
+
+	control& get_control();
+};
+
+struct timer_message : message
+{
+	typedef std::function<void()> callback_type;
+
+	callback_type m_callback;
+
+protected:
+	timer_message(control *c);
+
+	timer_message(control *c, callback_type f);
+
+public:
+	virtual ~timer_message();
+
+	static message::store create(control *c);
+
+	static message::store create(control *c, callback_type f);
 };
 
 } // namespace gui

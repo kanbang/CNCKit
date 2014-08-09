@@ -60,8 +60,9 @@ public:
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
-	window_container_tmpl(layout::store l, detail::native_window::store nw)
-		: base_type(std::move(l), std::move(nw))
+	window_container_tmpl(
+		rect_int rc, layout::store l, detail::native_window::store nw)
+			: base_type(rc, std::move(l), std::move(nw))
 	{
 	}
 

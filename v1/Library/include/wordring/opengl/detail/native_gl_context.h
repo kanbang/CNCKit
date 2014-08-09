@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/opengl/detail/native_gl_service.h
+ * @file    wordring/opengl/detail/native_gl_context.h
  *
  * @brief   
  *
@@ -17,8 +17,8 @@
  * @par     ライセンス
  *          PDS
  */
-#ifndef WORDRING_NATIVE_GL_SERVICE_H
-#define WORDRING_NATIVE_GL_SERVICE_H
+#ifndef WORDRING_NATIVE_GL_CONTEXT_H
+#define WORDRING_NATIVE_GL_CONTEXT_H
 
 #include <wordring/gui/canvas.h>
 
@@ -31,11 +31,11 @@ namespace detail
 
 class dummy;
 
-class native_gl_service
+class native_gl_context
 {
 public:
-	native_gl_service() { }
-	virtual ~native_gl_service() { }
+	native_gl_context() { }
+	virtual ~native_gl_context() { }
 
 	virtual void assign(
 		wordring::gui::window& w, int flg, int depth, int bpp) = 0;
@@ -51,4 +51,4 @@ public:
 } // namespace opengl
 } // namespace wordring
 
-#endif // WORDRING_NATIVE_GL_SERVICE_H
+#endif // WORDRING_NATIVE_GL_CONTEXT_H

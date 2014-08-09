@@ -1,5 +1,5 @@
 ﻿/**
-* @file    wordring/gui/detail/win32/win32_control_window.cpp
+* @file    wordring/gui/detail/win32/win32_child_window.cpp
 *
 * @brief   コントロール用のウィンドウ
 *

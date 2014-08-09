@@ -66,35 +66,56 @@ protected:
 	 * @param   l レイアウト
 	 * @param   nw ネイティブ・ウィンドウ
 	 */
-	window_control_tmpl(layout::store l, detail::native_window::store nw)
-		: control_type(std::move(l)), window_type(std::move(nw))
+	window_control_tmpl(
+		rect_int rc, layout::store l, detail::native_window::store nw)
+			: control_type(rc, std::move(l)), window_type(std::move(nw))
 	{
 	}
 
-	explicit window_control_tmpl(detail::native_window::store nw)
-		: window_type(std::move(nw))
+	window_control_tmpl(rect_int rc, detail::native_window::store nw)
+		: control_type(rc), window_type(std::move(nw))
 	{
 	}
 
 public:
 	virtual ~window_control_tmpl()
 	{
+
 	}
 
-	virtual void create(container *parent, rect_int rc)
+	// 親子関係 ---------------------------------------------------------------
+
+	virtual void attach_window()
 	{
-		m_parent = parent;
-		// トップレベル・コンテナの場合、親がnullもあり得る
-		window *pw = nullptr;
-		if (parent)
-		{
-			pw = &(parent->find_window());
-			// 位置の正規化
-			point_int pt = parent->query_position_from_window();
-			rc.pt += pt;
-		}
+		// 自身がウィンドウを持つため、ウィンドウ作成前の検索は必ず失敗する
+		// そのため、親コンテナに検索させて差分を計算する
+
+	// 自分のウィンドウを作成する
+		rect_int rc = get_rect();
+		// 位置の正規化
+		rc.pt += get_parent()->query_position_from_window();
+
 		window_type *pT2 = static_cast<window_type*>(this);
-		pT2->get_native()->create_window(pw, rc); // pwを親としてウィンドウを作成する
+		pT2->get_native()->create_window(get_parent()->find_window(), rc);
+
+	// 子のウィンドウを処理する
+		for (control::store &s : m_children)
+		{
+			s->attach_window();
+		}
+	}
+
+	virtual void detach_window()
+	{
+		// 子のウィンドウを処理する
+		for (control::store &s : m_children)
+		{
+			s->detach_window();
+		}
+
+		// 自分のウィンドウを破棄する
+		window_type *pT2 = static_cast<window_type*>(this);
+		pT2->get_native()->destroy_window();
 	}
 
 	// 情報 -------------------------------------------------------------------
@@ -105,9 +126,15 @@ public:
 		return "window_control_tmpl<T1, T2>";
 	}
 
-	virtual bool is_window() const { return true;  }
+	virtual bool is_window() const
+	{
+		return true;
+	}
 
-	virtual window& find_window() { return *this; }
+	virtual window* find_window()
+	{
+		return this;
+	}
 
 	// 表示 -------------------------------------------------------------------
 
@@ -121,21 +148,6 @@ public:
 	{
 		window_type *pT2 = static_cast<window_type*>(this);
 		pT2->get_native()->hide_window();
-	}
-
-	// 親子関係 ---------------------------------------------------------------
-
-	virtual void set_parent(container *parent)
-	{
-		assert(false);
-		/*
-		window* w = find_window();
-		// 親 *ウィンドウ* からの相対位置
-		point_int pt = query_position_from_window();
-		window_type::create_window(w); // ウィンドウ作成
-		window_type::set_window_position(pt);
-		window_type::set_parent_window(this);
-		*/
 	}
 
 	// 大きさ・位置 -----------------------------------------------------------

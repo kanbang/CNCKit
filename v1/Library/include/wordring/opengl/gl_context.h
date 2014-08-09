@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/opengl/gl_service.h
+ * @file    wordring/opengl/gl_context.h
  *
  * @brief   
  *
@@ -18,13 +18,13 @@
  *          PDS
  */
 
-#ifndef WORDRING_GL_SERVICE_H
-#define WORDRING_GL_SERVICE_H
+#ifndef WORDRING_GL_CONTEXT_H
+#define WORDRING_GL_CONTEXT_H
 
 #include <wordring/gui/canvas.h>
 
 #include <wordring/gui/window.h>
-#include <wordring/opengl/detail/native_gl_service.h>
+#include <wordring/opengl/detail/native_gl_context.h>
 
 #include <memory>
 
@@ -35,7 +35,7 @@ namespace opengl
 
 class dummy;
 
-class gl_service
+class gl_context
 {
 public:
 	enum flag
@@ -44,13 +44,13 @@ public:
 	};
 
 protected:
-	std::unique_ptr<detail::native_gl_service> m_native;
+	std::unique_ptr<detail::native_gl_context> m_native;
 
 public:
-	gl_service();
-	gl_service(wordring::gui::window &w, int flg, int depth, int bpp);
-	gl_service(wordring::gui::canvas &cv, int flg, int depth, int bpp);
-	virtual ~gl_service();
+	gl_context();
+	gl_context(wordring::gui::window &w, int flg, int depth, int bpp);
+	gl_context(wordring::gui::canvas &cv, int flg, int depth, int bpp);
+	virtual ~gl_context();
 
 	/**
 	 * ウィンドウと互換性を持つコンテキストを作成します
@@ -94,4 +94,4 @@ public:
 } // namespace opengl
 } // namespace wordring
 
-#endif // WORDRING_GL_SERVICE_H
+#endif // WORDRING_GL_CONTEXT_H

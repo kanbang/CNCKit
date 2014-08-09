@@ -150,14 +150,17 @@
     <ClInclude Include="include\wordring\opengl\gl_exception.h">
       <Filter>ヘッダー ファイル\opengl</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\opengl\gl_service.h">
+    <ClInclude Include="include\wordring\opengl\gl_container.h">
       <Filter>ヘッダー ファイル\opengl</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\opengl\detail\native_gl_service.h">
+    <ClInclude Include="include\wordring\opengl\detail\win32\win32_gl_context.h">
+      <Filter>ヘッダー ファイル\opengl\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\opengl\detail\native_gl_context.h">
       <Filter>ヘッダー ファイル\opengl\detail</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\opengl\detail\win32\win32_gl_service.h">
-      <Filter>ヘッダー ファイル\opengl\detail\win32</Filter>
+    <ClInclude Include="include\wordring\opengl\gl_context.h">
+      <Filter>ヘッダー ファイル\opengl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,11 +203,14 @@
     <ClCompile Include="src\wordring\gui\detail\win32\win32_window_service.cpp">
       <Filter>ソース ファイル\gui\detail\win32</Filter>
     </ClCompile>
-    <ClCompile Include="src\wordring\opengl\gl_service.cpp">
+    <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_context.cpp">
+      <Filter>ソース ファイル\opengl\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\opengl\gl_context.cpp">
       <Filter>ソース ファイル\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_service.cpp">
-      <Filter>ソース ファイル\opengl\detail\win32</Filter>
+    <ClCompile Include="src\wordring\gui\message.cpp">
+      <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

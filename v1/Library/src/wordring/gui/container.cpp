@@ -34,29 +34,39 @@ using namespace wordring::gui;
 
 // 構築・破棄 -----------------------------------------------------------------
 
-container::container() : m_layout(flow_layout::create())
+container::container(rect_int rc)
+	: m_layout(flow_layout::create())
+	, control(rc)
 {
 }
 
-container::container(layout::store l) : m_layout(std::move(l))
+container::container(rect_int rc, layout::store l)
+	: m_layout(std::move(l))
+	, control(rc)
 {
 }
 
 container::~container()
 {
+	m_children.clear();
 }
 
-control::store container::create()
+control::store container::create(rect_int rc)
 {
-	return control::store(new container);
+	return control::store(new container(rc));
 }
 
-control* container::assign(control::store s)
+control::store container::create(rect_int rc, layout::store l)
+{
+	return control::store(new container(rc, std::move(l)));
+}
+
+control* container::push_back(control::store s)
 {
 	control *c = s.get();
 	m_children.push_back(std::move(s));
 
-	c->create(this, c->get_rect());
+	c->attach_parent(this);
 	return c;
 }
 
@@ -102,6 +112,22 @@ container::storage_type& container::get_children()
 	return m_children;
 }
 
+void container::attach_window()
+{
+	for (control::store &s : m_children)
+	{
+		s->attach_window();
+	}
+}
+
+void container::detach_window()
+{
+	for (control::store &s : m_children)
+	{
+		s->detach_window();
+	}
+}
+
 // 描画 -----------------------------------------------------------------------
 
 // 大きさ・位置 ---------------------------------------------------------------
@@ -122,7 +148,6 @@ void container::perform_layout()
 	request_repaint(get_rect());
 }
 
-/// レイアウトを要求します
 void container::request_layout()
 {
 	find_root_container()->request_layout(this);

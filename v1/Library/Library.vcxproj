@@ -109,9 +109,10 @@
     <ClInclude Include="include\wordring\gui\window_container_tmpl.h" />
     <ClInclude Include="include\wordring\gui\window_control_tmpl.h" />
     <ClInclude Include="include\wordring\gui\window_service.h" />
-    <ClInclude Include="include\wordring\opengl\detail\native_gl_service.h" />
-    <ClInclude Include="include\wordring\opengl\detail\win32\win32_gl_service.h" />
-    <ClInclude Include="include\wordring\opengl\gl_service.h" />
+    <ClInclude Include="include\wordring\opengl\detail\native_gl_context.h" />
+    <ClInclude Include="include\wordring\opengl\detail\win32\win32_gl_context.h" />
+    <ClInclude Include="include\wordring\opengl\gl_container.h" />
+    <ClInclude Include="include\wordring\opengl\gl_context.h" />
     <ClInclude Include="include\wordring\opengl\gl_exception.h" />
     <ClInclude Include="include\wordring\wordring.h" />
   </ItemGroup>
@@ -126,11 +127,12 @@
     <ClCompile Include="src\wordring\gui\detail\win32\win32_window.cpp" />
     <ClCompile Include="src\wordring\gui\detail\win32\win32_window_service.cpp" />
     <ClCompile Include="src\wordring\gui\layout.cpp" />
+    <ClCompile Include="src\wordring\gui\message.cpp" />
     <ClCompile Include="src\wordring\gui\root_window.cpp" />
     <ClCompile Include="src\wordring\gui\window.cpp" />
     <ClCompile Include="src\wordring\gui\window_service.cpp" />
-    <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_service.cpp" />
-    <ClCompile Include="src\wordring\opengl\gl_service.cpp" />
+    <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_context.cpp" />
+    <ClCompile Include="src\wordring\opengl\gl_context.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
