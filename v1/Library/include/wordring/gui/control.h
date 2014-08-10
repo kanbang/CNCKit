@@ -306,9 +306,10 @@ public:
 
 class test_control : public control
 {
-public:
+protected:
 	test_control(rect_int rc);
 
+public:
 	virtual ~test_control();
 
 	static control::store create(rect_int rc);

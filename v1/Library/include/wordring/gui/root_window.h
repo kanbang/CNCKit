@@ -182,6 +182,10 @@ public:
 
 	void detach_parent();
 
+	void set_client(root_container::store s);
+
+	container* get_client();
+
 	/**
 	 * @brief   クライアント領域にコントロールを割り当てます
 	 */

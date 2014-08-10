@@ -178,6 +178,20 @@ public:
 
 };
 
+class test_container : public container
+{
+protected:
+	test_container(rect_int rc);
+
+public:
+	virtual ~test_container();
+
+	static control::store create(rect_int rc);
+
+	/// 再描画要求で呼び出されます
+	virtual void do_paint(canvas& cv);
+};
+
 } // namespace gui
 } // namespace wordring
 

@@ -49,16 +49,18 @@ int main()
 
 	wordring::debug::debug_memory_leak();
 
+	rect_int rc(point_int(0, 0), size_int(640, 480));
+
 	window_service ws;
 	gl_context gl;
 
 
-	rect_int rc(point_int(0, 0), size_int(640, 480));
-	root_window* rw1 = ws.push_back(root_window::create(rc));
+	
+//	root_window* rw1 = ws.push_back(root_window::create(rc));
 
 
-	//gl.assign(rw, gl_context::flag::WINDOW, 24, 24);
-	control* e = rw1->assign(cnc_3axis_emulator_control::create(rect_int(), gl));
+//	gl.assign(rw1, gl_context::flag::WINDOW, 24, 24);
+/*	control* e = rw1->assign(cnc_3axis_emulator_control::create(rect_int(), gl));
 	cnc_3axis_emulator_control* emu =
 		static_cast<cnc_3axis_emulator_control*>(e);
 	gl.assign(*static_cast<window*>(emu), gl_context::flag::WINDOW, 24, 24);
@@ -67,15 +69,18 @@ int main()
 	//a3e->show();
 
 	rw1->show();
-
+	*/
 
 
 	root_window *rw2 = ws.push_back(root_window::create(rc));
-	//rw2->
+
+	container *c2 = static_cast<container*>(
+		rw2->get_client()->push_back(test_container::create(rc)));
+	c2->set_layout(flow_layout::create());
 
 	for (int i = 0; i < 10; i++)
 	{
-		rw2->assign(test_control::create(
+		c2->push_back(test_control::create(
 			rect_int(point_int(0, 0), size_int(100, 100))));
 	}
 

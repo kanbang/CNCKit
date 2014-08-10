@@ -194,3 +194,24 @@ void container::do_paint_internal(canvas& cv)
 	}
 }
 
+// test_container -------------------------------------------------------------
+
+test_container::test_container(rect_int rc) : container(rc)
+{
+
+}
+
+test_container::~test_container()
+{
+
+}
+
+control::store test_container::create(rect_int rc)
+{
+	return control::store(new test_container(rc));
+}
+
+void test_container::do_paint(canvas &cv)
+{
+	cv.fill_rect(get_rect(), rgb_color(0xA0, 0xF0, 0xF0));
+}

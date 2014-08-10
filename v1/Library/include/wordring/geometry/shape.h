@@ -150,7 +150,7 @@ struct rect_int : shape
 		pt1.x = std::max(pt.x, rhs.pt.x);
 		pt1.y = std::max(pt.y, rhs.pt.y);
 		pt2.x = std::min(pt.x + size.cx, rhs.pt.x + rhs.size.cx);
-		pt2.y = std::min(pt.y + size.cy, rhs.pt.y + rhs.size.cx);
+		pt2.y = std::min(pt.y + size.cy, rhs.pt.y + rhs.size.cy);
 
 		int32_t
 			cx = pt2.x - pt1.x,

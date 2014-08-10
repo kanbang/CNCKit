@@ -202,6 +202,18 @@ void root_window::detach_parent()
 	m_service = nullptr;
 }
 
+void root_window::set_client(root_container::store s)
+{
+	m_client->detach_root_window();
+	m_client = std::move(s);
+	m_client->attach_root_window(this);
+}
+
+container* root_window::get_client()
+{
+	return m_client.get();
+}
+
 control* root_window::assign(control::store s)
 {
 	control *c = static_cast<control*>(s.get());
