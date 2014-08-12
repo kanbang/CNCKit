@@ -379,22 +379,24 @@ control::store test_control::create(rect_int rc)
 
 void test_control::do_paint(canvas &cv)
 {
-	size_int size = get_size();
-	rect_int rc(point_int(0, 0), size_int(size.cx - 1, size.cy - 1));
+	rect_int rc = rect_int(point_int(0, 0), get_size());
 
-	rgb_color rgb(0x3F, 0x3F, 0x3F);
+	point_int
+		pt1(rc.left(), rc.top()), pt2(rc.right(), rc.top()),
+		pt3(rc.left(), rc.bottom()), pt4(rc.right(), rc.bottom());
 
-	int32_t w = 3;
+	rgb_color fg(0x3F, 0x3F, 0x3F);
+	rgb_color bg(0xA0, 0x0, 0xA0);
+
+	int32_t w = 1;
 
 	cv.fill_rect(rc, rgb_color(0xA0, 0xA0, 0xA0));
 
-	cv.draw_line(rc.top_left(), rc.top_right(), w, rgb);
-	cv.draw_line(rc.bottom_left(), rc.bottom_right(), w, rgb);
-	cv.draw_line(rc.top_left(), rc.bottom_left(), w, rgb);
-	cv.draw_line(rc.top_right(), rc.bottom_right(), w, rgb);
-	cv.draw_line(rc.top_left(), rc.bottom_right(), w, rgb);
-	cv.draw_line(rc.top_right(), rc.bottom_left(), w, rgb);
+	cv.draw_rect(rc, w, bg);
+
+	cv.draw_line(pt1, pt4, w, bg);
+	cv.draw_line(pt2, pt3, w, bg);
 
 	cv.draw_string(
-		get_control_name(), point_int(0, 0), rgb, nullptr);
+		get_control_name(), point_int(0, 0), fg, nullptr);
 }

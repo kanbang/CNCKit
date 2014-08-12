@@ -247,12 +247,13 @@ root_window* window_service::push_back(root_store s)
 
 	return rw;
 }
-/*
+
 root_window::store window_service::remove(root_window *rw)
 {
-	return std::make_unique<root_window>();
+
+	return root_window::store();
 }
-*/
+
 void window_service::post_message(message::store m)
 {
 	m_message_service.push(std::move(m));

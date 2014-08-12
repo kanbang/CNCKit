@@ -187,7 +187,7 @@ public:
 	/// ルート・ウィンドウを末尾に追加します
 	root_window* push_back(root_store s);
 
-	//root_store remove(root_window* rw);
+	root_store remove(root_window* rw);
 
 	// キュー -----------------------------------------------------------------
 

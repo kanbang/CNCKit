@@ -213,5 +213,6 @@ control::store test_container::create(rect_int rc)
 
 void test_container::do_paint(canvas &cv)
 {
-	cv.fill_rect(get_rect(), rgb_color(0xA0, 0xF0, 0xF0));
+	rect_int rc(point_int(0, 0), get_size());
+	cv.fill_rect(rc, rgb_color(0xA0, 0xF0, 0xF0));
 }

@@ -93,6 +93,26 @@ struct rect_int : shape
 	rect_int() { }
 	rect_int(point_int pt_, size_int size_) : pt(pt_), size(size_) { }
 
+	int32_t top() const
+	{
+		return pt.y;
+	}
+
+	int32_t bottom() const
+	{
+		return pt.y + size.cy - 1;
+	}
+
+	int32_t left() const
+	{
+		return pt.x;
+	}
+
+	int32_t right() const
+	{
+		return pt.x + size.cx - 1;
+	}
+
 	bool operator ==(rect_int const &rhs) const
 	{
 		return pt == rhs.pt && size == rhs.size;
@@ -116,30 +136,6 @@ struct rect_int : shape
 	{
 		return pt.x <= pt_.x && pt_.x <= pt.x + size.cx
 			&& pt.y <= pt_.y && pt_.y <= pt.y + size.cy;
-	}
-
-	/// 左上の点を返します
-	point_int top_left() const
-	{
-		return pt;
-	}
-
-	/// 左下の点を返します
-	point_int bottom_left() const
-	{
-		return point_int(pt.x, pt.y + size.cy);
-	}
-
-	/// 右上の点を返します
-	point_int top_right() const
-	{
-		return point_int(pt.x + size.cx, pt.y);
-	}
-
-	/// 右下の点を返す
-	point_int bottom_right() const
-	{
-		return point_int(pt.x + size.cx, pt.y + size.cy);
 	}
 
 	/// 重なる部分を返します
