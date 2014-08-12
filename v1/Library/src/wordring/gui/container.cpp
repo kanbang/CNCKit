@@ -1,22 +1,22 @@
 ﻿/**
-* @file    wordring/gui/container.cpp
-*
-* @brief   GUIコンテナの実装ファイル
-*
-* @details
-*          フォームなどのGUIコンテナです。
-*
-*
-*
-*
-* @author  Kouichi Minami
-* @date    2014
-*
-* @par     ホーム
-*          https://github.com/wordring/
-* @par     ライセンス
-*          PDS
-*/
+ * @file    wordring/gui/container.cpp
+ *
+ * @brief   GUIコンテナの実装ファイル
+ *
+ * @details
+ *          フォームなどのGUIコンテナです。
+ *
+ *
+ *
+ *
+ * @author  Kouichi Minami
+ * @date    2014
+ *
+ * @par     ホーム
+ *          https://github.com/wordring/
+ * @par     ライセンス
+ *          PDS
+ */
 
 #include <wordring/debug.h>
 
@@ -150,7 +150,7 @@ void container::perform_layout()
 
 void container::request_layout()
 {
-	find_root_container()->request_layout(this);
+	find_service()->request_layout(this);
 }
 
 // マウス・メッセージ ---------------------------------------------------------

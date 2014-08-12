@@ -20,7 +20,7 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/detail/win32/win32_window_service.h>
+#include <wordring/gui/detail/win32/win32_message_service.h>
 
 #include <wordring/gui/detail/win32/win32_window.h>
 #include <wordring/gui/window.h>
@@ -421,7 +421,7 @@ void native_window_impl::onCommand(
 {
 	// nwはコントロール自身、thisはコントロールを載せているウィンドウ
 	native_window_impl* nw = static_cast<native_window_impl*>(
-		win32_window_service_impl::find(hwndCtl));
+		win32_message_service_impl::find(hwndCtl));
 	assert(nw);
 	// nwは自分自身の機能を知っているので適切に処理できる
 	nw->do_command(id, codeNotify);

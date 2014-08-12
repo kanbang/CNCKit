@@ -61,7 +61,7 @@ void root_container::attach_root_window(root_window *parent)
 
 void root_container::detach_root_window()
 {
-	find_service()->remove(this);
+	find_service()->erase_message(this);
 	detach_window();
 }
 
@@ -85,15 +85,6 @@ void root_container::attach_window()
 	{
 		s->attach_window();
 	}
-}
-
-void root_container::remove_layout_requests(container *c)
-{
-	layout_storage_type::iterator
-		first = m_layout_requests.begin(),
-		last = m_layout_requests.end();
-
-	m_layout_requests.erase(std::remove(first, last, c), last);
 }
 
 // 情報 -----------------------------------------------------------------------
@@ -122,37 +113,6 @@ root_window* root_container::find_root_window()
 window_service* root_container::find_service()
 {
 	return m_root_window->get_service();
-}
-
-// レイアウト調停 -------------------------------------------------------------
-
-void root_container::request_layout(container *c)
-{
-	// キューが空の場合、開始位置にいる
-	bool start = (m_layout_requests.empty()) ? true : false;
-
-	// TODO: 子孫が予約されている場合、祖先と挿げ替える機能を実装したほうが良い
-
-	// 祖先のコンテナがレイアウト予約されている場合、子孫は予約する必要がない
-	for (container *c0 : m_layout_requests)
-	{
-		if (c0->is_ancestor_of(c))
-		{
-			return;
-		}
-	}
-	// レイアウトを予約
-	m_layout_requests.push_back(c);
-
-	if (start) // 開始位置にいる場合、レイアウトを開始する
-	{
-		while (!m_layout_requests.empty())
-		{
-			container *c1 = m_layout_requests.front();
-			m_layout_requests.pop_front();
-			c1->perform_layout();
-		}
-	}
 }
 
 // root_window ----------------------------------------------------------------
@@ -184,7 +144,7 @@ root_window::store root_window::create(rect_int rc)
 	return store(new root_window(rc));
 }
 
-void root_window::attach_parent(window_service *ws)
+void root_window::attach_service(window_service *ws)
 {
 	assert(ws);
 
@@ -194,7 +154,7 @@ void root_window::attach_parent(window_service *ws)
 	m_client->attach_root_window(this);
 }
 
-void root_window::detach_parent()
+void root_window::detach_service()
 {
 	assert(m_service);
 

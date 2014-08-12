@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/gui/detail/win32/win32_window_service.h
+ * @file    wordring/gui/detail/win32/win32_message_service.h
  *
  * @brief   ウィンドウ・サービスの環境固有ヘッダー・ファイル
  *
@@ -18,12 +18,12 @@
  *          PDS
  */
 
-#ifndef WORDRING_WIN32_WINDOW_SERVICE_H
-#define WORDRING_WIN32_WINDOW_SERVICE_H
+#ifndef WORDRING_WIN32_MESSAGE_SERVICE_H
+#define WORDRING_WIN32_MESSAGE_SERVICE_H
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/detail/native_window_service.h>
+#include <wordring/gui/detail/native_message_service.h>
 #include <wordring/gui/detail/native_window.h>
 
 #include <Windows.h>
@@ -41,11 +41,11 @@ namespace detail
 {
 
 /**
- * @brief native_window_serviceの実装
+ * @brief native_message_serviceの実装
  * 
  * pimplの実装側です。
  */
-class win32_window_service_impl : public native_window_service
+class win32_message_service_impl : public native_message_service
 {
 private:
 	/// マップ
@@ -53,14 +53,14 @@ private:
 	HANDLE m_events[64];
 
 public:
-	win32_window_service_impl();
-	virtual ~win32_window_service_impl();
+	win32_message_service_impl();
+	virtual ~win32_message_service_impl();
 
 	virtual void run();
 	virtual void quit();
 
 	/**
-	 * @brief   空のメッセージを送信します
+	 * @brief   空のイベントを送信します
 	 *
 	 * @details このメンバは、ライブラリが実装するメッセージキューの処理を開始
 	 *          するタイミングを提供するために用意されています。
@@ -70,16 +70,16 @@ public:
 	 *          キューの二つです。
 	 *
 	 *          ライブラリのメッセージキューへメッセージをポストするタイミング
-	 *          でこのメンバを呼び出すと、ウィンドウ・システムのメッセージ
+	 *          でこのメンバを呼び出すと、システムのイベント
 	 *          キューに空のメッセージが積まれます。
-	 *          ウィンドウ・システムのメッセージキューからメッセージを取り出す
-	 *          ときに空のメッセージがあるとwindow_service::do_tick_message()が
+	 *          システムのイベント・キューからメッセージを取り出す
+	 *          ときに空のメッセージがあるとwindow_service::do_tack()が
 	 *          呼び出され、この中からライブラリのメッセージキューの処理を開始
 	 *          します。
 	 *
 	 *          以上の仕組みによって二つのメッセージキューが同期されます。
 	 */
-	virtual void post_tick_message();
+	virtual void tick();
 
 public:
 	/// ハンドルとウィンドウ・オブジェクトのセットをマップに追加します
@@ -89,7 +89,7 @@ public:
 	static native_window* find(HWND hwnd)
 	{
 		std::map<HWND, native_window*>& map =
-			win32_window_service_impl::tls_window_service->m_map;
+			win32_message_service_impl::tls_window_service->m_map;
 
 		std::map<HWND, native_window*>::iterator it = map.find(hwnd);
 		if (it == map.end()) { return nullptr; }
@@ -101,23 +101,19 @@ public:
 	static void remove(HWND hwnd)
 	{
 		std::map<HWND, native_window*>& map =
-			win32_window_service_impl::tls_window_service->m_map;
+			win32_message_service_impl::tls_window_service->m_map;
 
 		size_t n = map.erase(hwnd);
 		assert(n == 1);
 	}
 
-	static __declspec(thread) win32_window_service_impl* tls_window_service;
+	static __declspec(thread) win32_message_service_impl* tls_window_service;
 };
 
-typedef win32_window_service_impl native_window_service_impl;
-
-
-
-
+typedef win32_message_service_impl native_message_service_impl;
 
 } // namespace detail
 } // namespace gui
 } // namespace wordring
 
-#endif // WORDRING_WIN32_WINDOW_SERVICE_H
+#endif // WORDRING_WIN32_MESSAGE_SERVICE_H

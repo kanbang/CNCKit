@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/gui/detail/win32/win32_window_service.cpp
+ * @file    wordring/gui/detail/win32/win32_message_service.cpp
  *
  * @brief   ウィンドウ・サービスのwin32環境固有実装ファイル
  *
@@ -25,7 +25,7 @@
 #include <wordring/exception.h>
 
 #include <wordring/gui/window_service.h>
-#include <wordring/gui/detail/win32/win32_window_service.h>
+#include <wordring/gui/detail/win32/win32_message_service.h>
 
 #include <Windows.h>
 
@@ -34,16 +34,16 @@
 
 using namespace wordring::gui::detail;
 
-__declspec(thread) win32_window_service_impl*
-	win32_window_service_impl::tls_window_service = nullptr;
+__declspec(thread) win32_message_service_impl*
+	win32_message_service_impl::tls_window_service = nullptr;
 
-win32_window_service_impl::win32_window_service_impl()
+win32_message_service_impl::win32_message_service_impl()
 {
-	win32_window_service_impl::tls_window_service = this;
+	win32_message_service_impl::tls_window_service = this;
 	m_events[0] = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 }
 
-win32_window_service_impl::~win32_window_service_impl()
+win32_message_service_impl::~win32_message_service_impl()
 {
 	::CloseHandle(m_events[0]);
 }
@@ -63,7 +63,7 @@ void win32_window_service_impl::run()
 }
 */
 
-void win32_window_service_impl::run()
+void win32_message_service_impl::run()
 {
 	MSG msg;
 	BOOL result;
@@ -75,7 +75,7 @@ void win32_window_service_impl::run()
 
 		if (result == WAIT_OBJECT_0)
 		{
-			get_public()->do_tick_message();
+			get_public()->do_tack();
 			::ResetEvent(m_events[0]);
 		}
 
@@ -94,12 +94,12 @@ void win32_window_service_impl::run()
 	}
 }
 
-void win32_window_service_impl::quit()
+void win32_message_service_impl::quit()
 {
 	::PostQuitMessage(0); 
 }
 
-void win32_window_service_impl::post_tick_message()
+void win32_message_service_impl::tick()
 {
 	::SetEvent(m_events[0]);
 	/*
@@ -113,9 +113,9 @@ void win32_window_service_impl::post_tick_message()
 	*/
 }
 
-void win32_window_service_impl::assign(HWND hwnd, native_window* pwin)
+void win32_message_service_impl::assign(HWND hwnd, native_window* pwin)
 {
-	win32_window_service_impl::tls_window_service->m_map[hwnd] = pwin;
+	win32_message_service_impl::tls_window_service->m_map[hwnd] = pwin;
 }
 
 

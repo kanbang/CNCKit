@@ -37,7 +37,7 @@ namespace gui
 class root_window; // 前方宣言
 
 /**
- * @brief   最祖先のコンテナです
+ * @brief   ルート・ウィンドウのクライアント領域に使われるコンテナです
  *
  * @details 
  *          デスクトップ直下のウィンドウのクライアント領域に配置されるコンテナ
@@ -53,11 +53,8 @@ public:
 	typedef window_container_tmpl<container, window> base_type;
 	typedef std::unique_ptr<root_container> store;
 
-	typedef std::deque<container*> layout_storage_type;
-
 protected:
 	root_window *m_root_window;
-	layout_storage_type m_layout_requests; ///< レイアウト要求のキュー
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -92,15 +89,6 @@ public:
 	/// 再帰的にウィンドウを取り付けます
 	virtual void attach_window();
 
-	/**
-	 * @brief   キューからcに関連付けられたレイアウト要求を削除します
-	 *
-	 * @details
-	 *          このメンバは、取り外されようとしているコンテナから呼び出され
-	 *          ます。
-	 */
-	virtual void remove_layout_requests(container *c);
-
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
@@ -117,11 +105,6 @@ public:
 
 	/// スレッドのウィンドウ・サービスを検索します
 	virtual window_service* find_service();
-
-	// レイアウト調停 ---------------------------------------------------------
-
-	/// cのレイアウトを要求します
-	virtual void request_layout(container *c);
 };
 
 /**
@@ -178,9 +161,9 @@ public:
 	 */
 	static store create(rect_int rc);
 
-	void attach_parent(window_service *ws);
+	void attach_service(window_service *ws);
 
-	void detach_parent();
+	void detach_service();
 
 	void set_client(root_container::store s);
 

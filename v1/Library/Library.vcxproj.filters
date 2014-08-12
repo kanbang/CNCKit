@@ -129,9 +129,6 @@
     <ClInclude Include="include\wordring\gui\detail\native_window.h">
       <Filter>ヘッダー ファイル\gui\detail</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\gui\detail\native_window_service.h">
-      <Filter>ヘッダー ファイル\gui\detail</Filter>
-    </ClInclude>
     <ClInclude Include="include\wordring\gui\detail\win32\win32_canvas.h">
       <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
     </ClInclude>
@@ -142,9 +139,6 @@
       <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
     </ClInclude>
     <ClInclude Include="include\wordring\gui\detail\win32\win32_window_class.h">
-      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="include\wordring\gui\detail\win32\win32_window_service.h">
       <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
     </ClInclude>
     <ClInclude Include="include\wordring\opengl\gl_exception.h">
@@ -161,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="include\wordring\opengl\gl_context.h">
       <Filter>ヘッダー ファイル\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\native_message_service.h">
+      <Filter>ヘッダー ファイル\gui\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_message_service.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,9 +200,6 @@
     <ClCompile Include="src\wordring\gui\detail\win32\win32_window.cpp">
       <Filter>ソース ファイル\gui\detail\win32</Filter>
     </ClCompile>
-    <ClCompile Include="src\wordring\gui\detail\win32\win32_window_service.cpp">
-      <Filter>ソース ファイル\gui\detail\win32</Filter>
-    </ClCompile>
     <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_context.cpp">
       <Filter>ソース ファイル\opengl\detail\win32</Filter>
     </ClCompile>
@@ -211,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="src\wordring\gui\message.cpp">
       <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_message_service.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

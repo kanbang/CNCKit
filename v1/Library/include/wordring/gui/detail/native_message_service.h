@@ -1,12 +1,12 @@
 ﻿/**
- * @file    wordring/gui/detail/native_window_service.h
+ * @file    wordring/gui/detail/native_message_service.h
  *
- * @brief   ウィンドウ・サービスのpimplインターフェース
+ * @brief   メッセージ・サービスのpimplインターフェース
  *
  * @details
  *          
  *          このファイルには、pimplの公開されるインターフェースを定義します。\n
- *          ウィンドウ・サービスは、一般的なGUIライブラリにおける
+ *          メッセージ・サービスは、一般的なGUIライブラリにおける
  *          メッセージ・ポンプ相当です。
  *
  * @author  Kouichi Minami
@@ -18,32 +18,37 @@
  *          PDS
  */
 
-#ifndef WORDRING_NATIVE_WINDOW_SERVICE_H
-#define WORDRING_NATIVE_WINDOW_SERVICE_H
+#ifndef WORDRING_NATIVE_MESSAGE_SERVICE_H
+#define WORDRING_NATIVE_MESSAGE_SERVICE_H
 
 #include <wordring/debug.h>
+
+#include <memory>
 
 namespace wordring
 {
 namespace gui
 {
 
-class window_service;
+class message_service;
 
 namespace detail
 {
 
-class native_window_service
+class native_message_service
 {
+public:
+	typedef std::unique_ptr<native_message_service> store;
+
 protected:
-	window_service *m_public;
+	message_service *m_public;
 
 public:
-	native_window_service() : m_public(nullptr)
+	native_message_service() : m_public(nullptr)
 	{
 	}
 
-	virtual ~native_window_service()
+	virtual ~native_message_service()
 	{
 	}
 
@@ -52,17 +57,17 @@ public:
 	 *
 	 * @param   ws ウィンドウ・サービス
 	 */
-	void set_public(window_service *ws)
+	void set_public(message_service *ws)
 	{
 		m_public = ws;
 	}
 
-	window_service* get_public()
+	message_service* get_public()
 	{
 		return m_public;
 	}
 
-	virtual void post_tick_message() =0;
+	virtual void tick() = 0;
 
 	virtual void run() = 0;
 	virtual void quit() = 0;
@@ -76,4 +81,4 @@ public:
 } // namespace gui
 } // namespace wordring
 
-#endif // WORDRING_NATIVE_WINDOW_SERVICE_H
+#endif // WORDRING_NATIVE_MESSAGE_SERVICE_H

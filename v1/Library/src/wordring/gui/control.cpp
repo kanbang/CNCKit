@@ -66,7 +66,7 @@ void  control::detach_parent()
 {
 	assert(m_parent);
 
-	find_service()->remove(this);
+	find_service()->erase_message(this);
 	detach_window();
 
 	m_parent = nullptr;
@@ -174,11 +174,7 @@ bool control::is_ancestor(container const *c) const
 
 void control::repaint()
 {
-	window *w = find_window();
-
-	point_int pt = query_position_from_window();
-
-	w->get_native()->repaint_window(rect_int(pt, get_size()));
+	repaint(get_rect());
 }
 
 void control::repaint(rect_int rc)
@@ -186,8 +182,9 @@ void control::repaint(rect_int rc)
 	window *w = find_window();
 
 	point_int pt = query_position_from_window();
+	rc.pt += pt;
 
-	w->get_native()->repaint_window(rect_int(pt, rc.size));
+	w->get_native()->repaint_window(rc);
 }
 
 void control::request_repaint(rect_int rc)

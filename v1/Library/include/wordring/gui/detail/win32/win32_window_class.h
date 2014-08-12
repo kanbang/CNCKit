@@ -24,7 +24,7 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/detail/native_window.h>
-#include <wordring/gui/detail/win32/win32_window_service.h>
+#include <wordring/gui/detail/win32/win32_message_service.h>
 
 #include <Windows.h>
 #include <windowsx.h>
@@ -90,14 +90,14 @@ struct win32_window_class
 			assert(nw);
 			iw = static_cast<window_type*>(nw);
 			iw->m_hwnd = hwnd;
-			win32_window_service_impl::assign(hwnd, nw);
+			win32_message_service_impl::assign(hwnd, nw);
 		}
 
 		LRESULT result = 0;
 		bool handled = false;
 
 		iw = static_cast<window_type*>(
-			win32_window_service_impl::find(hwnd));
+			win32_message_service_impl::find(hwnd));
 		if(iw) // WM_NCCREATE以前は登録されていない
 		{
 			result = iw->WindowProc(hwnd, uMsg, wParam, lParam);
@@ -110,7 +110,7 @@ struct win32_window_class
 
 		if (uMsg == WM_NCDESTROY)
 		{
-			win32_window_service_impl::remove(hwnd);
+			win32_message_service_impl::remove(hwnd);
 			assert(iw); // 登録されていないウィンドウを消すことはできない
 			iw->m_hwnd = nullptr;
 		}

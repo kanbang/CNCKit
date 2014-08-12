@@ -28,7 +28,7 @@
 #include <wordring/gui/root_window.h>
 
 #ifdef _WIN32
-#include <wordring/gui/detail/win32/win32_window_service.h>
+#include <wordring/gui/detail/win32/win32_message_service.h>
 #endif // _WIN32
 
 #ifdef __linux__
@@ -36,7 +36,7 @@
 #endif // __linux__
 
 
-
+#include <memory>
 
 #include <iostream>
 
@@ -76,10 +76,12 @@ void layout_service::push(container *c)
 	}
 }
 
-void layout_service::remove(container *c)
+void layout_service::erase(container *c)
 {
 	m_queue.erase(
-		std::remove_if(m_queue.begin(), m_queue.end(),
+		std::remove_if(
+			m_queue.begin(),
+			m_queue.end(),
 			[=](container *c0)->bool{ return c->is_ancestor_of(c0); }),
 		m_queue.end());
 }
@@ -94,8 +96,7 @@ container* layout_service::pop()
 
 // timer_service --------------------------------------------------------------
 
-timer_service::timer_service(window_service &ws)
-	: m_window_service(ws)
+timer_service::timer_service()
 {
 	timer_service *self = this;
 	m_thread = std::thread([=]{ self->run(); });
@@ -104,11 +105,6 @@ timer_service::timer_service(window_service &ws)
 timer_service::~timer_service()
 {
 
-}
-
-timer_service::store timer_service::create(window_service &ws)
-{
-	return store(new timer_service(ws));
 }
 
 void timer_service::push(message::store m)
@@ -145,25 +141,99 @@ void timer_service::quit()
 	m_thread.join();
 }
 
+// message_service ------------------------------------------------------------
+
+message_service::message_service()
+	: m_native(std::make_unique<detail::native_message_service_impl>())
+	, m_window_service(nullptr)
+{
+	m_native->set_public(this);
+}
+
+message_service::~message_service()
+{
+
+}
+
+detail::native_message_service* message_service::get_native()
+{
+	return m_native.get();
+}
+
+void message_service::set_window_service(window_service *ws)
+{
+	m_window_service = ws;
+}
+
+void message_service::push(message::store s)
+{
+	std::lock_guard<mutex_type> g(m_mutex);
+
+	m_queue.push_back(std::move(s));
+	get_native()->tick();
+}
+
+message::store message_service::pop()
+{
+	std::lock_guard<mutex_type> g(m_mutex);
+
+	message::store s = std::move(m_queue.front());
+	m_queue.pop_front();
+
+	return std::move(s);
+}
+
+void message_service::erase(control *c)
+{
+	std::lock_guard<mutex_type> g(m_mutex);
+
+	iterator
+		first = m_queue.begin(),
+		last = m_queue.end();
+
+	if (c->is_container()) // コンテナは子孫のコントロールも削除する
+	{
+		container *c0 = static_cast<container*>(c);
+		m_queue.erase(std::remove_if(
+			first,
+			last,
+			[=](message::store &s)->bool
+				{ return c0->is_ancestor_of(s->m_control); }), last);
+	}
+	else // コントロールはコントロールのみ削除する
+	{
+		m_queue.erase(std::remove_if(
+			first,
+			last,
+			[=](message::store &s)->bool{ return c == s->m_control; }), last);
+	}
+}
+
+void message_service::run()
+{
+	get_native()->run();
+}
+
+void message_service::quit()
+{
+	std::lock_guard<mutex_type> g(m_mutex);
+	get_native()->quit();
+}
+
+void message_service::do_tack()
+{
+}
+
 // window_service -------------------------------------------------------------
 
 window_service::window_service()
-	: m_native(new wordring::gui::detail::native_window_service_impl)
 {
-	m_native->set_public(this);
-	m_debug_control_cnt = 0;
-
-	m_timer = timer_service::create(*this);
+	m_message_service.set_window_service(this);
 }
 
 window_service::~window_service()
 {
-	m_root_windows.clear();
-}
-
-detail::native_window_service* window_service::get_native()
-{
-	return m_native.get();
+	m_windows.clear();
 }
 
 root_window* window_service::push_back(root_store s)
@@ -171,70 +241,54 @@ root_window* window_service::push_back(root_store s)
 	assert(s);
 
 	root_window *rw = s.get();
-	m_root_windows.push_back(std::move(s));
+	m_windows.push_back(std::move(s));
 
-	rw->attach_parent(this);
+	rw->attach_service(this);
 
 	return rw;
 }
-
-void window_service::push(message::store m)
+/*
+root_window::store window_service::remove(root_window *rw)
 {
-	std::lock_guard<mutex_type> g(m_mutex);
-
-	m_queue.push_back(std::move(m));
-	post_tick_message();
+	return std::make_unique<root_window>();
+}
+*/
+void window_service::post_message(message::store m)
+{
+	m_message_service.push(std::move(m));
 }
 
-message::store window_service::pop()
+void window_service::erase_message(control *c)
 {
-	std::lock_guard<mutex_type> g(m_mutex);
-
-	message::store m = std::move(m_queue.front());
-	m_queue.pop_front();
-
-	return std::move(m);
-}
-
-void window_service::remove(control *c)
-{
-	std::lock_guard<mutex_type> g(m_mutex);
-
-	for (message::store &s : m_queue)
+	if (c->is_container())
 	{
-		if (s->m_control == c) { m_queue; }
+		m_layout_service.erase(static_cast<container*>(c));
 	}
+
+	m_message_service.erase(c);
 }
 
 void window_service::run()
 {
-	get_native()->run();
+	m_message_service.run();
 }
 
 void window_service::quit()
 {
-	m_timer->quit();
-
-	std::lock_guard<mutex_type> g(m_mutex);
-	get_native()->quit();
-}
-
-void window_service::set_timer(control *c, int32_t ms)
-{
-
-}
-
-void window_service::post_tick_message()
-{
-	get_native()->post_tick_message();
-	std::cout << "push" << std::endl;
-}
-
-void window_service::do_tick_message()
-{
-	while (m_queue.size())
+	for (root_window::store &s : m_windows)
 	{
-		message::store m(pop());
-		m->m_control->do_message_internal(*m);
+		s->detach_service();
 	}
+	m_windows.clear();
+	m_message_service.quit();
+}
+
+void window_service::set_timer(control *c, std::chrono::milliseconds ms)
+{
+
+}
+
+void window_service::request_layout(container *c)
+{
+	m_layout_service.push(c);
 }
