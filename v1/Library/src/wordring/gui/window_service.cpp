@@ -37,6 +37,8 @@
 
 
 #include <memory>
+#include <deque>
+#include <algorithm>
 
 #include <iostream>
 
@@ -92,6 +94,93 @@ container* layout_service::pop()
 	m_queue.pop_front();
 
 	return c;
+}
+
+// mouse_service --------------------------------------------------------------
+
+mouse_service::mouse_service()
+{
+
+}
+
+void mouse_service::process_mouse_move(control *c, point_int pt)
+{
+	assert(false);
+	if (c->get_control_name() == "control")
+	{
+		int i = 0;
+	}
+
+	iterator it = std::find(m_queue.begin(), m_queue.end(), c);
+
+	if (it == m_queue.end()) // キューにcが入っていない
+	{
+		m_queue.push_back(c);
+		c->do_mouse_over();
+		return;
+	}
+
+	if (++it == m_queue.end()) { return; } // キューの末尾にcが入っていた
+
+	storage_type q(it, m_queue.end()); // カーソルが出たコントロールをコピー
+	m_queue.erase(it, m_queue.end()); // カーソルが出たコントロールをキューから削除
+
+	reverse_iterator it1 = q.rbegin();
+	while (it1 != q.rend())
+	{
+		if ((*it1)->get_control_name() == "control")
+		{
+			int i = 0;
+		}
+		(*it1++)->do_mouse_out();
+	}
+}
+
+void mouse_service::process_bubble_up(control *c)
+{
+	if (std::find(m_queue.begin(), m_queue.end(), c) == m_queue.end())
+	{
+		m_queue.push_back(c);
+		//c->do_mouse_over();
+	}
+}
+
+void mouse_service::process_bubble_top(control *c)
+{
+	iterator it = std::remove_if(
+		m_queue.begin(),
+		m_queue.end(),
+		[=](control* c0)->bool{ return calc_mouse_out(c0, c); });
+
+	//call_mouse_out(it, m_queue.end());
+
+	m_queue.erase(it, m_queue.end());
+
+}
+
+bool mouse_service::calc_mouse_out(control *c0, control *c) const
+{
+	// 同じコントロール内でptが変わっただけの場合、カーソルは出ていない
+	if (c0 == c) { return false; }
+
+	// カーソルがあるトップ・コントロールcあるいはトップ・コンテナcと別の
+	// コントロールc0は、カーソルが出ている
+	if (!c0->is_container()) { return true; }
+
+	// カーソルのあるコントロールを載せているコンテナは、カーソルが出ていない
+	if (static_cast<container*>(c0)->is_ancestor_of(c)) { return false; }
+
+	// いずれでもない（カーソルのあるコントロールを載せていないコンテナ）場合、
+	// カーソルは出ている
+	return true;
+}
+
+void mouse_service::call_mouse_out(iterator first, iterator last)
+{
+	while (first != last)
+	{
+		(*first++)->do_mouse_out();
+	}
 }
 
 // timer_service --------------------------------------------------------------
@@ -292,4 +381,19 @@ void window_service::set_timer(control *c, std::chrono::milliseconds ms)
 void window_service::request_layout(container *c)
 {
 	m_layout_service.push(c);
+}
+
+void window_service::process_mouse_move(control *c, point_int pt)
+{
+	m_mouse_service.process_mouse_move(c, pt);
+}
+
+void window_service::process_bubble_up(control *c)
+{
+	m_mouse_service.process_bubble_up(c);
+}
+
+void window_service::process_bubble_top(control *c)
+{
+	m_mouse_service.process_bubble_top(c);
 }

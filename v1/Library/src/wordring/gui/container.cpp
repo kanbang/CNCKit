@@ -94,10 +94,11 @@ container* container::find_container()
 
 // 親子関係 -------------------------------------------------------------------
 
-bool container::is_ancestor_of(control *c) const
+bool container::is_ancestor_of(control const *c) const
 {
-	container const *c0 = c->get_parent();
+	assert(c != nullptr);
 
+	container const *c0 = c->get_parent();
 	do
 	{
 		if (c0 == this) { return true; }
@@ -155,24 +156,34 @@ void container::request_layout()
 
 // マウス・メッセージ ---------------------------------------------------------
 
-bool container::do_mouse_move_internal(point_int pt)
+void container::do_mouse_move_internal(point_int pt)
 {
+	window_service *service = find_service();
+
+	//service->process_bubble_up(this);
+
+	pt -= get_position();
+
 	// 最前面からテストするために逆イテレータを使う
-	storage_type::reverse_iterator current = get_children().rbegin();
-	while (current != get_children().rend())
+	storage_type::reverse_iterator
+		current = get_children().rbegin(),
+		last = get_children().rend();
+
+	while (current != last)
 	{
 		if ((*current)->get_rect().including(pt)) // ヒット・テスト
 		{
-			// 子コントロールが処理した場合、処理を終える
-			if ((*current)->do_mouse_move_internal(pt)) { return true; }
+			(*current)->do_mouse_move_internal(pt);
 			break;
 		}
 		++current;
 	}
 
-	// 子コントロールがヒットしない、あるいは処理しなかった場合、自身で処理を
-	// 試し、結果を返す
-	return do_mouse_move(pt);
+	// バブルを上昇させられない場合、このコンテナがトップ
+	//if (current == last) { service->process_bubble_top(this); }
+
+	// ハンドラ呼び出し
+	do_mouse_move(pt);
 }
 
 // キーボード・メッセージ -----------------------------------------------------

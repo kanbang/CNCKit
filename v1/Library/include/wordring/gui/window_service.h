@@ -74,6 +74,30 @@ public:
 	void erase(container *c);
 };
 
+class mouse_service
+{
+public:
+	typedef std::deque<control*> storage_type;
+	typedef storage_type::iterator iterator;
+	typedef storage_type::reverse_iterator reverse_iterator;
+
+private:
+	storage_type m_queue; ///< 現在マウスが載っているコントロール
+
+public:
+	mouse_service();
+
+	void process_bubble_up(control *c);
+
+	void process_bubble_top(control *c);
+
+	bool calc_mouse_out(control *c0, control *c) const;
+
+	void call_mouse_out(iterator first, iterator last);
+
+	void process_mouse_move(control *c, point_int pt);
+};
+
 class timer_service
 {
 public:
@@ -175,6 +199,7 @@ private:
 	message_service m_message_service; ///< メッセージ・キュー
 	//timer_service m_timer_service;
 	layout_service m_layout_service;
+	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
 
 public:
 	window_service();
@@ -214,6 +239,15 @@ public:
 
 	/// レイアウト要求を追加します
 	void request_layout(container *c);
+
+	// マウス -----------------------------------------------------------------
+
+	/// マウス・カーソルの出入りを処理します
+	void process_mouse_move(control *c, point_int pt);
+
+	void process_bubble_up(control *c);
+
+	void process_bubble_top(control *c);
 };
 
 

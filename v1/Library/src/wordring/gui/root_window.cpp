@@ -94,11 +94,6 @@ char const* root_container::get_control_name() const
 	return "root_container";
 }
 
-root_container* root_container::find_root_container()
-{
-	return this;
-}
-
 void root_container::set_root_window(root_window *rw)
 {
 	m_root_window = rw;

@@ -139,11 +139,6 @@ public:
 	virtual container* find_container();
 
 	/**
-	 * @brief   ルート・コンテナを検索します
-	 */
-	virtual root_container* find_root_container();
-
-	/**
 	 * @brief   ルート・ウィンドウを設定します
 	 *
 	 * @details
@@ -215,8 +210,8 @@ public:
 	 *          
 	 *          長方形の変更によってdo_size()メッセージ・ハンドラが引き起こされ
 	 *          その中から更に長方形の変更が引き起こされる場合があります。
-	 *          無駄な変更を避けるため、レイアウトの実施はルート・コンテナに
-	 *          委譲します。
+	 *          無駄な変更を避けるため、レイアウトの実施はウィンドウ・サービス
+	 *          に委譲します。
 	 *          委譲は親コンテナのrequest_layout()呼び出しによって適切に
 	 *          取り扱われます。
 	 *
@@ -237,14 +232,14 @@ public:
 	/// 最大の大きさを取得する
 	virtual size_int get_max_size() const;
 
-	/// フォームからの相対位置を取得する
-	virtual point_int query_position_from_form() const;
-
 	/// ウィンドウからの相対位置を取得する
-	virtual point_int query_position_from_window() const;
-
+	virtual point_int query_offset_from_window() const;
+	
 	/// ウィンドウからの相対長方形を取得する
 	virtual rect_int query_rect_from_window() const;
+
+	/// cからコントロールまでのオフセットを取得する
+	point_int query_offset_from(container *c) const;
 
 	// タイマー ---------------------------------------------------------------
 
@@ -268,7 +263,7 @@ public:
 	 *
 	 * @return  メッセージを処理した場合trueを返します。
 	 */
-	virtual bool do_mouse_move(point_int pt);
+	virtual void do_mouse_move(point_int pt);
 
 	/*
 	 * @brief   内部用: マウスの移動で呼び出されます
@@ -277,13 +272,14 @@ public:
 	 *          containerはこのメンバを実装しています。
 	 *          その中で、メッセージの配送を処理しています。
 	 *
-	 * @return  do_mouse_move()の戻り値をそのまま返します。
+	 * @return  イベントバブルのトップに到達した場合、trueを返します。
+	 *          オブジェクトがcontrolの場合は常にtrueを返します。
 	 */
-	virtual bool do_mouse_move_internal(point_int pt);
+	virtual void do_mouse_move_internal(point_int pt);
 
-	virtual void do_mouse_over(point_int pt);
+	virtual void do_mouse_over();
 
-	virtual void do_mouse_out(point_int pt);
+	virtual void do_mouse_out();
 
 	// キーボード・メッセージ -------------------------------------------------
 
@@ -307,12 +303,22 @@ public:
 class test_control : public control
 {
 protected:
-	test_control(rect_int rc);
+	rgb_color m_fg_color, m_bg_color;
+	int32_t m_id;
+
+protected:
+	test_control(rect_int rc, int32_t id);
 
 public:
 	virtual ~test_control();
 
-	static control::store create(rect_int rc);
+	static control::store create(rect_int rc, int32_t id);
+
+	virtual void do_mouse_move_internal(point_int pt);
+
+	virtual void do_mouse_over();
+
+	virtual void do_mouse_out();
 
 	/// 再描画要求で呼び出されます
 	virtual void do_paint(canvas& cv);

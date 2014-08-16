@@ -94,9 +94,6 @@ public:
 	/// コントロール名を返します
 	virtual char const* get_control_name() const;
 
-	/// ルート・コンテナを検索します
-	virtual root_container* find_root_container();
-
 	/// ルート・ウィンドウを設定します
 	virtual void set_root_window(root_window *rw);
 

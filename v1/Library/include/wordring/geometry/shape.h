@@ -118,6 +118,12 @@ struct rect_int : shape
 		return pt == rhs.pt && size == rhs.size;
 	}
 
+	void operator +=(point_int pt_)
+	{
+		pt.x += pt_.x;
+		pt.y += pt_.y;
+	}
+
 	rect_int operator +(rect_int const& rhs) const
 	{
 		int32_t x1, y1, x2, y2;
@@ -134,23 +140,29 @@ struct rect_int : shape
 
 	bool including(point_int pt_)
 	{
-		return pt.x <= pt_.x && pt_.x <= pt.x + size.cx
-			&& pt.y <= pt_.y && pt_.y <= pt.y + size.cy;
+		return left() <= pt_.x && pt_.x <= right()
+			&& top() <= pt_.y && pt_.y <= bottom();
 	}
 
 	/// 重なる部分を返します
 	rect_int intersects(rect_int rhs) const
 	{
 		point_int pt1, pt2;
-
+		/*
 		pt1.x = std::max(pt.x, rhs.pt.x);
 		pt1.y = std::max(pt.y, rhs.pt.y);
 		pt2.x = std::min(pt.x + size.cx, rhs.pt.x + rhs.size.cx);
 		pt2.y = std::min(pt.y + size.cy, rhs.pt.y + rhs.size.cy);
+		*/
+
+		pt1.x = std::max(left(), rhs.left());
+		pt1.y = std::max(top(), rhs.top());
+		pt2.x = std::min(right(), rhs.right());
+		pt2.y = std::min(bottom(), rhs.bottom());
 
 		int32_t
-			cx = pt2.x - pt1.x,
-			cy = pt2.y - pt1.y;
+			cx = pt2.x - pt1.x + 1,
+			cy = pt2.y - pt1.y + 1;
 
 		return rect_int(
 			pt1, (0 < cx && 0 < cy) ? size_int(cx, cy) : size_int());

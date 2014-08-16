@@ -81,7 +81,7 @@ int main()
 	for (int i = 0; i < 10; i++)
 	{
 		c2->push_back(test_control::create(
-			rect_int(point_int(0, 0), size_int(100, 100))));
+			rect_int(point_int(0, 0), size_int(200, 100)), i));
 	}
 
 	rw2->show();

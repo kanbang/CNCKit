@@ -116,7 +116,7 @@ public:
 	// 親子関係 ---------------------------------------------------------------
 
 	/// コンテナがcの先祖であるか調べます
-	bool is_ancestor_of(control *c) const;
+	bool is_ancestor_of(control const *c) const;
 
 	/// 子コントロールの配列を返します
 	storage_type& get_children();
@@ -156,7 +156,7 @@ public:
 	 *
 	 * @return  メッセージを処理した場合trueを返します。
 	 */
-	virtual bool do_mouse_move(point_int pt) { return false; }
+	virtual void do_mouse_move(point_int pt) { return; }
 
 	/*
 	 * @brief   内部用: マウスの移動で呼び出されます
@@ -165,9 +165,9 @@ public:
 	 *          containerはこのメンバを実装しています。
 	 *          その中で、メッセージの配送を処理しています。
 	 *
-	 * @return  do_mouse_move()の戻り値をそのまま返します。
+	 * @return  イベントバブルのトップに到達した場合、trueを返します。
 	 */
-	virtual bool do_mouse_move_internal(point_int pt);
+	virtual void do_mouse_move_internal(point_int pt);
 
 	// キーボード・メッセージ -------------------------------------------------
 
@@ -180,6 +180,9 @@ public:
 
 class test_container : public container
 {
+protected:
+	rgb_color m_fg_color, m_bg_color;
+
 protected:
 	test_container(rect_int rc);
 

@@ -93,7 +93,7 @@ public:
 	// 自分のウィンドウを作成する
 		rect_int rc = get_rect();
 		// 位置の正規化
-		rc.pt += get_parent()->query_position_from_window();
+		rc.pt += get_parent()->query_offset_from_window();
 
 		window_type *pT2 = static_cast<window_type*>(this);
 		pT2->get_native()->create_window(get_parent()->find_window(), rc);
@@ -204,7 +204,7 @@ public:
 
 		container *parent = pT1->get_parent(); // 親がデスクトップの場合、nullptr
 
-		if (parent) { rc.pt += parent->query_position_from_window(); }
+		if (parent) { rc.pt += parent->query_offset_from_window(); }
 
 		window_type *pT2 = static_cast<window_type*>(this);
 		pT2->get_native()->set_window_rect(rc);
@@ -222,7 +222,7 @@ public:
 	}
 */
 	/// ウィンドウからの相対位置を取得する
-	virtual point_int query_position_from_window() const
+	virtual point_int query_offset_from_window() const
 	{
 		return point_int(0, 0);
 	}
