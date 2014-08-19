@@ -24,7 +24,7 @@
 
 #include <wordring/exception.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
 
 #include <wordring/gui/window.h>
 #include <wordring/gui/detail/win32/win32_child_window.h>

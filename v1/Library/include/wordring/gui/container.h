@@ -115,14 +115,35 @@ public:
 
 	// 親子関係 ---------------------------------------------------------------
 
-	/// コンテナがcの先祖であるか調べます
+	/**
+	 * @brief   コンテナがcの先祖であるか調べます
+	 *
+	 * @return  コンテナがcの先祖である場合、trueを返します。
+	 *          コンテナがcの先祖でない場合、falseを返します。
+	 *          cがthisである場合、falseを返します。
+	 */
 	bool is_ancestor_of(control const *c) const;
 
 	/// 子コントロールの配列を返します
 	storage_type& get_children();
 
+	/**
+	 * @brief   [内部用] コントロールにウィンドウを取り付けます
+	 *
+	 * @details
+	 *          親に追加される時、attach_parent()から呼び出されます。
+	 *          再帰的に子へ伝搬しウィンドウを取り付けていきます。
+	 *          この動作により、
+	 */
 	virtual void attach_window();
 
+	/**
+	 * @brief   [内部用] コントロールからウィンドウを取り外します
+	 *
+	 * @details
+	 *          親から取り外される時、detach_parent()から呼び出されます。
+	 *          再帰的に子へ伝搬しウィンドウを取り外していきます。
+	 */
 	virtual void detach_window();
 
 //	iterator begin();
@@ -139,35 +160,21 @@ public:
 
 	/// 子コントロールの再配置を行います
 	virtual void perform_layout();
-	
-	/// レイアウトを要求します
-	void request_layout();
-
 
 	// マウス・メッセージ -----------------------------------------------------
 
-	/*
-	 * @brief   マウスの移動で呼び出されます
-	 *
-	 * @details
-	 *          マウスの移動に反応するには、このメンバをオーバーライドします。
-	 *          戻り値でfalseを返すと、親コンテナのdo_mouse_move()に権利が
-	 *          移ります。
-	 *
-	 * @return  メッセージを処理した場合trueを返します。
-	 */
-	virtual void do_mouse_move(point_int pt) { return; }
+	virtual bool do_mouse_down_internal(mouse &m);
 
 	/*
-	 * @brief   内部用: マウスの移動で呼び出されます
+	 * @brief   [内部用] マウスの移動で呼び出されます
 	 *
 	 * @details
 	 *          containerはこのメンバを実装しています。
 	 *          その中で、メッセージの配送を処理しています。
-	 *
-	 * @return  イベントバブルのトップに到達した場合、trueを返します。
 	 */
-	virtual void do_mouse_move_internal(point_int pt);
+	virtual void do_mouse_move_internal(mouse &m);
+
+	virtual bool do_mouse_up_internal(mouse &m);
 
 	// キーボード・メッセージ -------------------------------------------------
 

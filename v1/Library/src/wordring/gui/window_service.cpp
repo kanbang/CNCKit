@@ -103,84 +103,73 @@ mouse_service::mouse_service()
 
 }
 
-void mouse_service::process_mouse_move(control *c, point_int pt)
-{
-	assert(false);
-	if (c->get_control_name() == "control")
-	{
-		int i = 0;
-	}
-
-	iterator it = std::find(m_queue.begin(), m_queue.end(), c);
-
-	if (it == m_queue.end()) // キューにcが入っていない
-	{
-		m_queue.push_back(c);
-		c->do_mouse_over();
-		return;
-	}
-
-	if (++it == m_queue.end()) { return; } // キューの末尾にcが入っていた
-
-	storage_type q(it, m_queue.end()); // カーソルが出たコントロールをコピー
-	m_queue.erase(it, m_queue.end()); // カーソルが出たコントロールをキューから削除
-
-	reverse_iterator it1 = q.rbegin();
-	while (it1 != q.rend())
-	{
-		if ((*it1)->get_control_name() == "control")
-		{
-			int i = 0;
-		}
-		(*it1++)->do_mouse_out();
-	}
-}
-
-void mouse_service::process_bubble_up(control *c)
+void mouse_service::process_bubble_up(control *c, mouse &m)
 {
 	if (std::find(m_queue.begin(), m_queue.end(), c) == m_queue.end())
 	{
 		m_queue.push_back(c);
-		//c->do_mouse_over();
+		c->do_mouse_over(m);
 	}
 }
 
-void mouse_service::process_bubble_top(control *c)
+void mouse_service::process_bubble_top(control *c, mouse &m)
 {
 	iterator it = std::remove_if(
 		m_queue.begin(),
 		m_queue.end(),
-		[=](control* c0)->bool{ return calc_mouse_out(c0, c); });
-
-	//call_mouse_out(it, m_queue.end());
+		[&](control *c0)->bool{ return process_mouse_out(c0, c, m); });
 
 	m_queue.erase(it, m_queue.end());
-
 }
 
-bool mouse_service::calc_mouse_out(control *c0, control *c) const
+bool mouse_service::process_mouse_out(control *c0, control *c, mouse &m)
 {
-	// 同じコントロール内でptが変わっただけの場合、カーソルは出ていない
-	if (c0 == c) { return false; }
+	bool result = true; // マウス・カーソルがc0から出ていればtrue
 
-	// カーソルがあるトップ・コントロールcあるいはトップ・コンテナcと別の
-	// コントロールc0は、カーソルが出ている
-	if (!c0->is_container()) { return true; }
+	// 同じコントロール内でptが変わっただけの場合、カーソルは出ていない
+	if (c0 == c) { result = false; }
 
 	// カーソルのあるコントロールを載せているコンテナは、カーソルが出ていない
-	if (static_cast<container*>(c0)->is_ancestor_of(c)) { return false; }
+	if (c0->is_container() && static_cast<container*>(c0)->is_ancestor_of(c))
+	{
+		result = false;
+	}
 
-	// いずれでもない（カーソルのあるコントロールを載せていないコンテナ）場合、
-	// カーソルは出ている
-	return true;
+	if (result)
+	{
+		c0->do_mouse_out(m);
+	}
+
+	return result;
 }
 
-void mouse_service::call_mouse_out(iterator first, iterator last)
+void mouse_service::process_mouse_leave(control *c)
 {
-	while (first != last)
+	// コントロールの場合、cだけ処理する
+	if (!c->is_container())
 	{
-		(*first++)->do_mouse_out();
+		m_queue.erase(
+			std::find(m_queue.begin(), m_queue.end(), c),
+			m_queue.end());
+		return;
 	}
+
+	// コンテナの場合、cの子もすべて処理する
+	iterator it = std::remove_if(
+		m_queue.begin(),
+		m_queue.end(),
+		[&](control *c0)->bool{
+			assert(c->is_container());
+			if (static_cast<container*>(c)->is_ancestor_of(c0))
+			{
+				mouse m(0, 0, 0, 0);
+				c0->do_mouse_out(m);
+				return true;
+			}
+			return false;
+		});
+
+	m_queue.erase(it, m_queue.end());
 }
 
 // timer_service --------------------------------------------------------------
@@ -378,22 +367,17 @@ void window_service::set_timer(control *c, std::chrono::milliseconds ms)
 
 }
 
-void window_service::request_layout(container *c)
+layout_service& window_service::get_layout_service()
 {
-	m_layout_service.push(c);
+	return m_layout_service;
 }
 
-void window_service::process_mouse_move(control *c, point_int pt)
+mouse_service& window_service::get_mouse_service()
 {
-	m_mouse_service.process_mouse_move(c, pt);
+	return m_mouse_service;
 }
 
-void window_service::process_bubble_up(control *c)
+style_service& window_service::get_style_service()
 {
-	m_mouse_service.process_bubble_up(c);
-}
-
-void window_service::process_bubble_top(control *c)
-{
-	m_mouse_service.process_bubble_top(c);
+	return m_style_service;
 }

@@ -20,7 +20,7 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
 
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
@@ -61,7 +61,14 @@ void control::attach_parent(container *parent)
 	assert(parent);
 
 	m_parent = parent;
-	attach_window();
+
+	// 自身はまだウィンドウが無い。
+	// 親ウィンドウが作成済みであれば、自身のウィンドウを作成できる。
+	// 親ウィンドウが未作成であれば、親ウィンドウが作成される時に
+	// 子コントロールが再帰的にウィンドウ作成される。
+
+	window *w = parent->find_window();
+	if (w->get_native()->is_created()) { attach_window(); }
 }
 
 void  control::detach_parent()
@@ -69,7 +76,9 @@ void  control::detach_parent()
 	assert(m_parent);
 
 	find_service()->erase_message(this);
-	detach_window();
+
+	window *w = find_window();
+	if (w->get_native()->is_created()) { detach_window(); }
 
 	m_parent = nullptr;
 }
@@ -223,7 +232,9 @@ void control::set_rect(rect_int rc)
 
 	do_size(rc.size);
 
-	get_parent()->request_layout();
+	window_service* ws = find_service();
+	assert(ws);
+	ws->get_layout_service().push(get_parent());
 }
 
 rect_int control::get_rect() const
@@ -298,30 +309,53 @@ void control::do_message_internal(message &m)
 
 // マウス・メッセージ ---------------------------------------------------------
 
-void control::do_mouse_move(point_int pt)
+bool control::do_click(mouse &m)
 {
-	return;
+	return false;
 }
 
-void control::do_mouse_move_internal(point_int pt)
+bool control::do_mouse_down(mouse &m)
+{
+	return false;
+}
+
+bool control::do_mouse_down_internal(mouse &m)
+{
+	return do_mouse_down(m);
+}
+
+void control::do_mouse_move(mouse &m)
+{
+}
+
+void control::do_mouse_move_internal(mouse &m)
 {
 	window_service *service = find_service();
 
-	//service->process_bubble_up(this);
-	//service->process_bubble_top(this);
+	service->get_mouse_service().process_bubble_up(this, m);
+	service->get_mouse_service().process_bubble_top(this, m);
 
-	std::cout << pt.x << ", " << pt.y << std::endl;
-	do_mouse_over();
+	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
 
-	do_mouse_move(pt);
+	do_mouse_move(m);
 }
 
-void control::do_mouse_over()
+void control::do_mouse_over(mouse &m)
 {
 }
 
-void control::do_mouse_out()
+void control::do_mouse_out(mouse &m)
 {
+}
+
+bool control::do_mouse_up(mouse &m)
+{
+	return false;
+}
+
+bool control::do_mouse_up_internal(mouse &m)
+{
+	return do_mouse_up(m);
 }
 
 // キーボード・メッセージ -------------------------------------------------
@@ -396,30 +430,36 @@ control::store test_control::create(rect_int rc, int32_t id)
 	return control::store(new test_control(rc, id));
 }
 
-void test_control::do_mouse_move_internal(point_int pt)
+bool test_control::do_mouse_down(mouse &m)
 {
-	window_service *service = find_service();
+	std::cout << "down " << m.pt.x << ", " << m.pt.y << std::endl;
 
-	//service->process_bubble_up(this);
-	//service->process_bubble_top(this);
-
-	std::cout << pt.x << ", " << pt.y << ": " << m_id << std::endl;
-	do_mouse_over();
-
-	//do_mouse_move(pt);
+	std::swap(m_fg_color, m_bg_color);
+	repaint();
+	return true;
 }
 
-void test_control::do_mouse_over()
+void test_control::do_mouse_over(mouse &m)
 {
-	m_fg_color = rgb_color(0x33, 0, 0);
-	//std::swap(m_fg_color, m_bg_color);
+	std::cout << m.pt.x << ", " << m.pt.y << std::endl;
+	//m_fg_color = rgb_color(0x33, 0, 0);
+	std::swap(m_fg_color, m_bg_color);
 	repaint();
 }
 
-void test_control::do_mouse_out()
+void test_control::do_mouse_out(mouse &m)
 {
-	//std::swap(m_fg_color, m_bg_color);
+	std::cout << m.pt.x << ", " << m.pt.y << std::endl;
+	std::swap(m_fg_color, m_bg_color);
 	repaint();
+}
+
+bool test_control::do_mouse_up(mouse &m)
+{
+	std::cout << "up " << m.pt.x << ", " << m.pt.y << std::endl;
+	std::swap(m_fg_color, m_bg_color);
+	repaint();
+	return true;
 }
 
 void test_control::do_paint(canvas &cv)

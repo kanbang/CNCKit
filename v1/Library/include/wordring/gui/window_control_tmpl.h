@@ -23,12 +23,14 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
 
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
 
 #include <wordring/gui/window.h>
+
+#include <wordring/gui/mouse.h>
 
 #include <list>
 #include <iostream>
@@ -134,6 +136,9 @@ public:
 	virtual window* find_window()
 	{
 		return this;
+
+		//window_type *pT2 = static_cast<window_type*>(this);
+		//return (pT2->get_native()->is_created()) ? this : nullptr;
 	}
 
 	// 表示 -------------------------------------------------------------------
@@ -196,13 +201,15 @@ public:
 	virtual void set_rect(rect_int rc)
 	{
 		control_type *pT1 = static_cast<control_type*>(this);
+		window_service* ws = pT1->find_service();
+		assert(ws);
 
 		if (rc == pT1->get_rect()) { return; } // ループ・ガード
 
 		m_pt = rc.pt;
 		m_size = rc.size;
 
-		container *parent = pT1->get_parent(); // 親がデスクトップの場合、nullptr
+		container *parent = pT1->get_parent(); // 親がルートの場合、nullptr
 
 		if (parent) { rc.pt += parent->query_offset_from_window(); }
 
@@ -210,7 +217,7 @@ public:
 		pT2->get_native()->set_window_rect(rc);
 
 		container* c = parent ? parent : pT1->find_container();
-		c->request_layout();
+		ws->get_layout_service().push(c);
 	}
 /*
 	/// コントロールの長方形を取得する
@@ -236,10 +243,44 @@ public:
 
 	// マウス・メッセージ -----------------------------------------------------
 
-	virtual void do_mouse_move_window(point_int pt)
+	/// ウィンドウ上でマウス・ボタンが押された時、呼び出されます
+	virtual void do_mouse_down_window(mouse &m)
 	{
 		control_type *pT1 = static_cast<control_type*>(this);
-		pT1->do_mouse_move_internal(pt);
+		pT1->do_mouse_down_internal(m);
+	}
+
+	/// ウィンドウ上でマウス・ボタンが離された時、呼び出されます
+	virtual void do_mouse_up_window(mouse &m)
+	{
+		control_type *pT1 = static_cast<control_type*>(this);
+		pT1->do_mouse_up_internal(m);
+	}
+
+	virtual void do_mouse_enter_window(mouse &m)
+	{
+
+	}
+
+	virtual void do_mouse_leave_window()
+	{
+		control_type *pT1 = static_cast<control_type*>(this);
+		window_service *ws = pT1->find_service();
+
+		ws->get_mouse_service().process_mouse_leave(pT1);
+	}
+
+	/// ウィンドウ上をマウス・ポインタが移動するとき呼び出されます
+	virtual void do_mouse_move_window(mouse &m)
+	{
+		control_type *pT1 = static_cast<control_type*>(this);
+		pT1->do_mouse_move_internal(m);
+	}
+
+	/// マウス・ホイールが回されたとき呼び出されます
+	virtual void do_mouse_wheel_window(mouse &m)
+	{
+
 	}
 
 	// キーボード・メッセージ -------------------------------------------------

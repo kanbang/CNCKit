@@ -49,7 +49,7 @@ int main()
 
 	wordring::debug::debug_memory_leak();
 
-	rect_int rc(point_int(0, 0), size_int(640, 480));
+	rect_int rc(0, 0, 640, 480);
 
 	window_service ws;
 	gl_context gl;
@@ -71,6 +71,8 @@ int main()
 	rw1->show();
 	*/
 
+	test_control::store tc0 = test_control::create(
+		rect_int(point_int(0, 0), size_int(100, 100)), 11);
 
 	root_window *rw2 = ws.push_back(root_window::create(rc));
 
@@ -83,6 +85,8 @@ int main()
 		c2->push_back(test_control::create(
 			rect_int(point_int(0, 0), size_int(200, 100)), i));
 	}
+
+	c2->push_back(std::move(tc0));
 
 	rw2->show();
 

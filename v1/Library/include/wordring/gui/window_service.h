@@ -30,6 +30,8 @@
 
 #include <wordring/gui/message.h>
 
+#include <wordring/gui/mouse.h>
+
 #include <memory>
 #include <list>
 #include <deque>
@@ -87,15 +89,22 @@ private:
 public:
 	mouse_service();
 
-	void process_bubble_up(control *c);
+	/// マウスの移動メッセージが上昇する時、呼び出されます
+	void process_bubble_up(control *c, mouse &m);
 
-	void process_bubble_top(control *c);
+	/// マウスの移動メッセージが最前面に到達した時、呼び出されます
+	void process_bubble_top(control *c, mouse &m);
 
-	bool calc_mouse_out(control *c0, control *c) const;
+	/// マウス・ポインタがコントロール外に移動したか検査し、処理します
+	bool process_mouse_out(control *c0, control *c, mouse &m);
 
-	void call_mouse_out(iterator first, iterator last);
+	/// マウス・ポインタがコントロールから外れたとき呼び出されます
+	void process_mouse_leave(control *c);
+};
 
-	void process_mouse_move(control *c, point_int pt);
+class style_service
+{
+
 };
 
 class timer_service
@@ -200,6 +209,7 @@ private:
 	//timer_service m_timer_service;
 	layout_service m_layout_service;
 	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
+	style_service m_style_service; ///< スタイル
 
 public:
 	window_service();
@@ -237,17 +247,13 @@ public:
 
 	// レイアウト -------------------------------------------------------------
 
-	/// レイアウト要求を追加します
-	void request_layout(container *c);
-
 	// マウス -----------------------------------------------------------------
 
-	/// マウス・カーソルの出入りを処理します
-	void process_mouse_move(control *c, point_int pt);
+	layout_service& get_layout_service();
 
-	void process_bubble_up(control *c);
+	mouse_service& get_mouse_service();
 
-	void process_bubble_top(control *c);
+	style_service& get_style_service();
 };
 
 

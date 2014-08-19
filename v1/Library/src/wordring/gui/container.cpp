@@ -99,11 +99,12 @@ bool container::is_ancestor_of(control const *c) const
 	assert(c != nullptr);
 
 	container const *c0 = c->get_parent();
-	do
+
+	while (c0 != nullptr)
 	{
 		if (c0 == this) { return true; }
+		c0 = c0->get_parent();
 	}
-	while ((c0 = c0->get_parent()) != nullptr);
 
 	return false;
 }
@@ -115,6 +116,7 @@ container::storage_type& container::get_children()
 
 void container::attach_window()
 {
+	//if ()
 	for (control::store &s : m_children)
 	{
 		s->attach_window();
@@ -149,20 +151,43 @@ void container::perform_layout()
 	request_repaint(get_rect());
 }
 
-void container::request_layout()
-{
-	find_service()->request_layout(this);
-}
-
 // マウス・メッセージ ---------------------------------------------------------
 
-void container::do_mouse_move_internal(point_int pt)
+bool container::do_mouse_down_internal(mouse &m)
+{
+	// 子コントロールの処理を開始
+
+	m.pt -= get_position(); // 子コントロール用に位置を変更
+
+	// 最前面からテストするために逆イテレータを使う
+	storage_type::reverse_iterator current =
+		get_children().rbegin(), last = get_children().rend();
+
+	while (current != last)
+	{
+		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
+		{
+			// 子が処理したら終わり
+			if ((*current)->do_mouse_down_internal(m)) { return true; }
+		}
+		++current;
+	}
+	// 子コントロールの処理終わり
+
+	m.pt += get_position(); // this用に位置を変更
+
+	return do_mouse_down(m);
+}
+
+void container::do_mouse_move_internal(mouse &m)
 {
 	window_service *service = find_service();
 
-	//service->process_bubble_up(this);
+	service->get_mouse_service().process_bubble_up(this, m);
 
-	pt -= get_position();
+	// 子コントロールの処理を開始
+
+	m.pt -= get_position(); // 子コントロール用に位置を変更
 
 	// 最前面からテストするために逆イテレータを使う
 	storage_type::reverse_iterator
@@ -171,19 +196,51 @@ void container::do_mouse_move_internal(point_int pt)
 
 	while (current != last)
 	{
-		if ((*current)->get_rect().including(pt)) // ヒット・テスト
+		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
 		{
-			(*current)->do_mouse_move_internal(pt);
+			(*current)->do_mouse_move_internal(m);
 			break;
 		}
 		++current;
 	}
+	// 子コントロールの処理終わり
+
+	m.pt += get_position(); // this用に位置を変更
 
 	// バブルを上昇させられない場合、このコンテナがトップ
-	//if (current == last) { service->process_bubble_top(this); }
+	if (current == last)
+	{
+		service->get_mouse_service().process_bubble_top(this, m);
+	}
 
 	// ハンドラ呼び出し
-	do_mouse_move(pt);
+	do_mouse_move(m);
+}
+
+bool container::do_mouse_up_internal(mouse &m)
+{
+	// 子コントロールの処理を開始
+
+	m.pt -= get_position(); // 子コントロール用に位置を変更
+
+	// 最前面からテストするために逆イテレータを使う
+	storage_type::reverse_iterator current =
+		get_children().rbegin(), last = get_children().rend();
+
+	while (current != last)
+	{
+		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
+		{
+			// 子が処理したら終わり
+			if ((*current)->do_mouse_up_internal(m)) { return true; }
+		}
+		++current;
+	}
+	// 子コントロールの処理終わり
+
+	m.pt += get_position(); // this用に位置を変更
+
+	return do_mouse_up(m);
 }
 
 // キーボード・メッセージ -----------------------------------------------------

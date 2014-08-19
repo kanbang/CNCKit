@@ -25,7 +25,9 @@
 #include <wordring/gui/detail/win32/win32_window.h>
 #include <wordring/gui/window.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
+
+#include <wordring/gui/mouse.h>
 
 #include <wordring/gui/detail/win32/win32_canvas.h>
 #include <wordring/gui/canvas.h>
@@ -43,7 +45,10 @@ using namespace wordring::gui::detail;
 
 // 構築・破棄 -----------------------------------------------------------------
 
-native_window_impl::native_window_impl() : m_hwnd(NULL), m_msg_handled(false)
+native_window_impl::native_window_impl()
+	: m_hwnd(NULL)
+	, m_mouse_enter(false)
+	, m_msg_handled(false)
 {
 }
 
@@ -88,6 +93,13 @@ void native_window_impl::destroy_window()
 	BOOL result = ::DestroyWindow(m_hwnd);
 	assert(result != 0);
 	m_hwnd = nullptr;
+}
+
+// 情報 -----------------------------------------------------------------------
+
+bool native_window_impl::is_created() const
+{
+	return m_hwnd != nullptr;
 }
 
 // 表示 -----------------------------------------------------------------------
@@ -219,40 +231,10 @@ inline bool native_window_impl::get_message_handled() const
 	return m_msg_handled;
 }
 
-// マウス・メッセージ ---------------------------------------------------------
-
-void native_window_impl::do_mouse_move(int32_t x, int32_t y)
-{
-	get_public()->do_mouse_move_window(point_int(x, y));
-}
-
 // 親ウィンドウからコールバックされる（プロシージャから直接のハンドラではない）
 void native_window_impl::do_command(int id, UINT codeNotify)
 {
 
-}
-
-void native_window_impl::do_create()
-{
-	get_public()->do_create_window();
-}
-
-void native_window_impl::do_destroy()
-{
-	get_public()->do_destroy_window();
-}
-
-void native_window_impl::do_paint(HDC hdc)
-{
-	std::unique_ptr<detail::native_canvas> ncv(new native_canvas_impl(hdc));
-	canvas cv(std::move(ncv));
-	window* w = get_public();
-	w->do_paint_window(cv);
-}
-
-void native_window_impl::do_size(size_int size)
-{
-	get_public()->do_size_window(size);
 }
 
 /// ウィンドウ・プロシージャの雛型です
@@ -277,6 +259,7 @@ LRESULT native_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_RBUTTONDBLCLK, onRButtonDblClk);
 		HANDLE_MSG(hwnd, WM_RBUTTONDOWN, onRButtonDown);
 		HANDLE_MSG(hwnd, WM_RBUTTONUP, onRButtonUp);
+	case WM_MOUSELEAVE: onMouseLeave(); break;
 
 		// キーボード ---------------------------------------------------------
 
@@ -356,9 +339,37 @@ void native_window_impl::onLButtonDblClk(
 void native_window_impl::onLButtonDown(
 	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
+	set_message_handled(true);
+
+	uint32_t button = mouse::Left;
+	uint32_t state = 0;
+	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(x, y, button, state);
+
+	get_public()->do_mouse_down_window(m);
 }
 
-void native_window_impl::onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){}
+void native_window_impl::onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	set_message_handled(true);
+
+	uint32_t button = mouse::Left;
+	uint32_t state = 0;
+	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(x, y, button, state);
+
+	get_public()->do_mouse_up_window(m);
+}
 
 int native_window_impl::onMouseActivate(
 	HWND hwnd, HWND hwndTopLevel, UINT codeHitTest, UINT msg)
@@ -366,23 +377,118 @@ int native_window_impl::onMouseActivate(
 	return MA_ACTIVATE;
 }
 
+// このメンバはメッセージ・ハンドラではない
+// onMouseMove()から呼び出されます
+void native_window_impl::onMouseEnter(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	m_mouse_enter = true;
+
+	uint32_t button = 0;
+	uint32_t state = 0;
+	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(x, y, button, state);
+
+	get_public()->do_mouse_enter_window(m);
+}
+
+void native_window_impl::onMouseLeave()
+{
+	m_mouse_enter = false;
+	get_public()->do_mouse_leave_window();
+}
+
 void native_window_impl::onMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	do_mouse_move(x, y);
+	set_message_handled(true);
+
+	uint32_t button = 0;
+	uint32_t state = 0;
+	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(x, y, button, state);
+
+	if (!m_mouse_enter)
+	{
+		onMouseEnter(hwnd, x, y, keyFlags);
+
+		TRACKMOUSEEVENT ev;
+		ev.cbSize = sizeof(ev);
+		ev.dwFlags = TME_LEAVE;
+		ev.hwndTrack = m_hwnd;
+
+		BOOL result = ::TrackMouseEvent(&ev);
+		assert(result != 0);
+	}
+
+	get_public()->do_mouse_move_window(m);
 }
 
 void native_window_impl::onMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
 {
+	set_message_handled(true);
+
+	uint32_t button = 0;
+	uint32_t state = 0;
+	state |= (fwKeys & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (fwKeys & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (fwKeys & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (fwKeys & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (fwKeys & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(xPos, yPos, button, state);
+
+	get_public()->do_mouse_wheel_window(m);
 
 }
 
 void native_window_impl::onRButtonDblClk(
-	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags){}
+	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+}
 
 void native_window_impl::onRButtonDown(
-	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags){}
+	HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	set_message_handled(true);
 
-void native_window_impl::onRButtonUp(HWND hwnd, int x, int y, UINT flags){}
+	uint32_t button = mouse::Right;
+	uint32_t state = 0;
+	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(x, y, button, state);
+
+	get_public()->do_mouse_down_window(m);
+}
+
+void native_window_impl::onRButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	set_message_handled(true);
+
+	uint32_t button = mouse::Right;
+	uint32_t state = 0;
+	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
+	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
+	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
+	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
+	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+
+	mouse m(x, y, button, state);
+
+	get_public()->do_mouse_up_window(m);
+}
 
 // キーボード・メッセージ -------------------------------------------------
 
@@ -438,13 +544,13 @@ BOOL native_window_impl::onCopyData(HWND hwnd, HWND hwndFrom, PCOPYDATASTRUCT pc
 
 BOOL native_window_impl::onCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 {
-	do_create();
+	get_public()->do_create_window();
 	return 0; // 0を返すとウィンドウを生成する。生成しない場合、-1を返す。
 }
 
 void native_window_impl::onDestroy(HWND hwnd)
 {
-	do_destroy();
+	get_public()->do_destroy_window();
 }
 
 BOOL native_window_impl::onEraseBkgnd(HWND hwnd, HDC hdc)
@@ -463,7 +569,12 @@ void native_window_impl::onPaint(HWND hwnd)
 
 	HDC hdc = ::BeginPaint(hwnd, &ps);
 	assert(hdc);
-	do_paint(hdc);
+
+	std::unique_ptr<detail::native_canvas> ncv(new native_canvas_impl(hdc));
+	canvas cv(std::move(ncv));
+
+	get_public()->do_paint_window(cv);
+
 	::EndPaint(hwnd, &ps);
 }
 
@@ -482,7 +593,7 @@ void native_window_impl::onShowWindow(HWND hwnd, BOOL fShow, UINT status){}
 
 void native_window_impl::onSize(HWND hwnd, UINT state, int cx, int cy)
 {
-	do_size(size_int(cx, cy));
+	get_public()->do_size_window(size_int(cx, cy));
 }
 
 void native_window_impl::onSysCommand(HWND hwnd, UINT cmd, int x, int y){}
@@ -521,152 +632,6 @@ native_window_impl::window_class native_window_impl::g_window_class;
 
 
 
-
-
-
-
-
-
-
-
-//native_container_window_impl::window_class native_container_window_impl::g_window_class;
-
-
-
-
-
-
-
-
-
-/*
-// win32_control_window_impl --------------------------------------------------
-
-win32_control_window_impl::win32_control_window_impl()
-{
-}
-
-void win32_control_window_impl::create(window* parent)
-{
-	HWND hparent = NULL;
-	if (parent)
-	{
-		hparent = dynamic_cast<win32_control_window_impl*>(parent->get_native_window())->m_hwnd;
-	}
-
-	m_hwnd = ::CreateWindow(
-		(LPCTSTR)(DWORD)win32_control_window_impl::g_window_class.m_atom,
-		L"Tes", WS_CHILD | WS_VISIBLE,
-		100,
-		100,
-		200,
-		200,
-		hparent,
-		NULL,
-		win32_control_window_impl::g_window_class.m_hinstance,
-		this);
-	::ShowWindow(m_hwnd, SW_SHOW);
-	::UpdateWindow(m_hwnd);
-}
-
-WNDCLASSEX win32_control_window_impl::window_class::create()
-{
-	WNDCLASSEX wcex;
-
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = win32_window_class<window_class, window, win32_control_window_impl>::WindowProc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = sizeof(win32_control_window_impl*);
-	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
-	wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = TEXT("win32_control_window_impl");
-	wcex.hIconSm = NULL;
-
-	return wcex;
-}
-
-win32_control_window_impl::window_class win32_control_window_impl::g_window_class;
-
-
-// win32_container_window_impl ------------------------------------------------
-
-void win32_container_window_impl::create(window* parent)
-{
-	HWND hparent = NULL;
-	if (parent)
-	{
-		hparent = dynamic_cast<win32_window_impl*>(parent->get_native_window())->m_hwnd;
-	}
-	m_hwnd = ::CreateWindow(
-		(LPCTSTR)(DWORD)win32_container_window_impl::g_window_class.m_atom,
-		L"win32_container_window_impl", WS_OVERLAPPEDWINDOW,
-		100,
-		100,
-		200,
-		200,
-		hparent,
-		NULL,
-		win32_container_window_impl::g_window_class.m_hinstance,
-		this);
-	::ShowWindow(m_hwnd, SW_SHOW);
-	::UpdateWindow(m_hwnd);
-}
-
-WNDCLASSEX win32_container_window_impl::window_class::create()
-{
-	WNDCLASSEX wcex;
-
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = win32_window_class<window_class, window, win32_container_window_impl>::WindowProc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = sizeof(win32_container_window_impl*);
-	wcex.hInstance = (HINSTANCE)::GetModuleHandle(NULL);
-	wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = TEXT("win32_container_window_impl");
-	wcex.hIconSm = NULL;
-
-	return wcex;
-}
-
-
-win32_container_window_impl::window_class win32_container_window_impl::g_window_class;
-
-void win32_button_window_impl::create(window* parent)
-{
-	HWND hparent = NULL;
-	if (parent)
-	{
-		hparent = dynamic_cast<win32_window_impl*>(parent->get_native_window())->m_hwnd;
-	}
-
-	m_hwnd = ::CreateWindow(
-		TEXT("BUTTON"),
-		L"Button", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		60,
-		60,
-		60,
-		60,
-		hparent,
-		NULL,
-		win32_window_impl::g_window_class.m_hinstance,
-		NULL);
-
-	win32_message_map::assign(m_hwnd, parent);
-	//::ShowWindow(m_hwnd, SW_SHOW);
-	//::UpdateWindow(m_hwnd);
-
-}
-
-
-*/
 
 
 #endif // _WIN32

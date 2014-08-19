@@ -90,6 +90,7 @@
     <ClInclude Include="include\wordring\exception.h" />
     <ClInclude Include="include\wordring\geometry\shape.h" />
     <ClInclude Include="include\wordring\graphics\color.h" />
+    <ClInclude Include="include\wordring\gui\button.h" />
     <ClInclude Include="include\wordring\gui\canvas.h" />
     <ClInclude Include="include\wordring\gui\container.h" />
     <ClInclude Include="include\wordring\gui\control.h" />
@@ -104,7 +105,9 @@
     <ClInclude Include="include\wordring\gui\font.h" />
     <ClInclude Include="include\wordring\gui\layout.h" />
     <ClInclude Include="include\wordring\gui\message.h" />
+    <ClInclude Include="include\wordring\gui\mouse.h" />
     <ClInclude Include="include\wordring\gui\root_window.h" />
+    <ClInclude Include="include\wordring\gui\shape_int.h" />
     <ClInclude Include="include\wordring\gui\window.h" />
     <ClInclude Include="include\wordring\gui\window_container_tmpl.h" />
     <ClInclude Include="include\wordring\gui\window_control_tmpl.h" />

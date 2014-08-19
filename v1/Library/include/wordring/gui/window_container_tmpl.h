@@ -23,7 +23,7 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
 
 #include <wordring/gui/window_control_tmpl.h>
 

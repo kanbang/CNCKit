@@ -162,6 +162,15 @@
     <ClInclude Include="include\wordring\gui\detail\win32\win32_message_service.h">
       <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
     </ClInclude>
+    <ClInclude Include="include\wordring\gui\mouse.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\shape_int.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\button.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wordring\debug.cpp">

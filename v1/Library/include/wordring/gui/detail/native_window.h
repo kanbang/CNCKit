@@ -23,7 +23,7 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
 
 #include <string>
 #include <memory>
@@ -95,6 +95,11 @@ public:
 
 	/// ウィンドウを破棄します
 	virtual void destroy_window() = 0;
+
+	// 情報 -------------------------------------------------------------------
+
+	/// ウィンドウが作成されているか調べます
+	virtual bool is_created() const = 0;
 
 	// 表示 -------------------------------------------------------------------
 

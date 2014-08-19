@@ -24,8 +24,9 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/detail/native_window.h>
-#include <wordring/geometry/shape.h>
 #include <wordring/gui/detail/win32/win32_window_class.h>
+
+#include <wordring/gui/shape_int.h>
 
 #include <Windows.h>
 
@@ -57,6 +58,7 @@ class native_window_impl : public native_window
 {
 public:
 	HWND m_hwnd;        ///< ウィンドウ・ハンドル
+	bool m_mouse_enter;
 	bool m_msg_handled; ///< true: メッセージの処理を完了した
 
 	// 構築・破棄 -------------------------------------------------------------
@@ -77,8 +79,14 @@ public:
 
 	/// ウィンドウを作成します
 	virtual void create_window(window* parent, rect_int rc);
+
 	/// ウィンドウを破棄します
 	virtual void destroy_window();
+
+	// 情報 -------------------------------------------------------------------
+
+	/// ウィンドウが作成されているか調べます
+	virtual bool is_created() const;
 
 	// 表示 -------------------------------------------------------------------
 
@@ -136,30 +144,8 @@ public:
 	/// メッセージの処理法を取得します
 	bool get_message_handled() const;
 
-	// マウス・メッセージ -----------------------------------------------------
-protected:
-	virtual void do_mouse_move(int32_t x, int32_t y);
-
-	// キーボード・メッセージ -------------------------------------------------
-
-	// 一般メッセージ ---------------------------------------------------------
-
 	/// 親ウィンドウからのコールバック
 	virtual void do_command(int id, UINT codeNotify);
-
-	virtual void do_create();
-
-	virtual void do_destroy();
-
-	virtual void do_paint(HDC hdc);
-
-	virtual void do_size(size_int size);
-
-
-
-
-
-
 
 protected:
 	// マウス・メッセージ -----------------------------------------------------
@@ -176,6 +162,10 @@ protected:
 
 	int onMouseActivate(
 		HWND hwnd, HWND hwndTopLevel, UINT codeHitTest, UINT msg);
+
+	void onMouseEnter(HWND hwnd, int x, int y, UINT keyFlags);
+
+	void onMouseLeave();
 
 	void onMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
 

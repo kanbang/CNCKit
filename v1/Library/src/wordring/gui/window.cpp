@@ -60,9 +60,33 @@ detail::native_window const* window::get_native() const
 
 // マウス・メッセージ ---------------------------------------------------------
 
-void window::do_mouse_move_window(point_int pt)
+void window::do_mouse_down_window(mouse &m)
 {
+	assert(false);
+}
 
+void window::do_mouse_up_window(mouse &m)
+{
+	assert(false);
+}
+
+void window::do_mouse_enter_window(mouse &m)
+{
+}
+
+void window::do_mouse_leave_window()
+{
+	assert(false);
+}
+
+void window::do_mouse_move_window(mouse &m)
+{
+	assert(false);
+}
+
+void window::do_mouse_wheel_window(mouse &m)
+{
+	assert(false);
 }
 
 /// メッセージ・ハンドラ

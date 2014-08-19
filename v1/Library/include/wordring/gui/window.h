@@ -42,7 +42,8 @@
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/window_service.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
+#include <wordring/gui/mouse.h>
 
 #include <wordring/gui/canvas.h>
 
@@ -79,8 +80,30 @@ public:
 
 	// マウス・メッセージ -----------------------------------------------------
 
-	virtual void do_mouse_move_window(point_int pt);
+	/**
+	 * @brief   ウィンドウ上でマウス・ボタンが押された時、呼び出されます
+	 *
+	 * @param   m ボタンが押された時の状態
+	 */
+	virtual void do_mouse_down_window(mouse &m);
 
+	/**
+	 * @brief   ウィンドウ上で左マウス・ボタンが離された時、呼び出されます
+	 *
+	 * @param   m ボタンが離された時の状態
+	 */
+	virtual void do_mouse_up_window(mouse &m);
+
+	virtual void do_mouse_enter_window(mouse &m);
+
+	virtual void do_mouse_leave_window();
+
+	// ウィンドウ上をマウス・ポインタが移動するとき呼び出されます
+	virtual void do_mouse_move_window(mouse &m);
+
+	/// マウス・ホイールが回されたとき呼び出されます
+	virtual void do_mouse_wheel_window(mouse &m);
+	
 	// キーボード・メッセージ -------------------------------------------------
 
 	// 一般メッセージ ---------------------------------------------------------

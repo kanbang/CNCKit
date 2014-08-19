@@ -23,10 +23,12 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/geometry/shape.h>
+#include <wordring/gui/shape_int.h>
 #include <wordring/gui/canvas.h>
 
 #include <wordring/gui/message.h>
+
+#include <wordring/gui/mouse.h>
 
 #include <cstdint>
 #include <memory>
@@ -253,33 +255,38 @@ public:
 
 	// マウス・メッセージ -----------------------------------------------------
 
+	virtual bool do_click(mouse &m);
+
+	virtual bool do_mouse_down(mouse &m);
+
+	virtual bool do_mouse_down_internal(mouse &m);
+
 	/*
 	 * @brief   マウスの移動で呼び出されます
 	 *
 	 * @details
 	 *          マウスの移動に反応するには、このメンバをオーバーライドします。
-	 *          戻り値でfalseを返すと、親コンテナのdo_mouse_move()に権利が
-	 *          移ります。
-	 *
-	 * @return  メッセージを処理した場合trueを返します。
 	 */
-	virtual void do_mouse_move(point_int pt);
+	virtual void do_mouse_move(mouse &m);
 
 	/*
-	 * @brief   内部用: マウスの移動で呼び出されます
+	 * @brief   [内部用] マウスの移動で呼び出されます
 	 *
 	 * @details
 	 *          containerはこのメンバを実装しています。
 	 *          その中で、メッセージの配送を処理しています。
-	 *
-	 * @return  イベントバブルのトップに到達した場合、trueを返します。
-	 *          オブジェクトがcontrolの場合は常にtrueを返します。
 	 */
-	virtual void do_mouse_move_internal(point_int pt);
+	virtual void do_mouse_move_internal(mouse &m);
 
-	virtual void do_mouse_over();
+	virtual void do_mouse_over(mouse &m);
 
-	virtual void do_mouse_out();
+	virtual void do_mouse_out(mouse &m);
+
+	virtual bool do_mouse_up(mouse &m);
+
+	virtual bool do_mouse_up_internal(mouse &m);
+
+	//virtual 
 
 	// キーボード・メッセージ -------------------------------------------------
 
@@ -314,11 +321,13 @@ public:
 
 	static control::store create(rect_int rc, int32_t id);
 
-	virtual void do_mouse_move_internal(point_int pt);
+	virtual bool do_mouse_down(mouse &m);
 
-	virtual void do_mouse_over();
+	virtual void do_mouse_over(mouse &m);
 
-	virtual void do_mouse_out();
+	virtual void do_mouse_out(mouse &m);
+
+	virtual bool do_mouse_up(mouse &m);
 
 	/// 再描画要求で呼び出されます
 	virtual void do_paint(canvas& cv);
