@@ -171,6 +171,12 @@
     <ClInclude Include="include\wordring\gui\button.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
+    <ClInclude Include="include\wordring\gui\scroll_container.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\style.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wordring\debug.cpp">

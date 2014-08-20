@@ -107,7 +107,9 @@
     <ClInclude Include="include\wordring\gui\message.h" />
     <ClInclude Include="include\wordring\gui\mouse.h" />
     <ClInclude Include="include\wordring\gui\root_window.h" />
+    <ClInclude Include="include\wordring\gui\scroll_container.h" />
     <ClInclude Include="include\wordring\gui\shape_int.h" />
+    <ClInclude Include="include\wordring\gui\style.h" />
     <ClInclude Include="include\wordring\gui\window.h" />
     <ClInclude Include="include\wordring\gui\window_container_tmpl.h" />
     <ClInclude Include="include\wordring\gui\window_control_tmpl.h" />

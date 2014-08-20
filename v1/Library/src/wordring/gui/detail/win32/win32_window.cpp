@@ -219,6 +219,19 @@ void native_window_impl::set_window_text(std::wstring text)
 	assert(result != 0);
 }
 
+uint32_t native_window_impl::make_mouse_state_flag(UINT f)
+{
+	uint32_t state = 0;
+
+	state |= (f & MK_SHIFT) ? mouse::shift : 0;
+	state |= (f & MK_CONTROL) ? mouse::ctrl : 0;
+	state |= (f & MK_LBUTTON) ? mouse::left : 0;
+	state |= (f & MK_MBUTTON) ? mouse::middle : 0;
+	state |= (f & MK_RBUTTON) ? mouse::right : 0;
+
+	return state;
+}
+
 // メッセージ -----------------------------------------------------------------
 
 inline void native_window_impl::set_message_handled(bool handled)
@@ -341,13 +354,8 @@ void native_window_impl::onLButtonDown(
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::Left;
-	uint32_t state = 0;
-	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t button = mouse::left;
+	uint32_t state = make_mouse_state_flag(keyFlags);
 
 	mouse m(x, y, button, state);
 
@@ -358,13 +366,8 @@ void native_window_impl::onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::Left;
-	uint32_t state = 0;
-	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t button = mouse::left;
+	uint32_t state = make_mouse_state_flag(keyFlags);
 
 	mouse m(x, y, button, state);
 
@@ -384,12 +387,7 @@ void native_window_impl::onMouseEnter(HWND hwnd, int x, int y, UINT keyFlags)
 	m_mouse_enter = true;
 
 	uint32_t button = 0;
-	uint32_t state = 0;
-	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t state = make_mouse_state_flag(keyFlags);
 
 	mouse m(x, y, button, state);
 
@@ -407,12 +405,7 @@ void native_window_impl::onMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	set_message_handled(true);
 
 	uint32_t button = 0;
-	uint32_t state = 0;
-	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t state = make_mouse_state_flag(keyFlags);
 
 	mouse m(x, y, button, state);
 
@@ -437,12 +430,7 @@ void native_window_impl::onMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta,
 	set_message_handled(true);
 
 	uint32_t button = 0;
-	uint32_t state = 0;
-	state |= (fwKeys & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (fwKeys & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (fwKeys & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (fwKeys & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (fwKeys & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t state = make_mouse_state_flag(fwKeys);
 
 	mouse m(xPos, yPos, button, state);
 
@@ -460,13 +448,8 @@ void native_window_impl::onRButtonDown(
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::Right;
-	uint32_t state = 0;
-	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t button = mouse::right;
+	uint32_t state = make_mouse_state_flag(keyFlags);
 
 	mouse m(x, y, button, state);
 
@@ -477,13 +460,8 @@ void native_window_impl::onRButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::Right;
-	uint32_t state = 0;
-	state |= (keyFlags & MK_SHIFT) ? mouse::Shift : 0;
-	state |= (keyFlags & MK_CONTROL) ? mouse::Ctrl : 0;
-	state |= (keyFlags & MK_LBUTTON) ? mouse::Left : 0;
-	state |= (keyFlags & MK_MBUTTON) ? mouse::Middle : 0;
-	state |= (keyFlags & MK_RBUTTON) ? mouse::Right : 0;
+	uint32_t button = mouse::right;
+	uint32_t state = make_mouse_state_flag(keyFlags);
 
 	mouse m(x, y, button, state);
 

@@ -34,7 +34,7 @@ struct mouse
 {
 	enum
 	{
-		Shift = 0x1, Ctrl = 0x2, Left = 0x4, Middle = 0x8, Right = 0x10,
+		shift = 0x1, ctrl = 0x2, left = 0x4, middle = 0x8, right = 0x10,
 	};
 
 	point_int pt;

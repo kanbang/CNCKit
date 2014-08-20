@@ -135,6 +135,9 @@ public:
 	/// ウィンドウの文字列を設定します
 	virtual void set_window_text(std::wstring text);
 
+	/// マウス状態を作成します
+	static uint32_t make_mouse_state_flag(UINT f);
+
 	// メッセージ -------------------------------------------------------------
 protected:
 	/// メッセージの処理法を設定します
