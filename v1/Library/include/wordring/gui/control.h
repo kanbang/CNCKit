@@ -58,9 +58,7 @@ public:
 
 protected:
 	container* m_parent; ///< 親コンテナ
-
-	size_int   m_size;   ///< コントロールの幅と高さ
-	point_int  m_pt;     ///< 親コンテナ原点からの相対位置
+	rect_int m_rc; ///< コントロールの長方形
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -116,7 +114,10 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const;
+	virtual wchar_t const* get_control_name() const;
+
+	/// コントロール・アトムを返します
+	virtual int32_t find_control_atom();
 
 	/// コントロールがウィンドウの場合、trueを返します
 	virtual bool is_window() const;
@@ -182,9 +183,6 @@ public:
 
 	/// コントロールの指定部分を再描画します
 	virtual void repaint(rect_int rc);
-
-	/// コントロールの再描画を要求します
-	virtual void request_repaint(rect_int rc);
 
 	// 大きさ・位置 -----------------------------------------------------------
 

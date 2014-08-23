@@ -40,6 +40,11 @@ struct size_int
 	{
 		return cx == rhs.cx && cy == rhs.cy;
 	}
+
+	operator bool() const
+	{
+		return !(cx == 0 || cy == 0);
+	}
 };
 
 struct point_int
@@ -151,12 +156,6 @@ struct rect_int : shape_int
 	rect_int intersects(rect_int rhs) const
 	{
 		point_int pt1, pt2;
-		/*
-		pt1.x = std::max(pt.x, rhs.pt.x);
-		pt1.y = std::max(pt.y, rhs.pt.y);
-		pt2.x = std::min(pt.x + size.cx, rhs.pt.x + rhs.size.cx);
-		pt2.y = std::min(pt.y + size.cy, rhs.pt.y + rhs.size.cy);
-		*/
 
 		pt1.x = std::max(left(), rhs.left());
 		pt1.y = std::max(top(), rhs.top());

@@ -32,15 +32,17 @@
 
 #include <cassert>
 
+#include <iostream>
+
 using namespace wordring::gui::detail;
 using namespace wordring::gui;
 
 native_canvas_impl::native_canvas_impl()
 {
-
 }
 
-native_canvas_impl::native_canvas_impl(HDC hdc) : m_hdc(hdc)
+native_canvas_impl::native_canvas_impl(HDC hdc)
+	: m_hdc(hdc)
 {
 	::SetBkMode(m_hdc, TRANSPARENT);
 }
@@ -55,18 +57,26 @@ HDC native_canvas_impl::get_dc()
 	return m_hdc;
 }
 
+rect_int native_canvas_impl::get_viewport() const
+{
+	return rect_int(m_pt, m_size);
+}
+
 void native_canvas_impl::set_viewport(rect_int rc)
 {
+	if (get_viewport() == rc) { return; }
+
 	m_pt = rc.pt;
+	m_size = rc.size;
 
 	::SetMapMode(m_hdc, MM_TEXT);
 	HRGN hrgn = ::CreateRectRgn(
 		rc.left(), rc.top(), rc.right() + 1, rc.bottom() + 1);
 	assert(hrgn != NULL);
 	int r1 = ::SelectClipRgn(m_hdc, hrgn);
+
 	BOOL r2 = ::DeleteObject(hrgn);
 	assert(r2 != NULL);
-
 }
 
 void native_canvas_impl::draw_line(

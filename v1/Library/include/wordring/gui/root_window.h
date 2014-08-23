@@ -92,7 +92,7 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const;
+	virtual wchar_t const* get_control_name() const;
 
 	/// ルート・ウィンドウを設定します
 	virtual void set_root_window(root_window *rw);

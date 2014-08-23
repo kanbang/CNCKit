@@ -114,7 +114,7 @@ void native_gl_context_impl::create(
 	using namespace wordring::gui::detail;
 
 	native_canvas_impl& nci =
-		static_cast<native_canvas_impl&>(cv.get_native_canvas());
+		static_cast<native_canvas_impl&>(cv.get_native());
 	HDC hdc = nci.get_dc();
 	assert(hdc);
 
@@ -154,7 +154,7 @@ void native_gl_context_impl::make_current(wordring::gui::canvas& cv)
 	using namespace wordring::gui::detail;
 
 	native_canvas_impl& nci =
-		static_cast<native_canvas_impl&>(cv.get_native_canvas());
+		static_cast<native_canvas_impl&>(cv.get_native());
 	HDC hdc = nci.get_dc();
 	assert(hdc);
 
@@ -178,7 +178,7 @@ void native_gl_context_impl::unmake_current(wordring::gui::canvas& cv)
 	using namespace wordring::gui::detail;
 
 	native_canvas_impl& nci =
-		static_cast<native_canvas_impl&>(cv.get_native_canvas());
+		static_cast<native_canvas_impl&>(cv.get_native());
 	HDC hdc = nci.get_dc();
 
 	::SwapBuffers(hdc);

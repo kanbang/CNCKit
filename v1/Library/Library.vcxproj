@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClCompile Include="src\wordring\debug.cpp" />
     <ClCompile Include="src\wordring\detail\win32\exception.cpp" />
+    <ClCompile Include="src\wordring\gui\button.cpp" />
     <ClCompile Include="src\wordring\gui\canvas.cpp" />
     <ClCompile Include="src\wordring\gui\container.cpp" />
     <ClCompile Include="src\wordring\gui\control.cpp" />
@@ -134,6 +135,7 @@
     <ClCompile Include="src\wordring\gui\layout.cpp" />
     <ClCompile Include="src\wordring\gui\message.cpp" />
     <ClCompile Include="src\wordring\gui\root_window.cpp" />
+    <ClCompile Include="src\wordring\gui\style.cpp" />
     <ClCompile Include="src\wordring\gui\window.cpp" />
     <ClCompile Include="src\wordring\gui\window_service.cpp" />
     <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_context.cpp" />

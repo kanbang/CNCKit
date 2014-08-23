@@ -32,8 +32,9 @@
 //#include <wordring/gui/message.h>
 
 #include <cassert>
-#include <string>
 
+#include <string>
+#include <atomic>
 #include <cstdlib>
 
 using namespace wordring::gui;
@@ -41,7 +42,9 @@ using namespace wordring::gui;
 
 // 構築・破棄 -----------------------------------------------------------------
 
-control::control(rect_int rc) : m_parent(nullptr), m_pt(rc.pt), m_size(rc.size)
+control::control(rect_int rc)
+	: m_parent(nullptr)
+	, m_rc(rc)
 {
 }
 
@@ -103,9 +106,28 @@ container const* control::get_parent() const
 
 // 情報 -----------------------------------------------------------------------
 
-char const* control::get_control_name() const
+wchar_t const* control::get_control_name() const
 {
-	return "control";
+	return L"wordring::gui::control";
+}
+
+int32_t control::find_control_atom()
+{
+#ifdef _MSC_VER
+	static __declspec(thread) int32_t atom = 0;
+#else
+	static thread_local int32_t atom = 0;
+#endif // _MSC_VER
+
+	if (atom == 0)
+	{
+		window_service *ws = find_service();
+		assert(ws);
+		style_service &ss = ws->get_style_service();
+		atom = ss.get_atom(get_control_name());
+	}
+
+	return atom;
 }
 
 bool control::is_window() const
@@ -120,13 +142,13 @@ bool control::is_container() const
 
 window* control::find_window()
 {
-	assert(m_parent);
+	assert(get_parent());
 	return get_parent()->find_window();
 }
 
 container* control::find_container()
 {
-	assert(m_parent);
+	assert(get_parent());
 	return get_parent();
 }
 
@@ -163,18 +185,6 @@ void control::hide()
 
 }
 
-/*
-bool control::is_ancestor(container const *c) const
-{
-	container const *c0 = nullptr;
-
-	while ((c0 = get_parent()) != nullptr)
-	{
-		if (c0 == c) { return true; }
-	}
-	return false;
-}
-*/
 // 描画 -----------------------------------------------------------------------
 
 void control::repaint()
@@ -192,32 +202,26 @@ void control::repaint(rect_int rc)
 	w->get_native()->repaint_window(rc);
 }
 
-void control::request_repaint(rect_int rc)
-{
-	/// TODO: メッセージ圧縮を実装する
-	repaint(rc);
-}
-
 // 大きさ・位置 ---------------------------------------------------------------
 
 void control::set_size(size_int size)
 {
-	set_rect(rect_int(m_pt, size));
+	set_rect(rect_int(m_rc.pt, size));
 }
 
 size_int control::get_size() const
 {
-	return is_visible() ? m_size : size_int();
+	return is_visible() ? m_rc.size : size_int();
 }
 
 void control::set_position(point_int pt)
 {
-	set_rect(rect_int(pt, m_size));
+	set_rect(rect_int(pt, m_rc.size));
 }
 
 point_int control::get_position() const
 {
-	return m_pt;
+	return m_rc.pt;
 }
 
 void control::set_rect(rect_int rc)
@@ -225,10 +229,8 @@ void control::set_rect(rect_int rc)
 	// ルート・コンテナはオーバーライドする必要があります
 	assert(get_parent() != nullptr);
 
-	if (rc == rect_int(m_pt, m_size)) { return; } // ループ・ガード
-
-	m_pt = rc.pt;
-	m_size = rc.size;
+	if (rc == m_rc) { return; } // ループ・ガード
+	m_rc = rc;
 
 	do_size(rc.size);
 
@@ -239,7 +241,7 @@ void control::set_rect(rect_int rc)
 
 rect_int control::get_rect() const
 {
-	return rect_int(m_pt, m_size);
+	return m_rc;
 }
 
 size_int control::get_preferred_size() const
@@ -403,7 +405,7 @@ void control::do_paint(canvas &cv)
 
 void control::do_paint_internal(canvas& cv)
 {
-	cv.set_viewport(query_rect_from_window());
+	//cv->set_viewport(query_rect_from_window());
 	do_paint(cv);
 }
 
@@ -475,14 +477,14 @@ void test_control::do_paint(canvas &cv)
 
 	int32_t w = 1;
 
-	cv.fill_rect(rc, m_bg_color);
+	cv->fill_rect(rc, m_bg_color);
 
-	cv.draw_rect(rc, w, m_fg_color);
+	cv->draw_rect(rc, w, m_fg_color);
 
-	cv.draw_line(pt1, pt4, w, m_fg_color);
-	cv.draw_line(pt2, pt3, w, m_fg_color);
+	cv->draw_line(pt1, pt4, w, m_fg_color);
+	cv->draw_line(pt2, pt3, w, m_fg_color);
 
-	cv.draw_string(
+	cv->draw_string(
 		get_control_name(), point_int(0, 0), fg, nullptr);
 
 	char str[128];
@@ -496,6 +498,8 @@ void test_control::do_paint(canvas &cv)
 	src += ::_itoa(get_rect().bottom(), str, 10);
 	src += ") ";
 	src += ::_itoa(m_id, str, 10);
-	cv.draw_string(
+	cv->draw_string(
 		src, point_int(0, 16), fg, nullptr);
+
+	std::cout << "paint: " << m_id << std::endl;
 }

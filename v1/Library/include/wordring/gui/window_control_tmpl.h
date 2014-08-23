@@ -123,9 +123,9 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const
+	virtual wchar_t const* get_control_name() const
 	{
-		return "window_control_tmpl<T1, T2>";
+		return L"wordring::gui::window_control_tmpl<T1, T2>";
 	}
 
 	virtual bool is_window() const
@@ -205,9 +205,7 @@ public:
 		assert(ws);
 
 		if (rc == pT1->get_rect()) { return; } // ループ・ガード
-
-		m_pt = rc.pt;
-		m_size = rc.size;
+		m_rc = rc;
 
 		container *parent = pT1->get_parent(); // 親がルートの場合、nullptr
 

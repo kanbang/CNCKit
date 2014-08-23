@@ -45,8 +45,15 @@ protected:
 	size_int m_size; // コントロールの大きさ
 
 public:
-	native_canvas() { }
-	virtual ~native_canvas() { }
+	native_canvas()
+	{
+	}
+
+	virtual ~native_canvas()
+	{
+	}
+
+	virtual rect_int get_viewport() const = 0;
 
 	/**
 	 * @brief   ビューポートを設定します

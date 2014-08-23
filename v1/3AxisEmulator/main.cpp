@@ -26,6 +26,8 @@
 
 #include <wordring/gui/root_window.h>
 
+#include <wordring/gui/button.h>
+
 #include "cnc_3axis_emulator_control.h"
 
 //#include <Windows.h>
@@ -87,6 +89,9 @@ int main()
 	}
 
 	c2->push_back(std::move(tc0));
+
+	button *b = static_cast<button*>(
+		c2->push_back(button::create(0, 0, 100, 20)));
 
 	rw2->show();
 

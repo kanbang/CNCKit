@@ -89,9 +89,9 @@ void root_container::attach_window()
 
 // 情報 -----------------------------------------------------------------------
 
-char const* root_container::get_control_name() const
+wchar_t const* root_container::get_control_name() const
 {
-	return "root_container";
+	return L"wordring::gui::root_container";
 }
 
 void root_container::set_root_window(root_window *rw)

@@ -61,7 +61,7 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const;
+	virtual wchar_t const* get_control_name() const;
 
 	virtual void do_paint(gui::canvas &cv);
 	virtual void do_paint_internal(canvas& cv);

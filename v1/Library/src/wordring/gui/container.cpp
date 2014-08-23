@@ -77,9 +77,9 @@ void container::set_layout(layout::store l)
 
 // 情報 -----------------------------------------------------------------------
 
-char const* container::get_control_name() const
+wchar_t const* container::get_control_name() const
 {
-	return "container";
+	return L"wordring::gui::container";
 }
 
 bool container::is_container() const
@@ -148,7 +148,7 @@ void container::perform_layout()
 		}
 	}
 
-	request_repaint(get_rect());
+	repaint(get_rect());
 }
 
 // マウス・メッセージ ---------------------------------------------------------
@@ -249,8 +249,11 @@ bool container::do_mouse_up_internal(mouse &m)
 
 void container::do_paint_internal(canvas& cv)
 {
+	rect_int rc0 = cv->get_viewport();
 
-	cv.set_viewport(query_rect_from_window());
+	//rect_int rc0 = query_rect_from_window();
+
+	cv->set_viewport(rc0);
 
 	do_paint(cv); // まず自分を描画する
 
@@ -258,6 +261,9 @@ void container::do_paint_internal(canvas& cv)
 	for (store& s : m_children)
 	{
 		if (s->is_window()) { continue; }
+		rect_int rc1 = s->query_rect_from_window() & rc0;
+		if (!rc1.size) { continue; }
+		cv->set_viewport(rc1);
 		s->do_paint_internal(cv);
 	}
 }
@@ -282,5 +288,5 @@ control::store test_container::create(rect_int rc)
 void test_container::do_paint(canvas &cv)
 {
 	rect_int rc(point_int(0, 0), get_size());
-	cv.fill_rect(rc, rgb_color(0xA0, 0xF0, 0xF0));
+	cv->fill_rect(rc, rgb_color(0xA0, 0xF0, 0xF0));
 }

@@ -548,8 +548,13 @@ void native_window_impl::onPaint(HWND hwnd)
 	HDC hdc = ::BeginPaint(hwnd, &ps);
 	assert(hdc);
 
+	RECT rc0 = ps.rcPaint;
+	rect_int rc1(
+		rc0.left, rc0.top, rc0.right - rc0.left, rc0.bottom - rc0.top);
 	std::unique_ptr<detail::native_canvas> ncv(new native_canvas_impl(hdc));
 	canvas cv(std::move(ncv));
+
+	cv->set_viewport(rc1);
 
 	get_public()->do_paint_window(cv);
 

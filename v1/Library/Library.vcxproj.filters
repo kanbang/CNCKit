@@ -227,5 +227,11 @@
     <ClCompile Include="src\wordring\gui\detail\win32\win32_message_service.cpp">
       <Filter>ソース ファイル\gui\detail\win32</Filter>
     </ClCompile>
+    <ClCompile Include="src\wordring\gui\style.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\button.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

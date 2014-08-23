@@ -42,13 +42,30 @@ class dummy;
 
 class button : public control
 {
-protected:
-	rgb_color m_fg_color, m_bg_color;
+public:
+	enum
+	{
+		up, down, hover,
+	};
 
-	std::function<void(mouse&)> on_click;
+protected:
+	std::function<bool(mouse&)> on_click;
+	int32_t m_state;
+
+protected:
+	button(rect_int rc);
 
 public:
-	button(rect_int rc);
+	static control::store create(rect_int rc);
+
+	static control::store create(int32_t x, int32_t y, int32_t cx, int32_t cy);
+
+	virtual bool do_mouse_down(mouse &m);
+
+	virtual bool do_mouse_up(mouse &m);
+
+	/// 再描画要求で呼び出されます
+	virtual void do_paint(canvas& cv);
 };
 
 } // namespace gui

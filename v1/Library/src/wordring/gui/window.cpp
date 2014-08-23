@@ -100,7 +100,7 @@ void window::do_destroy_window()
 
 void window::do_paint_window(canvas& cv)
 {
-	cv.draw_string(
+	cv->draw_string(
 		"window::do_paint()", point_int(0, 0), rgb_color(), nullptr);
 }
 

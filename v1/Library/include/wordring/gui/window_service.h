@@ -32,6 +32,8 @@
 
 #include <wordring/gui/mouse.h>
 
+#include <wordring/gui/style.h>
+
 #include <memory>
 #include <list>
 #include <deque>
@@ -100,11 +102,6 @@ public:
 
 	/// マウス・ポインタがコントロールから外れたとき呼び出されます
 	void process_mouse_leave(control *c);
-};
-
-class style_service
-{
-
 };
 
 class timer_service

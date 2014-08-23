@@ -46,44 +46,13 @@ void canvas::operator=(canvas&& cv)
 	m_native = std::move(cv.m_native);
 }
 
-detail::native_canvas& canvas::get_native_canvas()
+detail::native_canvas& canvas::get_native()
 {
 	return *m_native;
 }
 
-void canvas::set_viewport(rect_int rc)
+detail::native_canvas* canvas::operator ->()
 {
-	m_native->set_viewport(rc);
+	return m_native.get();
 }
-
-void canvas::draw_line(
-	point_int pt1, point_int pt2, int32_t width, rgb_color rgb)
-{
-	m_native->draw_line(pt1, pt2, width, rgb);
-}
-
-void canvas::draw_rect(rect_int rc, int32_t width, rgb_color rgb)
-{
-	m_native->draw_rect(rc, width, rgb);
-}
-
-void canvas::fill_rect(rect_int rc, rgb_color rgb)
-{
-	m_native->fill_rect(rc, rgb);
-}
-
-void canvas::draw_string(
-	std::string str, point_int pt, rgb_color rgb, font* f)
-{
-	m_native->draw_string(str, pt, rgb, f);
-}
-
-void canvas::draw_string(
-	std::wstring str, point_int pt, rgb_color rgb, font* f)
-{
-	m_native->draw_string(str, pt, rgb, f);
-}
-
-
-
 

@@ -50,6 +50,8 @@ public:
 
 	HDC get_dc();
 
+	virtual rect_int get_viewport() const;
+
 	/**
 	 * @brief   ビューポートを設定します
 	 *

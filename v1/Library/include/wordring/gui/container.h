@@ -101,7 +101,7 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const;
+	virtual wchar_t const* get_control_name() const;
 
 	/// コントロールがコンテナの場合、trueを返します
 	virtual bool is_container() const;

@@ -74,9 +74,9 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const
+	virtual wchar_t const* get_control_name() const
 	{
-		return "window_container_tmpl<T1, T2>";
+		return L"wordring::gui::window_container_tmpl<T1, T2>";
 	}
 };
 
