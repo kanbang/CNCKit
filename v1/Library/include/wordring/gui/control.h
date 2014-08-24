@@ -56,6 +56,11 @@ class control
 public:
 	typedef std::unique_ptr<control> store;
 
+	enum : int32_t
+	{
+		control_atom = -1,
+	};
+
 protected:
 	container* m_parent; ///< 親コンテナ
 	rect_int m_rc; ///< コントロールの長方形
@@ -81,18 +86,38 @@ public:
 	// 親子関係 ---------------------------------------------------------------
 
 	/**
-	 * @brief   親コンテナを取り付けます
+	 * @brief   [内部用]親コンテナを取り付けます
 	 *
 	 * @details 
 	 *          親コンテナから呼び出されます。
 	 */
 	virtual void attach_parent(container *parent);
 
-	/// 親コンテナを取り外します
+	/// [内部用]親コンテナを取り外します
 	virtual void detach_parent();
 
+	/**
+	 * @brief   [内部用]ウィンドウを取り付けます
+	 *
+	 * @details 
+	 *          ウィンドウを持つコントロールは、このメンバが呼び出される
+	 *          タイミングでウィンドウを生成します。
+	 *          ウィンドウを持たないコントロールは何もしません。
+	 *          コンテナは、自身のウィンドウを処理した後、子のatatch_window()を
+	 *          順に呼び出します。
+	 */
 	virtual void attach_window();
 
+	/**
+	 * @brief   [内部用]ウィンドウを取り外します
+	 *
+	 * @details
+	 *          ウィンドウを持つコントロールは、このメンバが呼び出される
+	 *          タイミングでウィンドウを破棄します。
+	 *          ウィンドウを持たないコントロールは何もしません。
+	 *          コンテナは、子のdetach_window()を順に呼び出した後、自身の
+	 *          ウィンドウを処理します。
+	 */
 	virtual void detach_window();
 
 	/**
@@ -116,8 +141,14 @@ public:
 	/// コントロール名を返します
 	virtual wchar_t const* get_control_name() const;
 
-	/// コントロール・アトムを返します
-	virtual int32_t find_control_atom();
+	/**
+	 * @brief   クラス固有の番号を返します
+	 *
+	 * @details 
+	 *          既定スタイルの設定・取得に使われます。
+	 *          必ずオーバーライドする必要があります。
+	 */
+	virtual int32_t get_control_atom() const;
 
 	/// コントロールがウィンドウの場合、trueを返します
 	virtual bool is_window() const;
@@ -257,6 +288,7 @@ public:
 
 	virtual bool do_mouse_down(mouse &m);
 
+	// [内部用]
 	virtual bool do_mouse_down_internal(mouse &m);
 
 	/*
@@ -282,6 +314,7 @@ public:
 
 	virtual bool do_mouse_up(mouse &m);
 
+	// [内部用]
 	virtual bool do_mouse_up_internal(mouse &m);
 
 	//virtual 
@@ -299,7 +332,7 @@ public:
 	/// 再描画要求で呼び出されます
 	virtual void do_paint(canvas& cv);
 
-	/// 内部用: 再描画要求で呼び出されます
+	/// [内部用]再描画要求で呼び出されます
 	virtual void do_paint_internal(canvas &cv);
 
 	virtual void do_size(size_int size);

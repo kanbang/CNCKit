@@ -111,23 +111,9 @@ wchar_t const* control::get_control_name() const
 	return L"wordring::gui::control";
 }
 
-int32_t control::find_control_atom()
+int32_t control::get_control_atom() const
 {
-#ifdef _MSC_VER
-	static __declspec(thread) int32_t atom = 0;
-#else
-	static thread_local int32_t atom = 0;
-#endif // _MSC_VER
-
-	if (atom == 0)
-	{
-		window_service *ws = find_service();
-		assert(ws);
-		style_service &ss = ws->get_style_service();
-		atom = ss.get_atom(get_control_name());
-	}
-
-	return atom;
+	return control::control_atom;
 }
 
 bool control::is_window() const

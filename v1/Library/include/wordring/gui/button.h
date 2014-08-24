@@ -43,8 +43,9 @@ class dummy;
 class button : public control
 {
 public:
-	enum
+	enum : int32_t
 	{
+		control_atom = -2,
 		up, down, hover,
 	};
 

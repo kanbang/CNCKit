@@ -249,11 +249,8 @@ bool container::do_mouse_up_internal(mouse &m)
 
 void container::do_paint_internal(canvas& cv)
 {
-	rect_int rc0 = cv->get_viewport();
-
-	//rect_int rc0 = query_rect_from_window();
-
-	cv->set_viewport(rc0);
+	rect_int rc0 = cv->get_viewport(); // コンテナ自身のビューポート
+	//cv->set_viewport(rc0);
 
 	do_paint(cv); // まず自分を描画する
 
