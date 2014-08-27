@@ -27,6 +27,7 @@
 #include <wordring/gui/detail/win32/win32_window_class.h>
 
 #include <wordring/gui/shape_int.h>
+#include <wordring/gui/mouse.h>
 
 #include <Windows.h>
 
@@ -58,7 +59,7 @@ class native_window_impl : public native_window
 {
 public:
 	HWND m_hwnd;        ///< ウィンドウ・ハンドル
-	bool m_mouse_enter;
+	bool m_mouse_enter; ///< マウスがホバリングしている
 	bool m_msg_handled; ///< true: メッセージの処理を完了した
 
 	// 構築・破棄 -------------------------------------------------------------
@@ -136,7 +137,7 @@ public:
 	virtual void set_window_text(std::wstring text);
 
 	/// マウス状態を作成します
-	static uint32_t make_mouse_state_flag(UINT f);
+	static mouse::state_ make_mouse_state(UINT f);
 
 	// メッセージ -------------------------------------------------------------
 protected:

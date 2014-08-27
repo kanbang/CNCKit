@@ -219,17 +219,17 @@ void native_window_impl::set_window_text(std::wstring text)
 	assert(result != 0);
 }
 
-uint32_t native_window_impl::make_mouse_state_flag(UINT f)
+mouse::state_ native_window_impl::make_mouse_state(UINT f)
 {
-	uint32_t state = 0;
+	mouse::state_ result;
 
-	state |= (f & MK_SHIFT) ? mouse::shift : 0;
-	state |= (f & MK_CONTROL) ? mouse::ctrl : 0;
-	state |= (f & MK_LBUTTON) ? mouse::left : 0;
-	state |= (f & MK_MBUTTON) ? mouse::middle : 0;
-	state |= (f & MK_RBUTTON) ? mouse::right : 0;
+	result.shift = (f & MK_SHIFT) ? true : false;
+	result.ctrl = (f & MK_CONTROL) ? true : false;
+	result.left = (f & MK_LBUTTON) ? true : false;
+	result.middle = (f & MK_MBUTTON) ? true : false;
+	result.right = (f & MK_RBUTTON) ? true : false;
 
-	return state;
+	return result;
 }
 
 // メッセージ -----------------------------------------------------------------
@@ -354,10 +354,9 @@ void native_window_impl::onLButtonDown(
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::left;
-	uint32_t state = make_mouse_state_flag(keyFlags);
-
-	mouse m(x, y, button, state);
+	mouse m(x, y);
+	m.state = make_mouse_state(keyFlags);
+	m.button.left = true;
 
 	get_public()->do_mouse_down_window(m);
 }
@@ -366,10 +365,9 @@ void native_window_impl::onLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::left;
-	uint32_t state = make_mouse_state_flag(keyFlags);
-
-	mouse m(x, y, button, state);
+	mouse m(x, y);
+	m.state = make_mouse_state(keyFlags);
+	m.button.left = true;
 
 	get_public()->do_mouse_up_window(m);
 }
@@ -386,10 +384,8 @@ void native_window_impl::onMouseEnter(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	m_mouse_enter = true;
 
-	uint32_t button = 0;
-	uint32_t state = make_mouse_state_flag(keyFlags);
-
-	mouse m(x, y, button, state);
+	mouse m(x, y);
+	m.state = make_mouse_state(keyFlags);
 
 	get_public()->do_mouse_enter_window(m);
 }
@@ -404,10 +400,8 @@ void native_window_impl::onMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	set_message_handled(true);
 
-	uint32_t button = 0;
-	uint32_t state = make_mouse_state_flag(keyFlags);
-
-	mouse m(x, y, button, state);
+	mouse m(x, y);
+	m.state = make_mouse_state(keyFlags);
 
 	if (!m_mouse_enter)
 	{
@@ -425,14 +419,13 @@ void native_window_impl::onMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	get_public()->do_mouse_move_window(m);
 }
 
-void native_window_impl::onMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
+void native_window_impl::onMouseWheel(
+	HWND hwnd, int xPos, int yPos, int zDelta, UINT fwKeys)
 {
 	set_message_handled(true);
 
-	uint32_t button = 0;
-	uint32_t state = make_mouse_state_flag(fwKeys);
-
-	mouse m(xPos, yPos, button, state);
+	mouse m(xPos, yPos);
+	m.state = make_mouse_state(fwKeys);
 
 	get_public()->do_mouse_wheel_window(m);
 
@@ -448,10 +441,9 @@ void native_window_impl::onRButtonDown(
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::right;
-	uint32_t state = make_mouse_state_flag(keyFlags);
-
-	mouse m(x, y, button, state);
+	mouse m(x, y);
+	m.state = make_mouse_state(keyFlags);
+	m.button.right = true;
 
 	get_public()->do_mouse_down_window(m);
 }
@@ -460,10 +452,9 @@ void native_window_impl::onRButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	set_message_handled(true);
 
-	uint32_t button = mouse::right;
-	uint32_t state = make_mouse_state_flag(keyFlags);
-
-	mouse m(x, y, button, state);
+	mouse m(x, y);
+	m.state = make_mouse_state(keyFlags);
+	m.button.right = true;
 
 	get_public()->do_mouse_up_window(m);
 }

@@ -66,6 +66,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

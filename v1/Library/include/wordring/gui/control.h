@@ -4,9 +4,7 @@
  * @brief   GUIコントロール
  *
  * @details
- *          ボタン、スクロールバーなどのGUIコントロールの基礎を宣言します。
- *          controlクラスはインタフェースとして宣言されます。
- *          共通の機能が実装されます。
+ *          ボタン、スクロールバーなどのGUIコントロールの基礎を定義します。
  *          
  *
  * @author  Kouichi Minami
@@ -45,6 +43,21 @@ class root_window;    // 前方宣言
 class container;      // 前方宣言
 class root_container; // 前方宣言
 
+struct control_data
+{
+	control_data *base; ///< 基本クラス情報
+	wchar_t const *control_name; ///< コントロール・クラス名
+
+	/**
+	 * @brief   オブジェクトを構築します
+	 *
+	 * @param   base_ 基本クラスのcontrol_data
+	 *
+	 * @param   name コントロール名
+	 */
+	control_data(control_data* base_, wchar_t const *name);
+};
+
 /**
  * @brief   GUIコントロール基本クラス
  *
@@ -56,10 +69,8 @@ class control
 public:
 	typedef std::unique_ptr<control> store;
 
-	enum : int32_t
-	{
-		control_atom = -1,
-	};
+public:
+	static control_data s_control_data; ///< コントロール用の静的データ
 
 protected:
 	container* m_parent; ///< 親コンテナ
@@ -138,17 +149,20 @@ public:
 
 	// 情報 -------------------------------------------------------------------
 
-	/// コントロール名を返します
-	virtual wchar_t const* get_control_name() const;
-
 	/**
-	 * @brief   クラス固有の番号を返します
+	 * @brief   コントロールに付属するデータへのポインタを返します
 	 *
-	 * @details 
-	 *          既定スタイルの設定・取得に使われます。
-	 *          必ずオーバーライドする必要があります。
+	 * @details
+	 *          既定のスタイルなどを保存するためのstaticな構造体へのポインタを
+	 *          返します。
+	 *          このポインタは、クラスを識別するためにも使われます。
+	 *          コントロールから派生されるクラスは、このメンバをオーバーライド
+	 *          しなければなりません。
 	 */
-	virtual int32_t get_control_atom() const;
+	virtual control_data* get_control_data() const;
+
+	/// コントロール名を返します
+	wchar_t const* get_control_name() const;
 
 	/// コントロールがウィンドウの場合、trueを返します
 	virtual bool is_window() const;

@@ -162,7 +162,7 @@ void mouse_service::process_mouse_leave(control *c)
 			assert(c->is_container());
 			if (static_cast<container*>(c)->is_ancestor_of(c0))
 			{
-				mouse m(0, 0, 0, 0);
+				mouse m(0, 0);
 				c0->do_mouse_out(m);
 				return true;
 			}

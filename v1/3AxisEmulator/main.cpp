@@ -57,7 +57,7 @@ int main()
 	gl_context gl;
 
 
-	
+	//std::cout << sizeof(control::state) << std::endl;
 //	root_window* rw1 = ws.push_back(root_window::create(rc));
 
 
@@ -85,7 +85,7 @@ int main()
 	for (int i = 0; i < 10; i++)
 	{
 		c2->push_back(test_control::create(
-			rect_int(point_int(0, 0), size_int(200, 100)), i));
+			rect_int(point_int(0, 0), size_int(30, 30)), i));
 	}
 
 	c2->push_back(std::move(tc0));

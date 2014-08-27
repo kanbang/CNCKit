@@ -32,17 +32,27 @@ class dummy;
 
 struct mouse
 {
-	enum
+	struct button_
 	{
-		shift = 0x1, ctrl = 0x2, left = 0x4, middle = 0x8, right = 0x10,
+		bool left : 1;
+		bool middle : 1;
+		bool right : 1;
+	};
+
+	struct state_
+	{
+		bool shift : 1;
+		bool ctrl : 1;
+		bool left : 1;
+		bool middle : 1;
+		bool right : 1;
 	};
 
 	point_int pt;
-	uint32_t button; // left, middle, right
-	uint32_t state; // shift, ctrl, left, middle, right
+	button_ button; // left, middle, right
+	state_ state; // shift, ctrl, left, middle, right
 
-	mouse(int32_t x_, int32_t y_, uint32_t button_, uint32_t state_)
-		: pt(x_, y_), button(button_), state(state_)
+	mouse(int32_t x_, int32_t y_) : pt(x_, y_)
 	{
 	}
 };

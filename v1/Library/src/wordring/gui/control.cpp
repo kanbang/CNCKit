@@ -39,6 +39,17 @@
 
 using namespace wordring::gui;
 
+// control_data ---------------------------------------------------------------
+
+control_data::control_data(control_data *base_, wchar_t const *name)
+	: base(base_)
+	, control_name(name)
+{
+}
+
+// control --------------------------------------------------------------------
+
+control_data control::s_control_data(nullptr, L"wordring::gui::control");
 
 // 構築・破棄 -----------------------------------------------------------------
 
@@ -106,14 +117,14 @@ container const* control::get_parent() const
 
 // 情報 -----------------------------------------------------------------------
 
-wchar_t const* control::get_control_name() const
+control_data* control::get_control_data() const
 {
-	return L"wordring::gui::control";
+	return &s_control_data;
 }
 
-int32_t control::get_control_atom() const
+wchar_t const* control::get_control_name() const
 {
-	return control::control_atom;
+	return get_control_data()->control_name;
 }
 
 bool control::is_window() const
@@ -420,7 +431,7 @@ control::store test_control::create(rect_int rc, int32_t id)
 
 bool test_control::do_mouse_down(mouse &m)
 {
-	std::cout << "down " << m.pt.x << ", " << m.pt.y << std::endl;
+	//std::cout << "down " << m.pt.x << ", " << m.pt.y << std::endl;
 
 	std::swap(m_fg_color, m_bg_color);
 	repaint();
@@ -429,7 +440,7 @@ bool test_control::do_mouse_down(mouse &m)
 
 void test_control::do_mouse_over(mouse &m)
 {
-	std::cout << m.pt.x << ", " << m.pt.y << std::endl;
+	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
 	//m_fg_color = rgb_color(0x33, 0, 0);
 	std::swap(m_fg_color, m_bg_color);
 	repaint();
@@ -437,14 +448,14 @@ void test_control::do_mouse_over(mouse &m)
 
 void test_control::do_mouse_out(mouse &m)
 {
-	std::cout << m.pt.x << ", " << m.pt.y << std::endl;
+	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
 	std::swap(m_fg_color, m_bg_color);
 	repaint();
 }
 
 bool test_control::do_mouse_up(mouse &m)
 {
-	std::cout << "up " << m.pt.x << ", " << m.pt.y << std::endl;
+	//std::cout << "up " << m.pt.x << ", " << m.pt.y << std::endl;
 	std::swap(m_fg_color, m_bg_color);
 	repaint();
 	return true;
@@ -487,5 +498,5 @@ void test_control::do_paint(canvas &cv)
 	cv->draw_string(
 		src, point_int(0, 16), fg, nullptr);
 
-	std::cout << "paint: " << m_id << std::endl;
+	//std::cout << "paint: " << m_id << std::endl;
 }

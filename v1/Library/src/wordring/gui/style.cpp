@@ -58,8 +58,6 @@ std::wstring atom_service::get_string(int32_t atom)
 	return m_reverse_index[atom];
 }
 
-// value ----------------------------------------------------------------------
-
 // color_value ----------------------------------------------------------------
 
 color_value::operator rgb_color()
@@ -67,43 +65,9 @@ color_value::operator rgb_color()
 	return val;
 }
 
-// atom_value -----------------------------------------------------------------
-
-void atom_value::erase(int32_t atom)
-{
-	storage.erase(
-		std::remove(storage.begin(), storage.end(), atom), storage.end());
-}
-
-void atom_value::push_back(int32_t atom)
-{
-	assert(std::find(begin(), end(), atom) == end());
-	storage.push_back(atom);
-}
-
-atom_value::const_iterator atom_value::begin() const
-{
-	return storage.begin();
-}
-
-atom_value::const_iterator atom_value::end() const
-{
-	return storage.end();
-}
-
-atom_value::const_reverse_iterator atom_value::rbegin() const
-{
-	return storage.rbegin();
-}
-
-atom_value::const_reverse_iterator atom_value::rend() const
-{
-	return storage.rend();
-}
-
 // style ----------------------------------------------------------------------
 
-value* style::find(int32_t key)
+style_value* style::find(int32_t key)
 {
 	storage_type::iterator it = std::find_if(
 		m_storage.begin(),
@@ -113,11 +77,37 @@ value* style::find(int32_t key)
 	return (it == m_storage.end()) ? nullptr : it->second.get();
 }
 
+style_value const* style::find(int32_t key) const
+{
+	style *self = const_cast<style*>(this);
+	return self->find(key);
+}
+
+// style_cache ----------------------------------------------------------------
+
+void style_cache::push_back(style const *s)
+{
+	m_storage.push_back(s);
+}
+
+style_value const* style_cache::find(int32_t key) const
+{
+	style_value const *result = nullptr;
+
+	for (style const* s : m_storage)
+	{
+		result = s->find(key);
+		if (result != nullptr) { break; }
+	}
+
+	return result;
+}
+
 // style_service --------------------------------------------------------------
 
 void style_service::erase(control const *c)
 {
-	m_id_map.erase(c);
+	m_object_map.erase(c);
 }
 
 void style_service::erase(int32_t atom)
@@ -131,12 +121,23 @@ void style_service::erase(std::wstring name)
 	erase(atom);
 }
 
+void style_service::erase(std::type_index type)
+{
+	m_default_map.erase(type);
+}
+
 style* style_service::find(control const *c)
 {
-	id_map_type::iterator it = m_id_map.find(c);
-	if (it == m_id_map.end()) { return nullptr; }
+	object_map_type::iterator it = m_object_map.find(c);
+	if (it == m_object_map.end()) { return nullptr; }
 
 	return it->second.get();
+}
+
+style const* style_service::find(control const *c) const
+{
+	style_service *self = const_cast<style_service*>(this);
+	return self->find(c);
 }
 
 style* style_service::find(int32_t atom)
@@ -147,6 +148,12 @@ style* style_service::find(int32_t atom)
 	return it->second.get();
 }
 
+style const* style_service::find(int32_t atom) const
+{
+	style_service *self = const_cast<style_service*>(this);
+	return self->find(atom);
+}
+
 style* style_service::find(std::wstring name)
 {
 	int32_t atom = m_atom_service.get_atom(name);
@@ -154,32 +161,40 @@ style* style_service::find(std::wstring name)
 	return find(atom);
 }
 
-value* style_service::find(control *c, int32_t key)
+style* style_service::find(std::type_index type)
 {
-	value *result = nullptr;
-	style *s = find(c); // オブジェクトのスタイルを検索
+	default_map_type::iterator it = m_default_map.find(type);
+	if (it == m_default_map.end()) { return nullptr; }
 
-	if (s == nullptr) { return nullptr; }
+	return it->second.get();
+}
 
-	// オブジェクトのスタイルからkeyの値を検索
-	if ((result = s->find(key)) != nullptr) { return result; }
+style_cache style_service::find_styles(control const *c) const
+{
+	style_cache result;
 
-	// コントロールのクラスを検索
-	atom_value *cls = static_cast<atom_value*>(s->find(style::class_name));
-	if (cls == nullptr) { return nullptr; }
+	// オブジェクトのスタイルを検索
+	style const *s0 = find(c);
+	if (s0 == nullptr) { return result; } // 空のキャッシュを返す
+	result.push_back(s0);
 
-	atom_value::const_reverse_iterator it = cls->rbegin();
+	// オブジェクトに設定されているスタイル・クラスからスタイルを検索
+
+	// まず、スタイル・クラス識別子を検索する
+	class_atom_value const *cls =
+		static_cast<class_atom_value const*>(result.find(style::class_atom));
+	if (cls == nullptr) { return result; } // クラス識別子が設定されていない場合終了
+
+	// スタイル・クラスは後に登録された方が優先なので逆から検索していく
+	class_atom_value::const_reverse_iterator it = cls->rbegin();
 	while (it != cls->rend())
 	{
-		// クラスからスタイルを検索
-		if ((s = find(*it++)) != nullptr)
-		{
-			// クラスのスタイルからkeyの値を検索
-			if ((result = s->find(key)) != nullptr) { return result; }
-		}
+		int32_t atom = *it;
+		style const *s1 = find(atom);
+		if (s1 != nullptr) { result.push_back(s1); }
 	}
 
-	return nullptr;
+	return result;
 }
 
 int32_t style_service::get_atom(std::wstring name)
@@ -191,7 +206,7 @@ style* style_service::insert(control const *c)
 {
 	style::store s = std::make_unique<style>();
 	style *result = s.get();
-	m_id_map[c] = std::move(s);
+	m_object_map[c] = std::move(s);
 
 	return result;
 }
@@ -210,7 +225,14 @@ style* style_service::insert(std::wstring name)
 	return insert(get_atom(name));
 }
 
+style* style_service::insert(std::type_index type)
+{
+	style::store s = std::make_unique<style>();
+	style *result = s.get();
+	m_default_map[type] = std::move(s);
 
+	return result;
+}
 
 
 

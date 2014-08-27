@@ -64,6 +64,13 @@ rect_int native_canvas_impl::get_viewport() const
 
 void native_canvas_impl::set_viewport(rect_int rc)
 {
+	assert(
+		   0 <= rc.pt.x
+		&& 0 <= rc.pt.y
+		&& 0 <= rc.size.cx
+		&& 0 <= rc.size.cy);
+
+
 	if (get_viewport() == rc) { return; }
 
 	m_pt = rc.pt;

@@ -137,8 +137,18 @@ void container::detach_window()
 
 void container::perform_layout()
 {
+	static std::atomic_int i;
+	i++;
 	m_layout->perform_layout(this);
-
+	/*
+	for (store &s : m_children)
+	{
+		if (s->is_container())
+		{
+			container *c = static_cast<container*>(s.get());
+			c->perform_layout();
+		}
+	}*/
 	for (store &s : m_children)
 	{
 		if (s->is_container())
@@ -147,7 +157,8 @@ void container::perform_layout()
 			c->perform_layout();
 		}
 	}
-
+	i--;
+	std::cout << i << std::endl;
 	repaint(get_rect());
 }
 

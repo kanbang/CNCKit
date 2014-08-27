@@ -68,8 +68,9 @@ void button::do_paint(canvas &cv)
 	window_service *ws = find_service();
 	assert(ws);
 	style_service &ss = ws->get_style_service();
-	color_value *bg =
-		static_cast<color_value*>(ss.find(this, style::background_color));
+	style_cache sc = ss.find_styles(this);
+	color_value const *bg =
+		static_cast<color_value const*>(sc.find(style::background_color));
 
 	cv->fill_rect(rect_int(-10, -10, 300, 300), rgb_color(0x0, 0x0, 0xFF));
 }

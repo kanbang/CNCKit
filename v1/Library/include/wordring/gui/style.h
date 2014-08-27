@@ -26,6 +26,7 @@
 #include <memory>
 
 #include <unordered_map>
+#include <typeindex>
 #include <vector>
 #include <string>
 
@@ -34,7 +35,7 @@ namespace wordring
 namespace gui
 {
 
-class control;
+class control; // 先行宣言
 
 class atom_service
 {
@@ -52,52 +53,77 @@ public:
 	std::wstring get_string(int32_t atom);
 };
 
-struct value
+struct style_value
 {
-	typedef std::unique_ptr<value> store;
+	typedef std::unique_ptr<style_value> store;
 };
 
-struct color_value : value
+struct color_value : style_value
 {
 	rgb_color val;
 
 	operator rgb_color();
 };
 
-struct atom_value : value
+template <typename T>
+struct vector_value_tmpl : style_value
 {
-	typedef std::vector<int32_t> storage_type;
+	typedef T value_type;
 
-	typedef storage_type::const_iterator const_iterator;
-	typedef storage_type::const_reverse_iterator const_reverse_iterator;
+	typedef std::vector<value_type> storage_type;
+
+	typedef typename storage_type::const_iterator const_iterator;
+	typedef typename storage_type::const_reverse_iterator const_reverse_iterator;
 
 	storage_type storage;
 
-	void erase(int32_t atom);
+	void erase(value_type v)
+	{
+		storage.erase(
+			std::remove(storage.begin(), storage.end(), atom), storage.end());
+	}
 
-	void push_back(int32_t atom);
+	void push_back(value_type v)
+	{
+		assert(std::find(begin(), end(), atom) == end());
+		storage.push_back(atom);
+	}
 
-	const_iterator begin() const;
+	const_iterator begin() const
+	{
+		return storage.begin();
+	}
 
-	const_iterator end() const;
+	const_iterator end() const
+	{
+		return storage.end();
+	}
 
-	const_reverse_iterator rbegin() const;
+	const_reverse_iterator rbegin() const
+	{
+		return storage.rbegin();
+	}
 
-	const_reverse_iterator rend() const;
+	const_reverse_iterator rend() const
+	{
+		return storage.rend();
+	}
 };
+
+typedef vector_value_tmpl<int32_t> class_atom_value;
 
 class style
 {
 public:
 	typedef std::unique_ptr<style> store;
 
-	typedef std::pair<int32_t, value::store> value_type;
+	typedef std::pair<int32_t, style_value::store> value_type;
 	typedef std::vector<value_type> storage_type;
 
 public:
 	enum : int32_t
 	{
-		class_name,
+		class_atom,
 		background_color,
 	};
 
@@ -105,57 +131,107 @@ protected:
 	storage_type m_storage; ///< key, value
 
 public:
-	value* find(int32_t key);
+	style_value* find(int32_t key);
+
+	style_value const* find(int32_t key) const;
+};
+
+class style_cache
+{
+private:
+	std::vector<style const*> m_storage;
+
+public:
+	void push_back(style const *s);
+
+	style_value const* find(int32_t key) const;
 };
 
 class style_service
 {
 public:
-	typedef std::unordered_map<control const*, style::store> id_map_type;
+	typedef std::unordered_map<control const*, style::store> object_map_type;
 	typedef std::unordered_map<int32_t, style::store> class_map_type;
+	typedef std::unordered_map<std::type_index, style::store> default_map_type;
 
 private:
-	id_map_type m_id_map;
+	object_map_type m_object_map;
 	class_map_type m_class_map;
+	default_map_type m_default_map;
 
 	atom_service m_atom_service;
 
 public:
-	/// コントロールcに関連付けられたスタイルを消去します
+	/// コントロール・オブジェクトに関連付けられたスタイルを消去します
 	void erase(control const *c);
 
-	/// クラス・アトムに関連付けられたスタイルを消去します
+	/// スタイル・クラスに関連付けられたスタイルを消去します
 	void erase(int32_t atom);
 
-	/// クラス名に関連付けられたスタイルを消去します
+	/// スタイル・クラスに関連付けられたスタイルを消去します
 	void erase(std::wstring name);
 
+	/// コントロール・クラスに関連付けられたスタイルを消去します
+	void erase(std::type_index type);
+
 	/**
-	 * @brief   コントロールcに関連付けられたスタイルを検索します
+	 * @brief   コントロール・オブジェクトに関連付けられたスタイルを検索します
 	 *
 	 * @return  登録されていない場合、nullptrを返します
 	 */
 	style* find(control const *c);
 
 	/**
-	 * @brief   クラス・アトムに関連付けられたスタイルを検索します
+	 * @brief   コントロール・オブジェクトに関連付けられたスタイルを検索します
 	 *
-	 * @param   atom クラス・アトム
+	 * @return  登録されていない場合、nullptrを返します
+	 */
+	style const* find(control const *c) const;
+	
+	/**
+	 * @brief   スタイル・クラスに関連付けられたスタイルを検索します
+	 *
+	 * @param   atom スタイル・クラス識別子
 	 *
 	 * @return  登録されていない場合、nullptrを返します
 	 */
 	style* find(int32_t atom);
 
 	/**
-	 * @brief   クラス名に関連付けられたスタイルを検索します
+	 * @brief   スタイル・クラスに関連付けられたスタイルを検索します
 	 *
-	 * @param   name クラス名
+	 * @param   atom スタイル・クラス識別子
+	 *
+	 * @return  登録されていない場合、nullptrを返します
+	 */
+	style const* find(int32_t atom) const;
+
+	/**
+	 * @brief   スタイル・クラスに関連付けられたスタイルを検索します
+	 *
+	 * @param   name スタイル・クラス名
 	 *
 	 * @return  登録されていない場合、nullptrを返します
 	 */
 	style* find(std::wstring name);
 
-	value* find(control *c, int32_t key);
+	/**
+	 * @brief   スタイル・クラスに関連付けられたスタイルを検索します
+	 *
+	 * @param   type コントロール・クラスのtype_index
+	 *
+	 * @return  登録されていない場合、nullptrを返します
+	 */
+	style* find(std::type_index type);
+
+	/**
+	 * @brief   コントロールに関連付けられたスタイルを全て検索します
+	 *
+	 * @details 
+	 *          コントロール・オブジェクト及び、オブジェクトに関連付けられた
+	 *          スタイル・クラスをキーにすべてのスタイルを集めて返します。
+	 */
+	style_cache find_styles(control const *c) const;
 
 	int32_t get_atom(std::wstring name);
 
@@ -164,6 +240,8 @@ public:
 	style* insert(int32_t atom);
 
 	style* insert(std::wstring name);
+
+	style* insert(std::type_index type);
 };
 
 } // namespace gui
