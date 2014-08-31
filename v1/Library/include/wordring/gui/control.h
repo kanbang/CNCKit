@@ -43,21 +43,6 @@ class root_window;    // 前方宣言
 class container;      // 前方宣言
 class root_container; // 前方宣言
 
-struct control_data
-{
-	control_data *base; ///< 基本クラス情報
-	wchar_t const *control_name; ///< コントロール・クラス名
-
-	/**
-	 * @brief   オブジェクトを構築します
-	 *
-	 * @param   base_ 基本クラスのcontrol_data
-	 *
-	 * @param   name コントロール名
-	 */
-	control_data(control_data* base_, wchar_t const *name);
-};
-
 /**
  * @brief   GUIコントロール基本クラス
  *
@@ -68,9 +53,6 @@ class control
 {
 public:
 	typedef std::unique_ptr<control> store;
-
-public:
-	static control_data s_control_data; ///< コントロール用の静的データ
 
 protected:
 	container* m_parent; ///< 親コンテナ
@@ -102,10 +84,10 @@ public:
 	 * @details 
 	 *          親コンテナから呼び出されます。
 	 */
-	virtual void attach_parent(container *parent);
+	virtual void attach_parent_internal(container *parent);
 
 	/// [内部用]親コンテナを取り外します
-	virtual void detach_parent();
+	virtual void detach_parent_internal();
 
 	/**
 	 * @brief   [内部用]ウィンドウを取り付けます
@@ -117,7 +99,7 @@ public:
 	 *          コンテナは、自身のウィンドウを処理した後、子のatatch_window()を
 	 *          順に呼び出します。
 	 */
-	virtual void attach_window();
+	virtual void attach_window_internal();
 
 	/**
 	 * @brief   [内部用]ウィンドウを取り外します
@@ -129,7 +111,7 @@ public:
 	 *          コンテナは、子のdetach_window()を順に呼び出した後、自身の
 	 *          ウィンドウを処理します。
 	 */
-	virtual void detach_window();
+	virtual void detach_window_internal();
 
 	/**
 	 * @brief   親コンテナを取得します
@@ -149,20 +131,8 @@ public:
 
 	// 情報 -------------------------------------------------------------------
 
-	/**
-	 * @brief   コントロールに付属するデータへのポインタを返します
-	 *
-	 * @details
-	 *          既定のスタイルなどを保存するためのstaticな構造体へのポインタを
-	 *          返します。
-	 *          このポインタは、クラスを識別するためにも使われます。
-	 *          コントロールから派生されるクラスは、このメンバをオーバーライド
-	 *          しなければなりません。
-	 */
-	virtual control_data* get_control_data() const;
-
 	/// コントロール名を返します
-	wchar_t const* get_control_name() const;
+	virtual wchar_t const* get_control_name() const;
 
 	/// コントロールがウィンドウの場合、trueを返します
 	virtual bool is_window() const;
@@ -185,15 +155,6 @@ public:
 	 * @details thisがコンテナの場合、thisを返します。
 	 */
 	virtual container* find_container();
-
-	/**
-	 * @brief   ルート・ウィンドウを設定します
-	 *
-	 * @details
-	 *          ルート・ウィンドウはデスクトップ直下のウィンドウです。
-	 *          このメンバは、ルート・コンテナのためにあります。
-	 */
-	virtual void set_root_window(root_window &rw);
 
 	/**
 	 * @brief   ルート・ウィンドウを検索します
@@ -264,7 +225,8 @@ public:
 	 */
 	virtual void set_rect(rect_int rc);
 
-public:
+	//virtual void set_rect_internal(rect_int rc);
+
 	/// コントロールの長方形を取得する
 	virtual rect_int get_rect() const;
 

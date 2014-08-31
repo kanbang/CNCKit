@@ -87,7 +87,7 @@ public:
 
 	// 親子関係 ---------------------------------------------------------------
 
-	virtual void attach_window()
+	virtual void attach_window_internal()
 	{
 		// 自身がウィンドウを持つため、ウィンドウ作成前の検索は必ず失敗する
 		// そのため、親コンテナに検索させて差分を計算する
@@ -103,16 +103,16 @@ public:
 	// 子のウィンドウを処理する
 		for (control::store &s : m_children)
 		{
-			s->attach_window();
+			s->attach_window_internal();
 		}
 	}
 
-	virtual void detach_window()
+	virtual void detach_window_internal()
 	{
 		// 子のウィンドウを処理する
 		for (control::store &s : m_children)
 		{
-			s->detach_window();
+			s->detach_window_internal();
 		}
 
 		// 自分のウィンドウを破棄する

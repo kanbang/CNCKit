@@ -44,6 +44,16 @@ public:
 	virtual ~layout();
 
 	/**
+	 * @brief   レイアウトを作成します
+	 *
+	 * @details 
+	 *          メモリー管理のために存在します。
+	 *          レイアウトの作成は必ずレイアウト自身で行います。
+	 *          寿命の管理、アロケータの統一を実現します。
+	 */
+	static layout::store create();
+
+	/**
 	 * @brief   コンテナ内のコントロールをレイアウトします
 	 *
 	 * @details
@@ -56,15 +66,7 @@ public:
 	 */
 	virtual void perform_layout(container* c);
 
-	/**
-	 * @brief   レイアウトを作成します
-	 *
-	 * @details 
-	 *          メモリー管理のために存在します。
-	 *          レイアウトの作成は必ずレイアウト自身で行います。
-	 *          寿命の管理、アロケータの統一を実現します。
-	 */
-	static layout::store create();
+	//virtual void set_child_rect(control *c, rect_int rc);
 };
 
 /**
@@ -81,9 +83,10 @@ protected:
 public:
 	virtual ~full_layout();
 
+	static layout::store create();
+
 	virtual void perform_layout(container* c);
 
-	static layout::store create();
 };
 
 /**
@@ -101,9 +104,9 @@ protected:
 public:
 	virtual ~flow_layout();
 
-	virtual void perform_layout(container* c);
-
 	static layout::store create();
+
+	virtual void perform_layout(container* c);
 };
 
 } // namespace gui

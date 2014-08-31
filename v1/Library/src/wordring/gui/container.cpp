@@ -66,7 +66,7 @@ control* container::push_back(control::store s)
 	control *c = s.get();
 	m_children.push_back(std::move(s));
 
-	c->attach_parent(this);
+	c->attach_parent_internal(this);
 	return c;
 }
 
@@ -114,20 +114,20 @@ container::storage_type& container::get_children()
 	return m_children;
 }
 
-void container::attach_window()
+void container::attach_window_internal()
 {
 	//if ()
 	for (control::store &s : m_children)
 	{
-		s->attach_window();
+		s->attach_window_internal();
 	}
 }
 
-void container::detach_window()
+void container::detach_window_internal()
 {
 	for (control::store &s : m_children)
 	{
-		s->detach_window();
+		s->detach_window_internal();
 	}
 }
 
@@ -261,7 +261,6 @@ bool container::do_mouse_up_internal(mouse &m)
 void container::do_paint_internal(canvas& cv)
 {
 	rect_int rc0 = cv->get_viewport(); // コンテナ自身のビューポート
-	//cv->set_viewport(rc0);
 
 	do_paint(cv); // まず自分を描画する
 
@@ -274,6 +273,11 @@ void container::do_paint_internal(canvas& cv)
 		cv->set_viewport(rc1);
 		s->do_paint_internal(cv);
 	}
+}
+
+void container::do_size_child_internal(control *c)
+{
+
 }
 
 // test_container -------------------------------------------------------------

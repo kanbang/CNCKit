@@ -39,17 +39,7 @@
 
 using namespace wordring::gui;
 
-// control_data ---------------------------------------------------------------
-
-control_data::control_data(control_data *base_, wchar_t const *name)
-	: base(base_)
-	, control_name(name)
-{
-}
-
 // control --------------------------------------------------------------------
-
-control_data control::s_control_data(nullptr, L"wordring::gui::control");
 
 // 構築・破棄 -----------------------------------------------------------------
 
@@ -70,7 +60,7 @@ control::store control::create(rect_int rc)
 
 // 親子関係 -------------------------------------------------------------------
 
-void control::attach_parent(container *parent)
+void control::attach_parent_internal(container *parent)
 {
 	assert(parent);
 
@@ -82,26 +72,26 @@ void control::attach_parent(container *parent)
 	// 子コントロールが再帰的にウィンドウ作成される。
 
 	window *w = parent->find_window();
-	if (w->get_native()->is_created()) { attach_window(); }
+	if (w->get_native()->is_created()) { attach_window_internal(); }
 }
 
-void  control::detach_parent()
+void  control::detach_parent_internal()
 {
 	assert(m_parent);
 
 	find_service()->erase_message(this);
 
 	window *w = find_window();
-	if (w->get_native()->is_created()) { detach_window(); }
+	if (w->get_native()->is_created()) { detach_window_internal(); }
 
 	m_parent = nullptr;
 }
 
-void control::attach_window()
+void control::attach_window_internal()
 {
 }
 
-void control::detach_window()
+void control::detach_window_internal()
 {
 }
 
@@ -117,14 +107,9 @@ container const* control::get_parent() const
 
 // 情報 -----------------------------------------------------------------------
 
-control_data* control::get_control_data() const
-{
-	return &s_control_data;
-}
-
 wchar_t const* control::get_control_name() const
 {
-	return get_control_data()->control_name;
+	return L"control";
 }
 
 bool control::is_window() const
@@ -147,11 +132,6 @@ container* control::find_container()
 {
 	assert(get_parent());
 	return get_parent();
-}
-
-void control::set_root_window(root_window &rw)
-{
-	assert(false); // ルート・ウィンドウ直下にこのコントロールを配置できません
 }
 
 root_window* control::find_root_window()

@@ -53,29 +53,29 @@ root_container::store root_container::create()
 	return store(new root_container());
 }
 
-void root_container::attach_root_window(root_window *parent)
+void root_container::attach_root_window_internal(root_window *parent)
 {
 	m_root_window = parent;
-	attach_window();
+	attach_window_internal();
 }
 
-void root_container::detach_root_window()
+void root_container::detach_root_window_internal()
 {
 	find_service()->erase_message(this);
-	detach_window();
+	detach_window_internal();
 }
 
-void root_container::attach_parent(container *c)
+void root_container::attach_parent_internal(container *c)
 {
 	assert(false); // ルート・コンテナに親コンテナはありません
 }
 
-void root_container::detach_parent()
+void root_container::detach_parent_internal()
 {
 	assert(false); // ルート・コンテナに親コンテナはありません
 }
 
-void root_container::attach_window()
+void root_container::attach_window_internal()
 {
 	// 自分のウィンドウを作成する
 	get_native()->create_window(m_root_window, get_rect());
@@ -83,7 +83,7 @@ void root_container::attach_window()
 	// 子のウィンドウを処理する
 	for (control::store &s : m_children)
 	{
-		s->attach_window();
+		s->attach_window_internal();
 	}
 }
 
@@ -92,11 +92,6 @@ void root_container::attach_window()
 wchar_t const* root_container::get_control_name() const
 {
 	return L"wordring::gui::root_container";
-}
-
-void root_container::set_root_window(root_window *rw)
-{
-	m_root_window = rw;
 }
 
 root_window* root_container::find_root_window()
@@ -139,29 +134,29 @@ root_window::store root_window::create(rect_int rc)
 	return store(new root_window(rc));
 }
 
-void root_window::attach_service(window_service *ws)
+void root_window::attach_service_internal(window_service *ws)
 {
 	assert(ws);
 
 	m_service = ws;
 	get_native()->create_window(nullptr, get_rect());
 
-	m_client->attach_root_window(this);
+	m_client->attach_root_window_internal(this);
 }
 
-void root_window::detach_service()
+void root_window::detach_service_internal()
 {
 	assert(m_service);
 
-	m_client->detach_root_window();
+	m_client->detach_root_window_internal();
 	m_service = nullptr;
 }
 
 void root_window::set_client(root_container::store s)
 {
-	m_client->detach_root_window();
+	m_client->detach_root_window_internal();
 	m_client = std::move(s);
-	m_client->attach_root_window(this);
+	m_client->attach_root_window_internal(this);
 }
 
 container* root_window::get_client()
@@ -178,11 +173,6 @@ control* root_window::assign(control::store s)
 }
 
 // 情報 -------------------------------------------------------------------
-
-void root_window::set_service(window_service *ws)
-{
-	m_service = ws;
-}
 
 window_service* root_window::get_service()
 {

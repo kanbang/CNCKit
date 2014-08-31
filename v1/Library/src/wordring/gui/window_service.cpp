@@ -321,7 +321,7 @@ root_window* window_service::push_back(root_store s)
 	root_window *rw = s.get();
 	m_windows.push_back(std::move(s));
 
-	rw->attach_service(this);
+	rw->attach_service_internal(this);
 
 	return rw;
 }
@@ -356,7 +356,7 @@ void window_service::quit()
 {
 	for (root_window::store &s : m_windows)
 	{
-		s->detach_service();
+		s->detach_service_internal();
 	}
 	m_windows.clear();
 	m_message_service.quit();

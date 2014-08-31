@@ -75,27 +75,24 @@ public:
 	static store create();
 
 	/// 親となるルート・ウィンドウを取り付けます
-	virtual void attach_root_window(root_window *parent);
+	virtual void attach_root_window_internal(root_window *parent);
 
 	/// 親となるルート・ウィンドウを取り外します
-	virtual void detach_root_window();
+	virtual void detach_root_window_internal();
 
 	/// ルート・コンテナに親コンテナは無く、attach_root_windowを使用します
-	virtual void attach_parent(container *parent);
+	virtual void attach_parent_internal(container *parent);
 
 	/// ルート・コンテナに親コンテナは無く、detach_root_windowを使用します
-	virtual void detach_parent();
+	virtual void detach_parent_internal();
 
 	/// 再帰的にウィンドウを取り付けます
-	virtual void attach_window();
+	virtual void attach_window_internal();
 
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
 	virtual wchar_t const* get_control_name() const;
-
-	/// ルート・ウィンドウを設定します
-	virtual void set_root_window(root_window *rw);
 
 	/// ルート・ウィンドウを検索します
 	virtual root_window* find_root_window();
@@ -131,7 +128,6 @@ protected:
 	/**
 	 * @brief   ルート・ウィンドウを構築します
 	 *
-	 * @param   ws ウィンドウ・サービス
 	 * @param   rc ウィンドウの長方形
 	 */
 	root_window(rect_int rc);
@@ -139,7 +135,6 @@ protected:
 	/**
 	 * @brief   ルート・ウィンドウを構築します
 	 *
-	 * @param   ws ウィンドウ・サービス
 	 * @param   rc ウィンドウの長方形
 	 * @param   nw 環境依存のウィンドウ実装
 	 */
@@ -158,9 +153,9 @@ public:
 	 */
 	static store create(rect_int rc);
 
-	void attach_service(window_service *ws);
+	void attach_service_internal(window_service *ws);
 
-	void detach_service();
+	void detach_service_internal();
 
 	void set_client(root_container::store s);
 
@@ -172,8 +167,6 @@ public:
 	control* assign(control::store s);
 
 	// 情報 -------------------------------------------------------------------
-
-	void set_service(window_service *ws);
 
 	/// スレッドのウィンドウ・サービスを返します
 	window_service* get_service();

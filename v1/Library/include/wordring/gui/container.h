@@ -135,7 +135,7 @@ public:
 	 *          再帰的に子へ伝搬しウィンドウを取り付けていきます。
 	 *          この動作により、
 	 */
-	virtual void attach_window();
+	virtual void attach_window_internal();
 
 	/**
 	 * @brief   [内部用] コントロールからウィンドウを取り外します
@@ -144,7 +144,7 @@ public:
 	 *          親から取り外される時、detach_parent()から呼び出されます。
 	 *          再帰的に子へ伝搬しウィンドウを取り外していきます。
 	 */
-	virtual void detach_window();
+	virtual void detach_window_internal();
 
 //	iterator begin();
 
@@ -180,8 +180,11 @@ public:
 
 	// 一般メッセージ ---------------------------------------------------------
 
-	/// 内部用: 再描画要求で呼び出されます
+	/// [内部用] 再描画要求で呼び出されます
 	virtual void do_paint_internal(canvas& cv);
+
+	/// [内部用] 
+	virtual void do_size_child_internal(control *c);
 
 };
 
