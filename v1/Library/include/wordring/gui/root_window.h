@@ -21,7 +21,7 @@
 #ifndef WORDRING_ROOT_WINDOW_H
 #define WORDRING_ROOT_WINDOW_H
 
-#include <wordring/gui/window_container_tmpl.h>
+#include <wordring/gui/window_container.h>
 
 #include <wordring/gui/container.h>
 
@@ -47,10 +47,9 @@ class root_window; // 前方宣言
  *          この処理は特にLinuxでの処理の重さを改善する狙いがあります。
  *          レイアウト要求の圧縮や調停を行う能力があります。
  */
-class root_container : public window_container_tmpl<container, window>
+class root_container : public window_container
 {
 public:
-	typedef window_container_tmpl<container, window> base_type;
 	typedef std::unique_ptr<root_container> store;
 
 protected:
@@ -99,6 +98,10 @@ public:
 
 	/// スレッドのウィンドウ・サービスを検索します
 	virtual window_service* find_service();
+
+	// 大きさ・位置 -----------------------------------------------------------
+
+	void set_rect(rect_int rc);
 };
 
 /**

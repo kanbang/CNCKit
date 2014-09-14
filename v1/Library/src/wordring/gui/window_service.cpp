@@ -44,58 +44,6 @@
 
 using namespace wordring::gui;
 
-// layout_service -------------------------------------------------------------
-
-void layout_service::push(container *c)
-{
-	// キューが空の場合、開始位置にいる
-	bool start = (m_queue.empty()) ? true : false;
-
-	iterator it = m_queue.begin();
-	while (it != m_queue.end())
-	{
-		// 祖先のコンテナがレイアウト予約されている場合、子孫は予約する必要がない
-		if ((*it)->is_ancestor_of(c)) { return; }
-		// 子孫が予約されている場合、祖先と挿げ替える
-		if (c->is_ancestor_of(*it))
-		{
-			m_queue.erase(it);
-			m_queue.push_back(c);
-			return; // 既に何かが有るのなら、開始位置ではないのでreturn出来る
-		}
-	}
-
-	// レイアウトを予約
-	m_queue.push_back(c);
-
-	if (start) // 開始位置にいる場合、レイアウトを開始する
-	{
-		while (!m_queue.empty())
-		{
-			container *c0 = pop();
-			c0->perform_layout();
-		}
-	}
-}
-
-void layout_service::erase(container *c)
-{
-	m_queue.erase(
-		std::remove_if(
-			m_queue.begin(),
-			m_queue.end(),
-			[=](container *c0)->bool{ return c->is_ancestor_of(c0); }),
-		m_queue.end());
-}
-
-container* layout_service::pop()
-{
-	container *c = m_queue.front();
-	m_queue.pop_front();
-
-	return c;
-}
-
 // mouse_service --------------------------------------------------------------
 
 mouse_service::mouse_service()
@@ -339,10 +287,6 @@ void window_service::post_message(message::store m)
 
 void window_service::erase_message(control *c)
 {
-	if (c->is_container())
-	{
-		m_layout_service.erase(static_cast<container*>(c));
-	}
 
 	m_message_service.erase(c);
 }
@@ -365,11 +309,6 @@ void window_service::quit()
 void window_service::set_timer(control *c, std::chrono::milliseconds ms)
 {
 
-}
-
-layout_service& window_service::get_layout_service()
-{
-	return m_layout_service;
 }
 
 mouse_service& window_service::get_mouse_service()

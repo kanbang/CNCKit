@@ -29,6 +29,8 @@
 #include <cassert>
 #include <memory>
 
+#include <iostream>
+
 
 using namespace wordring::gui;
 
@@ -75,6 +77,11 @@ void container::set_layout(layout::store l)
 	m_layout = std::move(l);
 }
 
+layout* container::get_layout()
+{
+	return m_layout.get();
+}
+
 // 情報 -----------------------------------------------------------------------
 
 wchar_t const* container::get_control_name() const
@@ -116,7 +123,6 @@ container::storage_type& container::get_children()
 
 void container::attach_window_internal()
 {
-	//if ()
 	for (control::store &s : m_children)
 	{
 		s->attach_window_internal();
@@ -135,31 +141,20 @@ void container::detach_window_internal()
 
 // 大きさ・位置 ---------------------------------------------------------------
 
-void container::perform_layout()
+void container::set_rect_internal(rect_int rc, bool notify, bool paint)
 {
-	static std::atomic_int i;
-	i++;
-	m_layout->perform_layout(this);
-	/*
-	for (store &s : m_children)
+	std::swap(m_rc, rc);
+
+	get_layout()->perform_layout(this);
+
+	if (notify)
 	{
-		if (s->is_container())
-		{
-			container *c = static_cast<container*>(s.get());
-			c->perform_layout();
-		}
-	}*/
-	for (store &s : m_children)
-	{
-		if (s->is_container())
-		{
-			container *c = static_cast<container*>(s.get());
-			c->perform_layout();
-		}
+		assert(get_parent() != nullptr);
+		// rcは更新前の長方形と置き換わっている
+		get_parent()->get_layout()->do_child_rect(this, rc);
 	}
-	i--;
-	std::cout << i << std::endl;
-	repaint(get_rect());
+
+	if (paint) { repaint(); }
 }
 
 // マウス・メッセージ ---------------------------------------------------------
@@ -273,11 +268,6 @@ void container::do_paint_internal(canvas& cv)
 		cv->set_viewport(rc1);
 		s->do_paint_internal(cv);
 	}
-}
-
-void container::do_size_child_internal(control *c)
-{
-
 }
 
 // test_container -------------------------------------------------------------

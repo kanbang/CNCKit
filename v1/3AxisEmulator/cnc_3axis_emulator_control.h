@@ -24,8 +24,8 @@
 #include <wordring/debug.h>
 
 #include <wordring/gui/control.h>
-#include <wordring/gui/window_control_tmpl.h>
-#include <wordring/gui/window_container_tmpl.h>
+//#include <wordring/gui/window_control_tmpl.h>
+#include <wordring/gui/window_container.h>
 
 #include <wordring/opengl/gl_context.h>
 
@@ -41,8 +41,7 @@ namespace wordring
 namespace gui
 {
 
-class cnc_3axis_emulator_control
-	: public window_container_tmpl <container, window>
+class cnc_3axis_emulator_control : public window_container
 {
 public:
 	typedef wordring::opengl::gl_context gl_context;

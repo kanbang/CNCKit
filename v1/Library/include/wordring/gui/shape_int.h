@@ -121,9 +121,14 @@ struct rect_int : shape_int
 		return pt.x + size.cx - 1;
 	}
 
-	bool operator ==(rect_int const &rhs) const
+	bool operator ==(rect_int rhs) const
 	{
 		return pt == rhs.pt && size == rhs.size;
+	}
+
+	bool operator !=(rect_int rhs) const
+	{
+		return !(pt == rhs.pt && size == rhs.size);
 	}
 
 	void operator +=(point_int pt_)

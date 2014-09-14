@@ -82,7 +82,7 @@ int main()
 		rw2->get_client()->push_back(test_container::create(rc)));
 	c2->set_layout(flow_layout::create());
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		c2->push_back(test_control::create(
 			rect_int(point_int(0, 0), size_int(30, 30)), i));

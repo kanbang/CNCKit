@@ -21,6 +21,8 @@
 #ifndef WORDRING_LAYOUT_H
 #define WORDRING_LAYOUT_H
 
+#include <wordring/gui/shape_int.h>
+
 #include <cstdint>
 #include <memory>
 
@@ -29,6 +31,7 @@ namespace wordring
 namespace gui
 {
 
+class control;
 class container;
 
 /// 何もしないレイアウトです
@@ -59,34 +62,37 @@ public:
 	 * @details
 	 *          このメンバは、コンテナからコンテナ自身を引数に呼び出されます。
 	 *
-	 *          コンテナのレイアウト変更は、さらに親コンテナのレイアウト変更を
+	 *          コンテナのレイアウトは、さらに親コンテナのレイアウトを
 	 *          引き起こす場合があります。
-	 *
-	 *          container::perform_layout()の説明を読んでください。
 	 */
 	virtual void perform_layout(container* c);
 
-	//virtual void set_child_rect(control *c, rect_int rc);
-};
+	/**
+	 * @brief   子コントロールの位置が変更されたとき呼び出されます
+	 *
+	 * @param   child 原因となった子コントロール
+	 *
+	 * @param   old 以前の位置
+	 */
+	virtual void do_child_position(control *child, point_int old);
 
-/**
- * @brief   コンテナ全面にコントロールを拡大して配置します
- *
- * @details 
- *          複数のコントロールがある場合、重なって配置されます。
- */
-class full_layout : public layout
-{
-protected:
-	full_layout();
+	/**
+	 * @brief   子コントロールの長方形が変更されたとき呼び出されます
+	 *
+	 * @param   child 原因となった子コントロール
+	 *
+	 * @param   old 以前の長方形
+	 */
+	virtual void do_child_rect(control *child, rect_int old);
 
-public:
-	virtual ~full_layout();
-
-	static layout::store create();
-
-	virtual void perform_layout(container* c);
-
+	/**
+	 * @brief   子コントロールの大きさが変更されたとき呼び出されます
+	 *
+	 * @param   child 原因となった子コントロール
+	 *
+	 * @param   old 以前の大きさ
+	 */
+	virtual void do_child_size(control *child, size_int old);
 };
 
 /**
@@ -107,6 +113,26 @@ public:
 	static layout::store create();
 
 	virtual void perform_layout(container* c);
+};
+
+/**
+ * @brief   コンテナ全面にコントロールを拡大して配置します
+ *
+ * @details
+ *          複数のコントロールがある場合、重なって配置されます。
+ */
+class full_layout : public layout
+{
+protected:
+	full_layout();
+
+public:
+	virtual ~full_layout();
+
+	static layout::store create();
+
+	virtual void perform_layout(container* c);
+
 };
 
 } // namespace gui

@@ -33,6 +33,8 @@
 
 #include <cassert>
 
+#include <utility>
+
 #include <string>
 #include <atomic>
 #include <cstdlib>
@@ -181,16 +183,6 @@ void control::repaint(rect_int rc)
 
 // 大きさ・位置 ---------------------------------------------------------------
 
-void control::set_size(size_int size)
-{
-	set_rect(rect_int(m_rc.pt, size));
-}
-
-size_int control::get_size() const
-{
-	return is_visible() ? m_rc.size : size_int();
-}
-
 void control::set_position(point_int pt)
 {
 	set_rect(rect_int(pt, m_rc.size));
@@ -203,22 +195,38 @@ point_int control::get_position() const
 
 void control::set_rect(rect_int rc)
 {
+	set_rect_internal(rc, true, true);
+}
+
+void control::set_rect_internal(rect_int rc, bool notify, bool paint)
+{
 	// ルート・コンテナはオーバーライドする必要があります
 	assert(get_parent() != nullptr);
 
-	if (rc == m_rc) { return; } // ループ・ガード
-	m_rc = rc;
+	std::swap(m_rc, rc);
 
-	do_size(rc.size);
+	if (notify)
+	{
+		// rcは更新前の長方形と置き換わっている
+		get_parent()->get_layout()->do_child_rect(this, rc);
+	}
 
-	window_service* ws = find_service();
-	assert(ws);
-	ws->get_layout_service().push(get_parent());
+	if (paint) { repaint(); }
 }
 
 rect_int control::get_rect() const
 {
 	return m_rc;
+}
+
+void control::set_size(size_int size)
+{
+	set_rect(rect_int(m_rc.pt, size));
+}
+
+size_int control::get_size() const
+{
+	return is_visible() ? m_rc.size : size_int();
 }
 
 size_int control::get_preferred_size() const
@@ -287,12 +295,12 @@ void control::do_message_internal(message &m)
 }
 
 // マウス・メッセージ ---------------------------------------------------------
-
+/*
 bool control::do_click(mouse &m)
 {
 	return false;
 }
-
+*/
 bool control::do_mouse_down(mouse &m)
 {
 	return false;

@@ -40,13 +40,28 @@ layout::~layout()
 
 }
 
+layout::store layout::create()
+{
+	return layout::store(new layout);
+}
+
 void layout::perform_layout(container* c)
 {
 }
 
-layout::store layout::create()
+void layout::do_child_position(control *child, point_int old)
 {
-	return layout::store(new layout);
+	perform_layout(child->get_parent());
+}
+
+void layout::do_child_rect(control *child, rect_int old)
+{
+	perform_layout(child->get_parent());
+}
+
+void layout::do_child_size(control *child, size_int old)
+{
+	perform_layout(child->get_parent());
 }
 
 // full_layout ----------------------------------------------------------------
@@ -61,6 +76,11 @@ full_layout::~full_layout()
 
 }
 
+layout::store full_layout::create()
+{
+	return layout::store(new full_layout);
+}
+
 void full_layout::perform_layout(container* c)
 {
 	size_int size = c->get_size();
@@ -69,13 +89,9 @@ void full_layout::perform_layout(container* c)
 	for (container::store& store : children)
 	{
 		control* child = store.get();
-		child->set_rect(rect_int(point_int(0, 0), size));
+		child->set_rect_internal(
+			rect_int(point_int(0, 0), size), false, false);
 	}
-}
-
-layout::store full_layout::create()
-{
-	return layout::store(new full_layout);
 }
 
 // flow_layout ----------------------------------------------------------------
@@ -88,6 +104,11 @@ flow_layout::flow_layout()
 flow_layout::~flow_layout()
 {
 
+}
+
+layout::store flow_layout::create()
+{
+	return layout::store(new flow_layout);
 }
 
 void flow_layout::perform_layout(container* c)
@@ -115,14 +136,11 @@ void flow_layout::perform_layout(container* c)
 
 		dy = std::max(dy, size.cy);
 		
-		store->set_rect(rect_int(point_int(x, y), size));
+		store->set_rect_internal(
+			rect_int(point_int(x, y), size), false, false);
 	}
 }
 
-layout::store flow_layout::create()
-{
-	return layout::store(new flow_layout);
-}
 
 
 

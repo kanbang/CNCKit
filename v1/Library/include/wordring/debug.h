@@ -23,6 +23,9 @@
 #define WORDRING_DEBUG_H
 
 #ifdef _WIN32
+
+#define NOMINMAX // min maxマクロを抑制する
+
 #ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC

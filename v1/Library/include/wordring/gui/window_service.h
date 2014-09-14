@@ -52,32 +52,6 @@ class root_window;
 class container;
 class window_service;
 
-/**
- * @brief   レイアウトの調停と圧縮を行うサービスです
- *
- * @details
- *          レイアウト要求はネストするため、OSに処理を返さずにこのクラスで処理
- *          します。
- *          この処理は特にLinuxでの処理の重さを改善する狙いがあります。
- *          レイアウト要求の圧縮や調停を行う能力があります。
- */
-class layout_service
-{
-public:
-	typedef std::deque<container*> storage_type;
-	typedef storage_type::iterator iterator;
-
-private:
-	storage_type m_queue;
-
-public:
-	void push(container *c);
-
-	container* pop();
-
-	void erase(container *c);
-};
-
 class mouse_service
 {
 public:
@@ -215,7 +189,7 @@ private:
 
 	message_service m_message_service; ///< メッセージ・キュー
 	//timer_service m_timer_service;
-	layout_service m_layout_service;
+	//layout_service m_layout_service;
 	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
 	style_service m_style_service; ///< スタイル
 
@@ -257,7 +231,7 @@ public:
 
 	// マウス -----------------------------------------------------------------
 
-	layout_service& get_layout_service();
+	//layout_service& get_layout_service();
 
 	mouse_service& get_mouse_service();
 

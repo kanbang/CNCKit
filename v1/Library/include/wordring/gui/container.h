@@ -98,6 +98,9 @@ public:
 	/// レイアウトを設定します
 	void set_layout(layout::store l);
 
+	/// レイアウトを取得します
+	layout* get_layout();
+
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
@@ -158,8 +161,7 @@ public:
 
 	// 大きさ・位置 -----------------------------------------------------------
 
-	/// 子コントロールの再配置を行います
-	virtual void perform_layout();
+	virtual void set_rect_internal(rect_int rc, bool notify, bool paint);
 
 	// マウス・メッセージ -----------------------------------------------------
 
@@ -182,9 +184,6 @@ public:
 
 	/// [内部用] 再描画要求で呼び出されます
 	virtual void do_paint_internal(canvas& cv);
-
-	/// [内部用] 
-	virtual void do_size_child_internal(control *c);
 
 };
 

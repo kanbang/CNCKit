@@ -82,7 +82,6 @@ protected:
 public:
 	virtual ~window_control_tmpl()
 	{
-
 	}
 
 	// 親子関係 ---------------------------------------------------------------
@@ -136,9 +135,6 @@ public:
 	virtual window* find_window()
 	{
 		return this;
-
-		//window_type *pT2 = static_cast<window_type*>(this);
-		//return (pT2->get_native()->is_created()) ? this : nullptr;
 	}
 
 	// 表示 -------------------------------------------------------------------
@@ -201,15 +197,10 @@ public:
 	virtual void set_rect(rect_int rc)
 	{
 		control_type *pT1 = static_cast<control_type*>(this);
-		window_service* ws = pT1->find_service();
-		assert(ws);
+		assert(pT1->get_rect() != rc);
 
-		if (rc == pT1->get_rect()) { return; } // ループ・ガード
-		m_rc = rc;
-
-		container *parent = pT1->get_parent(); // 親がルートの場合、nullptr
-
-		if (parent) { rc.pt += parent->query_offset_from_window(); }
+		container *parent = pT1->get_parent();
+		rc.pt += parent->query_offset_from_window();
 
 		window_type *pT2 = static_cast<window_type*>(this);
 		pT2->get_native()->set_window_rect(rc);
@@ -217,15 +208,7 @@ public:
 		container* c = parent ? parent : pT1->find_container();
 		ws->get_layout_service().push(c);
 	}
-/*
-	/// コントロールの長方形を取得する
-	virtual rect_int get_rect() const
-	{
-		window_type const *pT2 = static_cast<window_type const*>(this);
-		rect_int result = pT2->get_native()->get_window_rect();
-		return result;
-	}
-*/
+
 	/// ウィンドウからの相対位置を取得する
 	virtual point_int query_offset_from_window() const
 	{
@@ -294,7 +277,12 @@ public:
 	virtual void do_size_window(size_int size)
 	{
 		control_type *pT1 = static_cast<control_type*>(this);
-		pT1->set_rect(rect_int(get_position(), size));
+
+		// プログラム内から大きさを変更されたリアクションの場合、すでに変更が
+		// 完了しているため、何もしない
+		if (pT1->get_size() == size) { return; }
+
+		pT1->set_rect(rc);
 	}
 
 	// ------------------------------------------------------------------------

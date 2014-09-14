@@ -123,8 +123,13 @@ public:
 public:
 	enum : int32_t
 	{
-		class_atom,
-		background_color,
+		class_atom, ///< スタイル・クラス
+
+		// 色
+		background_color, ///< 背景色
+		foreground_color, ///< 前景色
+	
+		control_specific ///< コントロールが定義する値
 	};
 
 protected:
@@ -155,10 +160,14 @@ public:
 	typedef std::unordered_map<std::type_index, style::store> default_map_type;
 
 private:
+	/// コントロール・オブジェクトとスタイルのマップ
 	object_map_type m_object_map;
+	/// スタイル・クラスとスタイルのマップ
 	class_map_type m_class_map;
+	/// コントロール・クラスとスタイルのマップ
 	default_map_type m_default_map;
 
+	/// スタイル・クラス名とスタイル・クラス識別子を対応付けるサービス
 	atom_service m_atom_service;
 
 public:
@@ -216,7 +225,7 @@ public:
 	style* find(std::wstring name);
 
 	/**
-	 * @brief   スタイル・クラスに関連付けられたスタイルを検索します
+	 * @brief   コントロール・クラスに関連付けられたスタイルを検索します
 	 *
 	 * @param   type コントロール・クラスのtype_index
 	 *

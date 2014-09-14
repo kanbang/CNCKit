@@ -146,6 +146,7 @@ public:
 	 * @details コントロール自身がウィンドウの場合もあり得ます。
 	 *          コントロール自身がウィンドウの場合は、このメンバをオーバーライド
 	 *          してください。
+	 *          クロス・キャストを避けるため仮想関数で実装します。
 	 */
 	virtual window* find_window();
 
@@ -192,12 +193,6 @@ public:
 
 	// 大きさ・位置 -----------------------------------------------------------
 
-	/// コントロールの大きさを設定する
-	virtual void set_size(size_int size);
-
-	/// コントロールの大きさを取得する
-	virtual size_int get_size() const;
-
 	/// コントロールの位置を設定する
 	virtual void set_position(point_int pt);
 
@@ -223,12 +218,34 @@ public:
 	 *
 	 * @param   rc 長方形
 	 */
-	virtual void set_rect(rect_int rc);
+	void set_rect(rect_int rc);
 
-	//virtual void set_rect_internal(rect_int rc);
+	/**
+	 * @brief   [内部用] コントロールの長方形を設定する
+	 *
+	 * @details
+	 *          コントロールの長方形を設定します。
+	 *          notifyがtrueの場合、親のレイアウトに通知します。
+	 *          親のレイアウトがset_rect_internalを呼び出す場合、notifyをfalse
+	 *          にして呼び出します。
+	 *          これをしない場合、呼び出しがループします。
+	 *
+	 * @param   rc 長方形
+	 *
+	 * @param   notify trueの場合、親のレイアウトへ通知します
+	 *
+	 * @param   paint trueの場合、再描画します
+	 */
+	virtual void set_rect_internal(rect_int rc, bool notify, bool paint);
 
 	/// コントロールの長方形を取得する
 	virtual rect_int get_rect() const;
+
+	/// コントロールの大きさを設定する
+	virtual void set_size(size_int size);
+
+	/// コントロールの大きさを取得する
+	virtual size_int get_size() const;
 
 	/// 推奨される大きさを取得する
 	virtual size_int get_preferred_size() const;
@@ -260,11 +277,12 @@ public:
 
 	// マウス・メッセージ -----------------------------------------------------
 
-	virtual bool do_click(mouse &m);
+	//virtual bool do_click(mouse &m);
 
+	/// マウス・ボタンが押されたとき呼び出されます
 	virtual bool do_mouse_down(mouse &m);
 
-	// [内部用]
+	/// [内部用] マウス・ボタンが押されたとき呼び出されます
 	virtual bool do_mouse_down_internal(mouse &m);
 
 	/*
@@ -284,13 +302,16 @@ public:
 	 */
 	virtual void do_mouse_move_internal(mouse &m);
 
+	/// マウス・ポインタがコントロールに入ったとき呼び出されます
 	virtual void do_mouse_over(mouse &m);
 
+	/// マウス・ポインタがコントロールから出たとき呼び出されます
 	virtual void do_mouse_out(mouse &m);
 
+	/// マウス・ボタンが離されたとき呼び出されます
 	virtual bool do_mouse_up(mouse &m);
 
-	// [内部用]
+	// [内部用] マウス・ボタンが離されたとき呼び出されます
 	virtual bool do_mouse_up_internal(mouse &m);
 
 	//virtual 

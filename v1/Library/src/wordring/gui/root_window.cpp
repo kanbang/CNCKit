@@ -35,7 +35,7 @@ using namespace wordring::gui;
 // 構築・破棄 -----------------------------------------------------------------
 
 root_container::root_container()
-	: base_type(
+	: window_container(
 		  rect_int() // ルート・ウィンドウによって決まるので空
 		, full_layout::create()
 		, std::move(detail::native_control_window_impl::create()))
@@ -105,6 +105,13 @@ window_service* root_container::find_service()
 	return m_root_window->get_service();
 }
 
+// 大きさ・位置 ---------------------------------------------------------------
+
+void root_container::set_rect(rect_int rc)
+{
+	set_rect_internal(rc, false, true);
+}
+
 // root_window ----------------------------------------------------------------
 
 // 構築・破棄 -----------------------------------------------------------------
@@ -172,7 +179,7 @@ control* root_window::assign(control::store s)
 	return c;
 }
 
-// 情報 -------------------------------------------------------------------
+// 情報 -----------------------------------------------------------------------
 
 window_service* root_window::get_service()
 {
@@ -217,7 +224,10 @@ void root_window::do_paint_window(canvas &cv)
 
 void root_window::do_size_window(size_int size)
 {
-	if (m_client) { m_client->set_size(size); }
+	if (m_client)
+	{
+		m_client->set_rect(rect_int(point_int(0, 0), size));
+	}
 }
 
 
