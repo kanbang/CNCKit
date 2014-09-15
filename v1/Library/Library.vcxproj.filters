@@ -177,6 +177,12 @@
     <ClInclude Include="include\wordring\gui\window_container.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
+    <ClInclude Include="include\wordring\gui\control_data.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\atom.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wordring\debug.cpp">
@@ -234,6 +240,12 @@
       <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
     <ClCompile Include="src\wordring\gui\window_container.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\atom.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\control_data.cpp">
       <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
   </ItemGroup>

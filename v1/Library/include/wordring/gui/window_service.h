@@ -29,9 +29,8 @@
 //#include <wordring/gui/root_window.h>
 
 #include <wordring/gui/message.h>
-
 #include <wordring/gui/mouse.h>
-
+//#include <wordring/gui/control_data.h>
 #include <wordring/gui/style.h>
 
 #include <memory>
@@ -189,8 +188,8 @@ private:
 
 	message_service m_message_service; ///< メッセージ・キュー
 	//timer_service m_timer_service;
-	//layout_service m_layout_service;
 	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
+	//control_data_service m_data_service; ///< コントロールの外部データ
 	style_service m_style_service; ///< スタイル
 
 public:
@@ -231,9 +230,13 @@ public:
 
 	// マウス -----------------------------------------------------------------
 
-	//layout_service& get_layout_service();
-
 	mouse_service& get_mouse_service();
+
+	// コントロール・データ ---------------------------------------------------
+
+	//control_data_service& get_data_service();
+
+	// スタイル ---------------------------------------------------------------
 
 	style_service& get_style_service();
 };

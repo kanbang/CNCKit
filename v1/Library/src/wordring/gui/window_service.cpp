@@ -315,7 +315,12 @@ mouse_service& window_service::get_mouse_service()
 {
 	return m_mouse_service;
 }
-
+/*
+control_data_service& window_service::get_data_service()
+{
+	return m_data_service;
+}
+*/
 style_service& window_service::get_style_service()
 {
 	return m_style_service;
