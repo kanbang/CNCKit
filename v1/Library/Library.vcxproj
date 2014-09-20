@@ -99,10 +99,12 @@
     <ClInclude Include="include\wordring\gui\control.h" />
     <ClInclude Include="include\wordring\gui\control_data.h" />
     <ClInclude Include="include\wordring\gui\detail\native_canvas.h" />
+    <ClInclude Include="include\wordring\gui\detail\native_font.h" />
     <ClInclude Include="include\wordring\gui\detail\native_window.h" />
     <ClInclude Include="include\wordring\gui\detail\native_message_service.h" />
     <ClInclude Include="include\wordring\gui\detail\win32\win32_canvas.h" />
     <ClInclude Include="include\wordring\gui\detail\win32\win32_child_window.h" />
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_font.h" />
     <ClInclude Include="include\wordring\gui\detail\win32\win32_window.h" />
     <ClInclude Include="include\wordring\gui\detail\win32\win32_window_class.h" />
     <ClInclude Include="include\wordring\gui\detail\win32\win32_message_service.h" />
@@ -136,8 +138,10 @@
     <ClCompile Include="src\wordring\gui\control_data.cpp" />
     <ClCompile Include="src\wordring\gui\detail\win32\win32_canvas.cpp" />
     <ClCompile Include="src\wordring\gui\detail\win32\win32_child_window.cpp" />
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_font.cpp" />
     <ClCompile Include="src\wordring\gui\detail\win32\win32_window.cpp" />
     <ClCompile Include="src\wordring\gui\detail\win32\win32_message_service.cpp" />
+    <ClCompile Include="src\wordring\gui\font.cpp" />
     <ClCompile Include="src\wordring\gui\layout.cpp" />
     <ClCompile Include="src\wordring\gui\message.cpp" />
     <ClCompile Include="src\wordring\gui\root_window.cpp" />

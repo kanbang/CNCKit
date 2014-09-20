@@ -56,7 +56,6 @@ int main()
 	window_service ws;
 	gl_context gl;
 
-
 	//std::cout << sizeof(control::state) << std::endl;
 //	root_window* rw1 = ws.push_back(root_window::create(rc));
 
@@ -82,18 +81,28 @@ int main()
 		rw2->get_client()->push_back(test_container::create(rc)));
 	c2->set_layout(flow_layout::create());
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 200; i++)
 	{
-		c2->push_back(test_control::create(
-			rect_int(point_int(0, 0), size_int(100, 100)), i));
+		//c2->push_back(test_control::create(
+		//	rect_int(point_int(0, 0), size_int(100, 100)), i));
+		button *b = static_cast<button*>(
+			c2->push_back(button::create(0, 0, 200, 16)));
+		b->on_click = [](mouse &m)->bool{
+			std::cout << "click" << m.pt.x << ", " << m.pt.y << std::endl;
+			return true;
+		};
 	}
 
 	c2->push_back(std::move(tc0));
 
-	button *b = static_cast<button*>(
-		c2->push_back(button::create(0, 0, 100, 20)));
+
+
+	style *s = ws.get_style_service().insert(typeid(button));
+	s->insert(style::bg_color, rgb_color(0, 0x40, 0x40, 0xFF));
 
 	rw2->show();
+
+	std::cout << sizeof(style_value) << std::endl;
 
 	//size_int s1 = f.get_size(),
 	//	s2 = a3e->get_size();

@@ -23,9 +23,9 @@
 
 #include <wordring/debug.h>
 
+#include <wordring/gui/font.h>
 #include <wordring/gui/shape_int.h>
 #include <wordring/graphics/color.h>
-#include <wordring/gui/font.h>
 
 #include <string>
 
@@ -41,8 +41,8 @@ class dummy;
 class native_canvas
 {
 protected:
-	point_int m_pt; // コントロールの開始位置
-	size_int m_size; // コントロールの大きさ
+	rect_int m_viewport;
+	point_int m_origin;
 
 public:
 	native_canvas()
@@ -52,6 +52,12 @@ public:
 	virtual ~native_canvas()
 	{
 	}
+
+	/// 描画原点を取得します
+	virtual point_int get_origin() const = 0;
+
+	/// 描画原点を設定します
+	virtual void set_origin(point_int pt) = 0;
 
 	virtual rect_int get_viewport() const = 0;
 

@@ -48,7 +48,13 @@ public:
 
 	virtual ~native_canvas_impl();
 
-	HDC get_dc();
+	HDC get_handle();
+
+	/// 描画原点を取得します
+	virtual point_int get_origin() const;
+
+	/// キャンバスの描画原点を設定します
+	virtual void set_origin(point_int pt);
 
 	virtual rect_int get_viewport() const;
 
@@ -63,8 +69,11 @@ public:
 	 * @brief   線を描画します
 	 *
 	 * @param   pt1   始点
+	 *
 	 * @param   pt2   終点
+	 *
 	 * @param   width 太さ
+	 *
 	 * @param   rgb   色
 	 */
 	virtual void draw_line(
@@ -74,7 +83,9 @@ public:
 	 * @brief   長方形を描画します
 	 *
 	 * @param   rc    長方形
+	 *
 	 * @param   width 太さ
+	 *
 	 * @param   rgb   色
 	 */
 	virtual void draw_rect(rect_int rc, int32_t width, rgb_color rgb);
@@ -83,6 +94,7 @@ public:
 	 * @brief   長方形を塗りつぶします
 	 *
 	 * @param   rc  長方形
+	 *
 	 * @param   rgb 色
 	 */
 	virtual void fill_rect(rect_int rc, rgb_color rgb);
@@ -91,8 +103,11 @@ public:
 	 * @brief   文字列を描画します
 	 *
 	 * @param   str 文字列
+	 *
 	 * @param   pt  文字列の左上位置
+	 *
 	 * @param   rgb 色
+	 *
 	 * @param   f   フォント
 	 */
 	virtual void draw_string(
@@ -101,8 +116,11 @@ public:
 	 * @brief   文字列を描画します
 	 *
 	 * @param   str 文字列
+	 *
 	 * @param   pt  文字列の左上位置
+	 *
 	 * @param   rgb 色
+	 *
 	 * @param   f   フォント
 	 */
 	virtual void draw_string(

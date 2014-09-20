@@ -18,24 +18,25 @@
  *          PDS
  */
 
-#ifdef _WIN32
+#include <wordring/wordring.h>
 
-#include <wordring/debug.h>
-
-#include <wordring/gui/detail/win32/win32_canvas.h>
+#ifdef WORDRING_OS_WIN
 
 #include <wordring/gui/shape_int.h>
 #include <wordring/graphics/color.h>
 #include <wordring/gui/font.h>
 
-#include <Windows.h>
+#include <wordring/gui/detail/win32/win32_canvas.h>
+#include <wordring/gui/detail/win32/win32_font.h>
 
 #include <cassert>
 
-#include <iostream>
+#include <Windows.h>
 
 using namespace wordring::gui::detail;
 using namespace wordring::gui;
+
+// native_canvas_impl ---------------------------------------------------------
 
 native_canvas_impl::native_canvas_impl()
 {
@@ -52,14 +53,24 @@ native_canvas_impl::~native_canvas_impl()
 	::SelectClipRgn(m_hdc, NULL);
 }
 
-HDC native_canvas_impl::get_dc()
+HDC native_canvas_impl::get_handle()
 {
 	return m_hdc;
 }
 
+point_int native_canvas_impl::get_origin() const
+{
+	return m_origin;
+}
+
+void native_canvas_impl::set_origin(point_int pt)
+{
+	m_origin = pt;
+}
+
 rect_int native_canvas_impl::get_viewport() const
 {
-	return rect_int(m_pt, m_size);
+	return m_viewport;
 }
 
 void native_canvas_impl::set_viewport(rect_int rc)
@@ -73,8 +84,7 @@ void native_canvas_impl::set_viewport(rect_int rc)
 
 	if (get_viewport() == rc) { return; }
 
-	m_pt = rc.pt;
-	m_size = rc.size;
+	m_viewport = rc;
 
 	::SetMapMode(m_hdc, MM_TEXT);
 	HRGN hrgn = ::CreateRectRgn(
@@ -89,7 +99,7 @@ void native_canvas_impl::set_viewport(rect_int rc)
 void native_canvas_impl::draw_line(
 	point_int pt1, point_int pt2, int32_t width, rgb_color rgb)
 {
-	pt1 += m_pt; pt2 += m_pt; // ビューポート・オフセット
+	pt1 += m_origin; pt2 += m_origin; // ビューポート・オフセット
 
 	HPEN hpen = ::CreatePen(
 		PS_SOLID | PS_INSIDEFRAME, width, RGB(rgb.r, rgb.g, rgb.b));
@@ -122,7 +132,7 @@ void native_canvas_impl::draw_rect(rect_int rc, int32_t width, rgb_color rgb)
 	draw_line(pt2, pt4, width, rgb);
 	draw_line(pt3, pt4, width, rgb);
 	*/
-	rc.pt += m_pt;
+	rc.pt += m_origin;
 
 	HPEN hpen = ::CreatePen(
 		PS_SOLID | PS_INSIDEFRAME, width, RGB(rgb.r, rgb.g, rgb.b));
@@ -147,7 +157,7 @@ void native_canvas_impl::draw_rect(rect_int rc, int32_t width, rgb_color rgb)
 
 void native_canvas_impl::fill_rect(rect_int rc, rgb_color rgb)
 {
-	rc.pt += m_pt;
+	rc.pt += m_origin;
 
 	HBRUSH hbrush = ::CreateSolidBrush(RGB(rgb.r, rgb.g, rgb.b));
 	assert(hbrush != NULL);
@@ -178,7 +188,7 @@ void native_canvas_impl::fill_rect(rect_int rc, rgb_color rgb)
 void native_canvas_impl::draw_string(
 	std::string str, point_int pt, rgb_color rgb, font* f)
 {
-	pt += m_pt;
+	pt += m_origin;
 
 	BOOL result = ::TextOutA(m_hdc, pt.x, pt.y, str.c_str(), str.size());
 	assert(result != 0);
@@ -187,8 +197,14 @@ void native_canvas_impl::draw_string(
 void native_canvas_impl::draw_string(
 	std::wstring str, point_int pt, rgb_color rgb, font* f)
 {
-	pt += m_pt;
+	pt += m_origin;
 
+	if (f != nullptr)
+	{
+		native_font_impl *nf = static_cast<native_font_impl*>(f->get_native());
+
+		::SelectObject(m_hdc, nf->get_handle(get_handle()));
+	}
 	BOOL result = ::TextOutW(m_hdc, pt.x, pt.y, str.c_str(), str.size());
 	assert(result != 0);
 }
@@ -238,4 +254,4 @@ native_memory_canvas_impl::~native_memory_canvas_impl()
 
 
 
-#endif // _WIN32
+#endif // WRODRING_OS_WIN

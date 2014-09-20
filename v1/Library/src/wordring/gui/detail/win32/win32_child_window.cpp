@@ -18,15 +18,15 @@
 *          PDS
 */
 
-#ifdef _WIN32
+#include <wordring/wordring.h>
 
-#include <wordring/debug.h>
+#ifdef WORDRING_OS_WIN
 
 #include <wordring/exception.h>
-
 #include <wordring/gui/shape_int.h>
 
 #include <wordring/gui/window.h>
+
 #include <wordring/gui/detail/win32/win32_child_window.h>
 
 #include <Windows.h>
@@ -165,4 +165,4 @@ WNDCLASSEX native_control_window_impl::window_class::create()
 /// native_control_window_impl用のwindow_class
 native_control_window_impl::window_class g_window_class;
 
-#endif // _WIN32
+#endif // WRODRING_OS_WIN

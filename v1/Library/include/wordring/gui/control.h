@@ -153,7 +153,8 @@ public:
 	/**
 	 * @brief   一番近いコンテナを返します
 	 *
-	 * @details thisがコンテナの場合、thisを返します。
+	 * @details 
+	 *          thisがコンテナの場合、thisを返します。
 	 */
 	virtual container* find_container();
 

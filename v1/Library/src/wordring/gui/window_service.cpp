@@ -255,6 +255,7 @@ void message_service::do_tack()
 window_service::window_service()
 {
 	m_message_service.set_window_service(this);
+	m_font_service.set_window_service(this);
 }
 
 window_service::~window_service()
@@ -324,4 +325,9 @@ control_data_service& window_service::get_data_service()
 style_service& window_service::get_style_service()
 {
 	return m_style_service;
+}
+
+font_service& window_service::get_font_service()
+{
+	return m_font_service;
 }

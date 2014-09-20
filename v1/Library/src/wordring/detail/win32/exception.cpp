@@ -18,14 +18,17 @@
  *          PDS
  */
 
-#ifdef _WIN32
+#include <wordring/wordring.h>
 
+#ifdef WORDRING_OS_WIN
+
+#include <wordring/debug.h>
 #include <wordring/exception.h>
-
-#include <Windows.h>
 
 #include <string>
 #include <cassert>
+
+#include <Windows.h>
 
 using namespace wordring;
 
@@ -66,4 +69,4 @@ void wordring::check_assertion(bool btrue)
 	}
 }
 
-#endif // _WIN32
+#endif // WRODRING_OS_WIN

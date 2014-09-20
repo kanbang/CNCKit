@@ -32,6 +32,7 @@
 #include <wordring/gui/mouse.h>
 //#include <wordring/gui/control_data.h>
 #include <wordring/gui/style.h>
+#include <wordring/gui/font.h>
 
 #include <memory>
 #include <list>
@@ -191,6 +192,7 @@ private:
 	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
 	//control_data_service m_data_service; ///< コントロールの外部データ
 	style_service m_style_service; ///< スタイル
+	font_service m_font_service;
 
 public:
 	window_service();
@@ -239,6 +241,8 @@ public:
 	// スタイル ---------------------------------------------------------------
 
 	style_service& get_style_service();
+
+	font_service& get_font_service();
 };
 
 

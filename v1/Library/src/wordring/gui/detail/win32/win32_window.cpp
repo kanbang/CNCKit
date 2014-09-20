@@ -20,19 +20,16 @@
 
 #include <wordring/debug.h>
 
-#include <wordring/gui/detail/win32/win32_message_service.h>
+#include <wordring/exception.h>
 
-#include <wordring/gui/detail/win32/win32_window.h>
 #include <wordring/gui/window.h>
-
 #include <wordring/gui/shape_int.h>
-
 #include <wordring/gui/mouse.h>
-
-#include <wordring/gui/detail/win32/win32_canvas.h>
 #include <wordring/gui/canvas.h>
 
-#include <wordring/exception.h>
+#include <wordring/gui/detail/win32/win32_message_service.h>
+#include <wordring/gui/detail/win32/win32_window.h>
+#include <wordring/gui/detail/win32/win32_canvas.h>
 
 #include <Windows.h>
 #include <windowsx.h>

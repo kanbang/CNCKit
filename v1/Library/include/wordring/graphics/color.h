@@ -36,6 +36,16 @@ struct rgb_color
 		unsigned char g_,
 		unsigned char b_,
 		unsigned char a_ = 255) : r(r_), g(g_), b(b_), a(a_) { }
+	rgb_color(uint32_t rgba)
+		: r((rgba & 0xFF000000) >> 24)
+		, g((rgba & 0xFF0000) >> 16)
+		, b((rgba & 0xFF00) >> 8)
+		, a(rgba & 0xFF) { }
+
+	operator uint32_t() const
+	{
+		return (r << 24) + (g << 16) + (b << 8) + a;
+	}
 };
 
 } // namespace graphics

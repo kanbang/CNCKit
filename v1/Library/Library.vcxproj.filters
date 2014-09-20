@@ -183,6 +183,12 @@
     <ClInclude Include="include\wordring\atom.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\native_font.h">
+      <Filter>ヘッダー ファイル\gui\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_font.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wordring\debug.cpp">
@@ -247,6 +253,12 @@
     </ClCompile>
     <ClCompile Include="src\wordring\gui\control_data.cpp">
       <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\font.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_font.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

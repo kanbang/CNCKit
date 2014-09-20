@@ -18,16 +18,22 @@
  *          PDS
  */
 
-#include <wordring/gui/canvas.h>
-#include <wordring/gui/detail/native_canvas.h>
-#include <wordring/gui/detail/win32/win32_canvas.h>
-
 #include <wordring/gui/shape_int.h>
 #include <wordring/graphics/color.h>
 #include <wordring/gui/font.h>
 
-using namespace wordring::gui;
+#include <wordring/gui/canvas.h>
+#include <wordring/gui/detail/native_canvas.h>
 
+#ifdef _WIN32
+#include <wordring/gui/detail/win32/win32_canvas.h>
+#endif // _WIN32
+
+#ifdef __linux__
+// linux
+#endif // __linux__
+
+using namespace wordring::gui;
 
 canvas::canvas() : m_native(new detail::native_canvas_impl)
 {

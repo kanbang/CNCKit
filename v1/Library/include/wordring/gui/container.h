@@ -41,8 +41,7 @@ namespace gui
 class container : public control
 {
 public:
-	typedef std::unique_ptr<control> store;
-	typedef std::vector<store> storage_type;
+	typedef std::vector<control::store> storage_type;
 	typedef storage_type::iterator iterator;
 	typedef storage_type::const_iterator const_iterator;
 

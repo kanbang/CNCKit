@@ -30,6 +30,8 @@
 
 #include <wordring/graphics/color.h>
 
+#include <wordring/gui/style.h>
+
 #include <string>
 #include <functional>
 
@@ -45,13 +47,25 @@ class button : public control
 public:
 	enum : int32_t
 	{
-		control_atom = -2,
-		up, down, hover,
+		up = 0,
+		down = 1,
+		
+		style_specific = style::control_specific,
+		hover_bg_color,
+		down_bg_color,
 	};
 
-protected:
+	struct state
+	{
+		bool hover : 1;
+		uint32_t button : 1;
+
+		state();
+	};
+
 	std::function<bool(mouse&)> on_click;
-	int32_t m_state;
+protected:
+	state m_state;
 
 protected:
 	button(rect_int rc);
@@ -62,6 +76,12 @@ public:
 	static control::store create(int32_t x, int32_t y, int32_t cx, int32_t cy);
 
 	virtual bool do_mouse_down(mouse &m);
+
+	/// マウス・ポインタがコントロールに入ったとき呼び出されます
+	virtual void do_mouse_over(mouse &m);
+
+	/// マウス・ポインタがコントロールから出たとき呼び出されます
+	virtual void do_mouse_out(mouse &m);
 
 	virtual bool do_mouse_up(mouse &m);
 

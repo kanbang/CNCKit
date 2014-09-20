@@ -26,16 +26,17 @@
 #endif // _MSCVER
 
 #include <wordring/gui/canvas.h>
-#include <wordring/gui/detail/win32/win32_canvas.h>
-
 #include <wordring/gui/window.h>
-#include <wordring/gui/detail/win32/win32_window.h>
-
-#include <wordring/opengl/detail/win32/win32_gl_context.h>
 
 #include <wordring/opengl/gl_context.h>
 
 #include <wordring/exception.h>
+
+#include <wordring/gui/detail/win32/win32_canvas.h>
+
+#include <wordring/gui/detail/win32/win32_window.h>
+
+#include <wordring/opengl/detail/win32/win32_gl_context.h>
 
 #include <GL/glew.h>
 #include <GL/wglew.h>
@@ -115,7 +116,7 @@ void native_gl_context_impl::create(
 
 	native_canvas_impl& nci =
 		static_cast<native_canvas_impl&>(cv.get_native());
-	HDC hdc = nci.get_dc();
+	HDC hdc = nci.get_handle();
 	assert(hdc);
 
 	create(hdc, flg, depth, bpp);
@@ -155,7 +156,7 @@ void native_gl_context_impl::make_current(wordring::gui::canvas& cv)
 
 	native_canvas_impl& nci =
 		static_cast<native_canvas_impl&>(cv.get_native());
-	HDC hdc = nci.get_dc();
+	HDC hdc = nci.get_handle();
 	assert(hdc);
 
 	make_current(hdc);
@@ -179,7 +180,7 @@ void native_gl_context_impl::unmake_current(wordring::gui::canvas& cv)
 
 	native_canvas_impl& nci =
 		static_cast<native_canvas_impl&>(cv.get_native());
-	HDC hdc = nci.get_dc();
+	HDC hdc = nci.get_handle();
 
 	::SwapBuffers(hdc);
 

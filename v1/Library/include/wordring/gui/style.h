@@ -25,6 +25,7 @@
 
 #include <wordring/atom.h>
 #include <wordring/graphics/color.h>
+#include <wordring/gui/font.h>
 
 #include <memory>
 
@@ -39,43 +40,24 @@ namespace gui
 {
 
 class control; // 先行宣言
-
+class style_service; // 先行宣言
 
 struct style_value
 {
-	typedef std::unique_ptr<style_value> store;
-
 	int32_t key;
+	union
+	{
+		int32_t int_value;
+		font *font_value;
+	};
 
-protected:
-	style_value(int32_t key_);
-};
+	style_value(int32_t key_, int32_t value_);
 
-struct color_value : style_value
-{
-	rgb_color value;
+	bool operator <(style_value const &rhs) const;
 
-protected:
-	color_value(int32_t key_, rgb_color value_);
+	bool operator ==(style_value const &rhs) const;
 
-public:
-	static store create(int32_t key_, rgb_color value_);
-};
-
-struct int32_value : style_value
-{
-	int32_t value;
-};
-
-struct style_class_value : style_value
-{
-	std::vector<int32_t> value;
-
-protected:
-	style_class_value();
-
-public:
-	static style_value::store create();
+	bool operator >(style_value const &rhs) const;
 };
 
 class style
@@ -83,7 +65,7 @@ class style
 public:
 	typedef std::unique_ptr<style> store;
 
-	typedef std::vector<style_value::store> storage_type;
+	typedef std::vector<style_value> storage_type;
 
 	typedef storage_type::iterator iterator;
 	typedef storage_type::const_iterator const_iterator;
@@ -97,10 +79,38 @@ public:
 		style_class, ///< スタイル・クラス
 
 		// 色
-		background_color, ///< 背景色
-		foreground_color, ///< 前景色
+		bg_color, ///< 背景色
+		fg_color, ///< 前景色
+
+		control_specific = 20000, ///< これ以降はコントロールが使用します
 	};
 
+	struct active
+	{
+		enum : int32_t
+		{
+			bg_color = 1000,
+			fg_color,
+		};
+	};
+
+	struct focus
+	{
+		enum : int32_t
+		{
+			bg_color = 2000,
+			fg_color,
+		};
+	};
+
+	struct hover
+	{
+		enum : int32_t
+		{
+			bg_color = 3000,
+			fg_color,
+		};
+	};
 protected:
 	storage_type m_storage; ///< key, value
 
@@ -110,24 +120,32 @@ protected:
 public:
 	static store create();
 
-	style_value* find(int32_t key);
+	const_iterator begin() const;
 
-	style_value const* find(int32_t key) const;
+	const_iterator end() const;
 
-	void insert(style_value::store s);
+	const_range_type equal_range(int32_t key) const;
 
-	void insert(int32_t key, int32_t val);
+	const_iterator find(int32_t key) const;
+
+	void insert(int32_t key, int32_t value);
 };
 
 class style_cache
 {
 private:
+	/// 文字列やフォントを検索するために使います
+	style_service const &m_style_service;
 	std::vector<style const*> m_storage;
 
 public:
+	style_cache(style_service const &ss);
+
 	void push_back(style const *s);
 
-	style_value const* find(int32_t key) const;
+	bool find(int32_t key, style_value &result) const;
+
+	bool find(int32_t key, rgb_color &result) const;
 };
 
 class style_service
@@ -228,6 +246,15 @@ public:
 	style* find(std::type_index type);
 
 	/**
+	 * @brief   C++クラスに関連付けられたスタイルを検索します
+	 *
+	 * @param   type C++クラスのtype_index
+	 *
+	 * @return  登録されていない場合、nullptrを返します
+	 */
+	style const* find(std::type_index type) const;
+
+	/**
 	 * @brief   C++オブジェクトに関連付けられたスタイルを全て検索します
 	 *
 	 * @details
@@ -235,6 +262,8 @@ public:
 	 *          スタイル・クラスをキーにすべてのスタイルを集めて返します。
 	 */
 	style_cache find_styles(void const *p) const;
+
+	style_cache find_styles(std::type_index ti, void const *p) const;
 
 	/**
 	 * @brief   文字列に対応する一意の識別子を取得します
