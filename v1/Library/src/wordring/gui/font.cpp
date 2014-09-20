@@ -1,7 +1,7 @@
 ﻿/**
  * @file    wordring/gui/font.cpp
  *
- * @brief   
+ * @brief   フォントの実装ファイル
  *
  * @details
  *          
@@ -18,17 +18,21 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/font.h>
 
-#ifdef _WIN32
-#include <wordring/gui/detail/win32/win32_font.h>
-#endif // _WIN32
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
 
-#ifdef __linux__
-// linux
-#endif // __linux__
+#include <wordring/gui/detail/win32/win32_font.h>
+
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
+
+#include <wordring/gui/detail/x11/x11_font.h>
+
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------
 
 using namespace wordring::gui;
 
@@ -62,6 +66,16 @@ detail::native_font* font::get_native()
 font_conf const& font::get_conf() const
 {
 	return m_font_conf;
+}
+
+void font::attach(detail::native_canvas const *cv)
+{
+	get_native()->attach(cv);
+}
+
+void font::detach()
+{
+	m_native = nullptr;
 }
 
 // font_hash ------------------------------------------------------------------

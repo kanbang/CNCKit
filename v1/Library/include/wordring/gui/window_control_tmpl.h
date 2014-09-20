@@ -21,19 +21,16 @@
 #ifndef WORDRING_WINDOW_CONTROL_TMPL_H
 #define WORDRING_WINDOW_CONTROL_TMPL_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
+
+#include <wordring/gui/window.h>
+#include <wordring/gui/container.h>
+#include <wordring/gui/control.h>
+#include <wordring/gui/mouse.h>
 
 #include <wordring/gui/shape_int.h>
 
-#include <wordring/gui/control.h>
-#include <wordring/gui/container.h>
-
-#include <wordring/gui/window.h>
-
-#include <wordring/gui/mouse.h>
-
 #include <list>
-#include <iostream>
 
 namespace wordring
 {

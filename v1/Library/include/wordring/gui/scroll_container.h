@@ -21,6 +21,8 @@
 #ifndef WORDRING_SCROLL_CONTAINER_H
 #define WORDRING_SCROLL_CONTAINER_H
 
+#include <wordring/wordring.h>
+
 #include <wordring/gui/container.h>
 
 namespace wordring

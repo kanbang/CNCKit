@@ -18,23 +18,16 @@
 *          PDS
 */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/shape_int.h>
-
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
-
 #include <wordring/gui/root_window.h>
-
 #include <wordring/gui/window.h>
 
-//#include <wordring/gui/message.h>
-
 #include <cassert>
-
 #include <utility>
-
 #include <string>
 #include <atomic>
 #include <cstdlib>

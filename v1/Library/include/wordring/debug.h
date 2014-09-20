@@ -22,24 +22,22 @@
 #ifndef WORDRING_DEBUG_H
 #define WORDRING_DEBUG_H
 
-#ifdef _WIN32
+#ifdef WORDRING_D_DEBUG // Debug ----------------------------------------------
 
-#define NOMINMAX // min maxマクロを抑制する
-
-#ifdef _DEBUG
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
 
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#define new new(_NORMAL_BLOCK,__FILE__,__LINE__) 
+#define new new(_NORMAL_BLOCK,__FILE__,__LINE__)
 
-#include <iostream>
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
 
-#endif // _DEBUG
-#endif // _WIN32
 
-#ifndef WORDRING_DEBUG_CONTROL
-//#define WORDRING_DEBUG_CONTROL
-#endif // WORDRING_DEBUG_CONTROL
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------
+
+#endif // WORDRING_D_DEBUG ----------------------------------------------------
 
 namespace wordring
 {

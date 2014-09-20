@@ -21,13 +21,14 @@
 #ifndef WORDRING_WIN32_CANVAS_H
 #define WORDRING_WIN32_CANVAS_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
+
+#include <cstdint>
 
 #include <wordring/gui/detail/native_canvas.h>
 
 #include <Windows.h>
 
-#include <cstdint>
 
 namespace wordring
 {

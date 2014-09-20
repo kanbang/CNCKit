@@ -16,16 +16,18 @@
  *          PDS
  */
 
-#ifdef _WIN32
+#include <wordring/wordring.h>
 
-#include <wordring/debug.h>
+#ifdef WORDRING_OS_WIN
 
 #include <wordring/exception.h>
-
 #include <wordring/gui/window.h>
 #include <wordring/gui/shape_int.h>
 #include <wordring/gui/mouse.h>
 #include <wordring/gui/canvas.h>
+
+#include <string>
+#include <cassert>
 
 #include <wordring/gui/detail/win32/win32_message_service.h>
 #include <wordring/gui/detail/win32/win32_window.h>
@@ -33,9 +35,6 @@
 
 #include <Windows.h>
 #include <windowsx.h>
-
-#include <string>
-#include <cassert>
 
 using namespace wordring::gui;
 using namespace wordring::gui::detail;
@@ -605,4 +604,4 @@ native_window_impl::window_class native_window_impl::g_window_class;
 
 
 
-#endif // _WIN32
+#endif // WRODRING_OS_WIN

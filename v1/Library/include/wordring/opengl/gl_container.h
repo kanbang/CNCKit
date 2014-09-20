@@ -21,11 +21,11 @@
 #ifndef WORDRING_GL_CONTAINER_H
 #define WORDRING_GL_CONTAINER_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
-#include <wordring/gui/window_container_tmpl.h>
+#include <wordring/gui/window_container.h>
 
 #include <wordring/opengl/gl_context.h>
 
@@ -51,14 +51,12 @@ class dummy;
  *
  *
  */
-class gl_container : public window_container_tmpl <container, window>
+class gl_container : public window_container
 {
 public:
-	typedef window_container_tmpl<container, window> base_type;
-	typedef wordring::opengl::gl_context gl_context;
 
 protected:
-	gl_context m_context;
+	opengl::gl_context m_context;
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -79,7 +77,7 @@ public:
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
-	virtual char const* get_control_name() const;
+	virtual wchar_t const* get_control_name() const;
 
 	// 一般メッセージ ---------------------------------------------------------
 

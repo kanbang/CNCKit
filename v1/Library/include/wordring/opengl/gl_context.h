@@ -21,9 +21,12 @@
 #ifndef WORDRING_GL_CONTEXT_H
 #define WORDRING_GL_CONTEXT_H
 
-#include <wordring/gui/canvas.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/window.h>
+
+#include <wordring/gui/canvas.h>
+
 #include <wordring/opengl/detail/native_gl_context.h>
 
 #include <memory>

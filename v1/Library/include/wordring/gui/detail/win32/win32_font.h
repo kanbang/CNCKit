@@ -21,10 +21,11 @@
 #ifndef WORDRING_WIN32_FONT_H
 #define WORDRING_WIN32_FONT_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
+
+#include <wordring/gui/font.h>
 
 #include <wordring/gui/detail/native_font.h>
-#include <wordring/gui/font.h>
 
 #include <Windows.h>
 
@@ -35,7 +36,7 @@ namespace gui
 namespace detail
 {
 
-class dummy;
+class native_canvas; // 先行宣言
 
 class native_font_impl : public native_font
 {
@@ -50,9 +51,9 @@ public:
 
 	static native_font::store create(font_conf fc);
 
-	HFONT get_handle(HDC hdc);
+	HFONT get_handle(native_canvas const *cv);
 
-	void attach(HDC hdc, font_conf const &fc);
+	virtual void attach(native_canvas const *cv);
 };
 
 } // namespace detail

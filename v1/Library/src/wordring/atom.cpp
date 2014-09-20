@@ -18,11 +18,12 @@
  *          PDS
  */
 
+#include <wordring/wordring.h>
+
 #include <wordring/atom.h>
 
 #include <cstdint>
 #include <string>
-
 #include <cassert>
 
 using namespace wordring;

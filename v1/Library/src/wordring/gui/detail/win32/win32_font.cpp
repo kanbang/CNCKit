@@ -1,7 +1,7 @@
 ﻿/**
  * @file   wordring/gui/detail/win32/win32_font.cpp 
  *
- * @brief   
+ * @brief   Win32用フォント実装ファイル
  *
  * @details
  *          
@@ -18,15 +18,18 @@
  *          PDS
  */
 
-#ifdef _WIN32
+#include <wordring/wordring.h>
 
-#include <wordring/debug.h>
+#ifdef WORDRING_WS_WIN
 
-#include <wordring/gui/detail/win32/win32_font.h>
-
-#include <Windows.h>
+#include <wordring/gui/canvas.h>
 
 #include <cassert>
+
+#include <wordring/gui/detail/win32/win32_font.h>
+#include <wordring/gui/detail/win32/win32_canvas.h>
+
+#include <Windows.h>
 
 using namespace wordring::gui;
 using namespace wordring::gui::detail;
@@ -49,18 +52,26 @@ native_font::store native_font_impl::create(font_conf fc)
 	return native_font::store(new native_font_impl(fc));
 }
 
-HFONT native_font_impl::get_handle(HDC hdc)
+HFONT native_font_impl::get_handle(native_canvas const *cv)
 {
 	if (m_hfont == NULL)
 	{
-		attach(hdc, get_public()->get_conf());
+		attach(cv);
 	}
 
 	return m_hfont;
 }
 
-void native_font_impl::attach(HDC hdc, font_conf const &fc)
+void native_font_impl::attach(native_canvas const *cv)
 {
+
+	native_canvas_impl *ncv =
+		const_cast<native_canvas_impl*>(
+			static_cast<native_canvas_impl const*>(cv));
+	HDC hdc = ncv->get_handle();
+
+	font_conf const &fc = get_public()->get_conf();
+
 	int height      = 0;
 	int width       = 0;
 	int escapement  = 0;
@@ -108,8 +119,14 @@ void native_font_impl::attach(HDC hdc, font_conf const &fc)
 	case font::monospace:  pitch_and_family = FF_MODERN;    break;
 	}
 	
-	if (fc.face.empty()) { family = L"Meiryo"; }
-	else { family = fc.face; }
+	if (fc.face.empty())
+	{
+		family = L"Meiryo";
+	}
+	else
+	{
+		family = fc.face;
+	}
 
 	m_hfont = ::CreateFont(
 		height, width, escapement, orientation, weight,
@@ -120,4 +137,4 @@ void native_font_impl::attach(HDC hdc, font_conf const &fc)
 }
 
 
-#endif // _WIN32
+#endif // WRODRING_WS_WIN

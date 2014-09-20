@@ -21,16 +21,14 @@
 #ifndef WORDRING_BUTTON_H
 #define WORDRING_BUTTON_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/control.h>
+#include <wordring/gui/style.h>
 #include <wordring/gui/mouse.h>
-
 #include <wordring/gui/shape_int.h>
 
 #include <wordring/graphics/color.h>
-
-#include <wordring/gui/style.h>
 
 #include <string>
 #include <functional>

@@ -21,14 +21,15 @@
 #ifndef WORDRING_STYLE_H
 #define WORDRING_STYLE_H
 
-//#include <wordring/gui/control_data.h>
+#include <wordring/wordring.h>
 
 #include <wordring/atom.h>
+
 #include <wordring/graphics/color.h>
+
 #include <wordring/gui/font.h>
 
 #include <memory>
-
 #include <unordered_map>
 #include <typeindex>
 #include <vector>

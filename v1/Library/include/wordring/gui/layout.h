@@ -21,6 +21,8 @@
 #ifndef WORDRING_LAYOUT_H
 #define WORDRING_LAYOUT_H
 
+#include <wordring/wordring.h>
+
 #include <wordring/gui/shape_int.h>
 
 #include <cstdint>

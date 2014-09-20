@@ -21,6 +21,8 @@
 #ifndef WORDRING_COLOR_H
 #define WORDRING_COLOR_H
 
+#include <wordring/wordring.h>
+
 namespace wordring
 {
 namespace graphics

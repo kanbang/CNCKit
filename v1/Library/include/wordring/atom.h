@@ -21,6 +21,8 @@
 #ifndef WORDRING_ATOM_H
 #define WORDRING_ATOM_H
 
+#include <wordring/wordring.h>
+
 #include <cstdint>
 #include <unordered_map>
 #include <vector>

@@ -21,7 +21,7 @@
 #ifndef WORDRING_NATIVE_MESSAGE_SERVICE_H
 #define WORDRING_NATIVE_MESSAGE_SERVICE_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <memory>
 

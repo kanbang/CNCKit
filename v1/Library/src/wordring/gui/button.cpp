@@ -1,7 +1,7 @@
 /**
  * @file    wordring/gui/button.cpp
  *
- * @brief   
+ * @brief   ボタン・コントロールの実装ファイル
  *
  * @details
  *          
@@ -18,7 +18,7 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/button.h>
 
@@ -118,4 +118,3 @@ void button::do_paint(canvas &cv)
 
 	cv->draw_string(L"Aプロポーショナル → 16px", point_int(0, 0), color, &f);
 }
-

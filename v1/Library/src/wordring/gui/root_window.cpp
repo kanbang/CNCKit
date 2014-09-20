@@ -1,7 +1,7 @@
 ﻿/**
  * @file    wordring/gui/root_window.cpp
  *
- * @brief   
+ * @brief   ルート・ウィンドウの実装ファイル
  *
  * @details
  *          
@@ -18,15 +18,23 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/root_window.h>
 
-#ifdef _WIN32
-#include <wordring/gui/detail/win32/win32_child_window.h>
-#endif // _WIN32
-
 #include <algorithm>
+
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
+
+#include <wordring/gui/detail/win32/win32_child_window.h>
+
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
+
+#include <wordring/gui/detail/x11/x11_child_window.h>
+
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------
 
 using namespace wordring::gui;
 

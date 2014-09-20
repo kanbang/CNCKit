@@ -18,7 +18,7 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/message.h>
 #include <wordring/gui/window_service.h>
@@ -28,19 +28,23 @@
 #include <wordring/gui/root_window.h>
 
 #ifdef _WIN32
-#include <wordring/gui/detail/win32/win32_message_service.h>
 #endif // _WIN32
 
-#ifdef __linux__
-// linux
-#endif // __linux__
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
 
+#include <wordring/gui/detail/win32/win32_message_service.h>
+
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
+
+#include <wordring/gui/detail/x11/x11_message_service.h>
+
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------
 
 #include <memory>
 #include <deque>
 #include <algorithm>
-
-#include <iostream>
 
 using namespace wordring::gui;
 

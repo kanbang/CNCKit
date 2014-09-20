@@ -21,7 +21,7 @@
 #ifndef WORDRING_FONT_H
 #define WORDRING_FONT_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/detail/native_font.h>
 
@@ -35,6 +35,13 @@ namespace gui
 {
 
 class window_service; // 先行宣言
+
+namespace  detail
+{
+
+class native_canvas; // 先行宣言
+
+} // namespace detail
 
 struct font_conf
 {
@@ -86,6 +93,10 @@ public:
 	detail::native_font* get_native();
 
 	font_conf const& get_conf() const;
+
+	void attach(detail::native_canvas const *cv);
+
+	void detach();
 };
 
 /// unordered_map用

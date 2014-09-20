@@ -21,7 +21,7 @@
 #ifndef WORDRING_SHAPE_H
 #define WORDRING_SHAPE_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <algorithm>
 #include <cstdint>

@@ -18,7 +18,7 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/control.h>
 
@@ -26,7 +26,6 @@
 
 #include <string>
 #include <algorithm>
-
 #include <cassert>
 
 using namespace wordring::gui;

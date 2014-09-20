@@ -18,6 +18,8 @@
  *          PDS
  */
 
+#include <wordring/wordring.h>
+
 #include <wordring/gui/message.h>
 #include <wordring/gui/control.h>
 

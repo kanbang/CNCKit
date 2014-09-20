@@ -18,6 +18,8 @@
  *          PDS
  */
 
+#include <wordring/wordring.h>
+
 #include <wordring/gui/shape_int.h>
 #include <wordring/graphics/color.h>
 #include <wordring/gui/font.h>
@@ -25,13 +27,18 @@
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/detail/native_canvas.h>
 
-#ifdef _WIN32
-#include <wordring/gui/detail/win32/win32_canvas.h>
-#endif // _WIN32
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
 
-#ifdef __linux__
-// linux
-#endif // __linux__
+#include <wordring/gui/detail/win32/win32_canvas.h>
+
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
+
+#include <wordring/gui/detail/x11/x11_canvas.h>
+
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------
+
 
 using namespace wordring::gui;
 
@@ -53,6 +60,11 @@ void canvas::operator=(canvas&& cv)
 }
 
 detail::native_canvas& canvas::get_native()
+{
+	return *m_native;
+}
+
+detail::native_canvas const& canvas::get_native() const
 {
 	return *m_native;
 }

@@ -19,13 +19,11 @@
 #ifndef WORDRING_CONTROL_H
 #define WORDRING_CONTROL_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/shape_int.h>
 #include <wordring/gui/canvas.h>
-
 #include <wordring/gui/message.h>
-
 #include <wordring/gui/mouse.h>
 
 #include <cstdint>

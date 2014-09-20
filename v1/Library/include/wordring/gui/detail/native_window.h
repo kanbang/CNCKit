@@ -21,7 +21,7 @@
 #ifndef WORDRING_NATIVE_WINDOW_H
 #define WORDRING_NATIVE_WINDOW_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/shape_int.h>
 

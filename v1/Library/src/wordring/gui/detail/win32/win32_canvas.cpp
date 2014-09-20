@@ -20,16 +20,16 @@
 
 #include <wordring/wordring.h>
 
-#ifdef WORDRING_OS_WIN
+#ifdef WORDRING_WS_WIN
 
 #include <wordring/gui/shape_int.h>
 #include <wordring/graphics/color.h>
 #include <wordring/gui/font.h>
 
+#include <cassert>
+
 #include <wordring/gui/detail/win32/win32_canvas.h>
 #include <wordring/gui/detail/win32/win32_font.h>
-
-#include <cassert>
 
 #include <Windows.h>
 
@@ -203,7 +203,7 @@ void native_canvas_impl::draw_string(
 	{
 		native_font_impl *nf = static_cast<native_font_impl*>(f->get_native());
 
-		::SelectObject(m_hdc, nf->get_handle(get_handle()));
+		::SelectObject(m_hdc, nf->get_handle(this));
 	}
 	BOOL result = ::TextOutW(m_hdc, pt.x, pt.y, str.c_str(), str.size());
 	assert(result != 0);
@@ -254,4 +254,4 @@ native_memory_canvas_impl::~native_memory_canvas_impl()
 
 
 
-#endif // WRODRING_OS_WIN
+#endif // WRODRING_WS_WIN

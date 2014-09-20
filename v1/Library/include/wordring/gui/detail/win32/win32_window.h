@@ -21,24 +21,20 @@
 #ifndef WORDRING_WIN32_WINDOW_H
 #define WORDRING_WIN32_WINDOW_H
 
-#include <wordring/debug.h>
-
-#include <wordring/gui/detail/native_window.h>
-#include <wordring/gui/detail/win32/win32_window_class.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/shape_int.h>
 #include <wordring/gui/mouse.h>
 
-#include <Windows.h>
+#include <wordring/gui/detail/native_window.h>
 
 #include <cassert>
-
 #include <utility>
 #include <string>
 
-#ifdef _DEBUG
-#include <iostream>
-#endif // _DEBUG
+#include <wordring/gui/detail/win32/win32_window_class.h>
+
+#include <Windows.h>
 
 namespace wordring
 {

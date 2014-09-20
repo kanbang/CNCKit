@@ -1,7 +1,7 @@
 ﻿/**
  * @file    wordring/detail/win32/exception.cpp
  *
- * @brief   
+ * @brief   例外実装ファイル
  *
  * @details
  *          
@@ -22,7 +22,6 @@
 
 #ifdef WORDRING_OS_WIN
 
-#include <wordring/debug.h>
 #include <wordring/exception.h>
 
 #include <string>

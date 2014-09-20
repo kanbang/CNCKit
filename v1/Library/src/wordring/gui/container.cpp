@@ -18,7 +18,7 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/window_service.h>
 
@@ -28,9 +28,6 @@
 
 #include <cassert>
 #include <memory>
-
-#include <iostream>
-
 
 using namespace wordring::gui;
 

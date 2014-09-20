@@ -18,23 +18,22 @@
  *          PDS
  */
 
-#ifdef _WIN32
-#define WINVER 0x0500 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
+
+#ifdef WORDRING_WS_WIN 
 
 #include <wordring/exception.h>
-
 #include <wordring/gui/window_service.h>
+
+#include <cassert>
+
 #include <wordring/gui/detail/win32/win32_message_service.h>
 
 #include <Windows.h>
 
-#include <cassert>
-#include <iostream>
-
 using namespace wordring::gui::detail;
 
-__declspec(thread) win32_message_service_impl*
+WORDRING_TLS win32_message_service_impl*
 	win32_message_service_impl::tls_window_service = nullptr;
 
 win32_message_service_impl::win32_message_service_impl()
@@ -118,5 +117,4 @@ void win32_message_service_impl::assign(HWND hwnd, native_window* pwin)
 	win32_message_service_impl::tls_window_service->m_map[hwnd] = pwin;
 }
 
-
-#endif // _WIN32
+#endif // WORDRING_WS_WIN

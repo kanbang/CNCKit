@@ -21,18 +21,17 @@
 #ifndef WORDRING_WINDOW_SERVICE_H
 #define WORDRING_WINDOW_SERVICE_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
+
+#include <wordring/gui/message.h>
+#include <wordring/gui/mouse.h>
+#include <wordring/gui/style.h>
+#include <wordring/gui/font.h>
 
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/detail/native_message_service.h>
 
 //#include <wordring/gui/root_window.h>
-
-#include <wordring/gui/message.h>
-#include <wordring/gui/mouse.h>
-//#include <wordring/gui/control_data.h>
-#include <wordring/gui/style.h>
-#include <wordring/gui/font.h>
 
 #include <memory>
 #include <list>

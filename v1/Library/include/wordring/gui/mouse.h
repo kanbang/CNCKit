@@ -21,6 +21,8 @@
 #ifndef WORDRING_MOUSE_H
 #define WORDRING_MOUSE_H
 
+#include <wordring/wordring.h>
+
 #include <wordring/gui/shape_int.h>
 
 namespace wordring

@@ -17,8 +17,11 @@
  * @par     ライセンス
  *          PDS
  */
+
 #ifndef WORDRING_NATIVE_GL_CONTEXT_H
 #define WORDRING_NATIVE_GL_CONTEXT_H
+
+#include <wordring/wordring.h>
 
 #include <wordring/gui/canvas.h>
 

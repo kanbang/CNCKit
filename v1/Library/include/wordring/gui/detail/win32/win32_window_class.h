@@ -21,19 +21,20 @@
 #ifndef WORDRING_WIN32_WINDOW_CLASS_H
 #define WORDRING_WIN32_WINDOW_CLASS_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/detail/native_window.h>
-#include <wordring/gui/detail/win32/win32_message_service.h>
-
-#include <Windows.h>
-#include <windowsx.h>
 
 #include <map>
 #include <vector>
 #include <string>
 #include <memory>
 #include <cassert>
+
+#include <wordring/gui/detail/win32/win32_message_service.h>
+
+#include <Windows.h>
+#include <windowsx.h>
 
 namespace wordring
 {

@@ -1,7 +1,7 @@
 ﻿/**
  * @file    wordring/opengl/gl_context.cpp
  *
- * @brief   
+ * @brief   OpenGLコンテキスト実装ファイル
  *
  * @details
  *          
@@ -18,13 +18,24 @@
  *          PDS
  */
 
-#include <wordring/opengl/gl_context.h>
+#include <wordring/wordring.h>
+
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/window.h>
 
-#ifdef _WIN32
+#include <wordring/opengl/gl_context.h>
+
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
+
 #include <wordring/opengl/detail/win32/win32_gl_context.h>
-#endif // _WIN32
+
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
+
+#include <wordring/opengl/detail/x11/x11_gl_context.h>
+
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------
 
 using namespace wordring::opengl;
 

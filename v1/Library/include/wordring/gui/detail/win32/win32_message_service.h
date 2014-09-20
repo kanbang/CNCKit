@@ -21,17 +21,16 @@
 #ifndef WORDRING_WIN32_MESSAGE_SERVICE_H
 #define WORDRING_WIN32_MESSAGE_SERVICE_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/detail/native_message_service.h>
 #include <wordring/gui/detail/native_window.h>
 
-#include <Windows.h>
-
 #include <utility>
 #include <map>
-
 #include <cassert>
+
+#include <Windows.h>
 
 namespace wordring
 {

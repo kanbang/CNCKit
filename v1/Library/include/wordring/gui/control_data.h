@@ -21,13 +21,13 @@
 #ifndef WORDRING_CONTROL_DATA_H
 #define WORDRING_CONTROL_DATA_H
 
+#include <wordring/wordring.h>
+
 #include <wordring/atom.h>
 
 #include <unordered_map>
 #include <typeindex>
-
 #include <memory>
-
 #include <cstdint>
 
 namespace wordring

@@ -20,10 +20,12 @@
 #ifndef WORDRING_GL_EXCEPTION_H
 #define WORDRING_GL_EXCEPTION_H
 
-#include <GL/glew.h>
+#include <wordring/wordring.h>
 
 #include <string>
 #include <stdexcept>
+
+#include <GL/glew.h>
 
 namespace wordring
 {

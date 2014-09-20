@@ -21,6 +21,8 @@
 #ifndef WORDRING_SHAPE_INT_H
 #define WORDRING_SHAPE_INT_H
 
+#include <wordring/wordring.h>
+
 #include <cstdint>
 #include <algorithm>
 

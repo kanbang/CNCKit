@@ -21,8 +21,9 @@
 #ifndef WORDRING_ROOT_WINDOW_H
 #define WORDRING_ROOT_WINDOW_H
 
-#include <wordring/gui/window_container.h>
+#include <wordring/wordring.h>
 
+#include <wordring/gui/window_container.h>
 #include <wordring/gui/container.h>
 
 #include <wordring/gui/detail/native_window.h>

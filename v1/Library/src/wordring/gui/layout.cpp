@@ -18,10 +18,9 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/layout.h>
-
 #include <wordring/gui/container.h>
 
 #include <algorithm>

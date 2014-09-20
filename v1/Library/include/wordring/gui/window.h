@@ -37,15 +37,14 @@
 #ifndef WORDRING_WINDOW_H
 #define WORDRING_WINDOW_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
-#include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/window_service.h>
-
 #include <wordring/gui/shape_int.h>
 #include <wordring/gui/mouse.h>
-
 #include <wordring/gui/canvas.h>
+
+#include <wordring/gui/detail/native_window.h>
 
 #include <memory>
 

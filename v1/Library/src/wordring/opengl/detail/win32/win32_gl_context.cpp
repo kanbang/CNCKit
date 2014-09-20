@@ -18,22 +18,32 @@
  *          PDS
  */
 
-#ifdef _WIN32
+#include <wordring/wordring.h>
 
-#ifdef _MSC_VER // TODO: 
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
+
+#ifdef WORDRING_CC_VC // VC ---------------------------------------------------
+
 #pragma comment (lib, "opengl32.lib")
 #pragma comment (lib, "glu32.lib")
-#endif // _MSCVER
+
+//#else
+//#ifdef WORDRING_CC_GCC // gcc -------------------------------------------------
+
+//#endif // WORDRING_CC_GCC
+#endif // WORDRING_CC_VC ------------------------------------------------------
+
+#include <wordring/exception.h>
 
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/window.h>
 
 #include <wordring/opengl/gl_context.h>
 
-#include <wordring/exception.h>
+#include <stdexcept>
+#include <atomic>
 
 #include <wordring/gui/detail/win32/win32_canvas.h>
-
 #include <wordring/gui/detail/win32/win32_window.h>
 
 #include <wordring/opengl/detail/win32/win32_gl_context.h>
@@ -42,9 +52,6 @@
 #include <GL/wglew.h>
 
 #include <Windows.h>
-
-#include <stdexcept>
-#include <atomic>
 
 using namespace wordring::opengl::detail;
 
@@ -210,4 +217,4 @@ void native_gl_context_impl::initialize(HDC hdc)
 
 std::atomic_bool native_gl_context_impl::g_initialized = { false };
 
-#endif // _WIN32
+#endif // WRODRING_WS_WIN

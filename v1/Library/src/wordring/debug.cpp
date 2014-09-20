@@ -1,7 +1,7 @@
 ﻿/**
  * @file    wordring/debug.cpp
  *
- * @brief   
+ * @brief   デバッグ実装ファイル
  *
  * @details
  *          
@@ -18,17 +18,22 @@
  *          PDS
  */
 
+#include <wordring/wordring.h>
+
 #include <wordring/debug.h>
 
-#ifdef _WIN32
+#ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
 
 void wordring::debug::debug_memory_leak()
 {
-#ifdef _DEBUG
+#ifdef WORDRING_D_DEBUG
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
-#endif
+#endif // WORDRING_D_DEBUG
 }
 
+#else
+#ifdef WORDRING_WS_X11 // X11 -------------------------------------------------
 
 
-#endif // _WIN32
+#endif // WORDRING_WS_X11
+#endif // WORDRING_WS_WIN -----------------------------------------------------

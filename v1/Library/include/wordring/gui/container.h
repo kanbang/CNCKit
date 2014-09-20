@@ -21,7 +21,7 @@
 #ifndef WORDRING_CONTAINER_H
 #define WORDRING_CONTAINER_H
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 #include <wordring/gui/control.h>
 #include <wordring/gui/layout.h>
