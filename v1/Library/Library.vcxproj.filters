@@ -87,9 +87,6 @@
     <ClInclude Include="include\wordring\geometry\shape.h">
       <Filter>ヘッダー ファイル\geometry</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\graphics\color.h">
-      <Filter>ヘッダー ファイル\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="include\wordring\gui\message.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
@@ -188,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="include\wordring\gui\detail\win32\win32_font.h">
       <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\color.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

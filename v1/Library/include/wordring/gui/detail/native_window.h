@@ -142,6 +142,9 @@ public:
 
 	// その他 -----------------------------------------------------------------
 
+	// ウィンドウの文字列を取得します
+	virtual std::wstring get_window_text() const = 0;
+
 	/// ウィンドウの文字列を設定します
 	virtual void set_window_text(std::string text) = 0;
 

@@ -190,6 +190,12 @@ public:
 
 	rect_int get_rect() const;
 
+	// その他 -----------------------------------------------------------------
+
+	std::wstring get_title_text() const;
+
+	void set_title_text(std::wstring s);
+
 	// 一般メッセージ ---------------------------------------------------------
 
 	virtual void do_destroy_window();

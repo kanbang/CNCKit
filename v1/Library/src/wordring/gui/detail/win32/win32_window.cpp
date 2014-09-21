@@ -202,6 +202,23 @@ rect_int native_window_impl::get_window_rect() const
 
 // その他 ---------------------------------------------------------------------
 
+std::wstring native_window_impl::get_window_text() const
+{
+	std::wstring result;
+
+	int l = ::GetWindowTextLengthW(m_hwnd);
+	if (l == 0)
+	{
+		return result;
+	}
+
+	std::unique_ptr<wchar_t[]> s(new wchar_t[l + 1]);
+	l = ::GetWindowTextW(m_hwnd, s.get(), l + 1);
+	result.assign(s.get(), l);
+
+	return result;
+}
+
 void native_window_impl::set_window_text(std::string text)
 {
 	assert(false);
@@ -219,11 +236,11 @@ mouse::state_ native_window_impl::make_mouse_state(UINT f)
 {
 	mouse::state_ result;
 
-	result.shift = (f & MK_SHIFT) ? true : false;
-	result.ctrl = (f & MK_CONTROL) ? true : false;
-	result.left = (f & MK_LBUTTON) ? true : false;
+	result.shift  = (f & MK_SHIFT)   ? true : false;
+	result.ctrl   = (f & MK_CONTROL) ? true : false;
+	result.left   = (f & MK_LBUTTON) ? true : false;
 	result.middle = (f & MK_MBUTTON) ? true : false;
-	result.right = (f & MK_RBUTTON) ? true : false;
+	result.right  = (f & MK_RBUTTON) ? true : false;
 
 	return result;
 }

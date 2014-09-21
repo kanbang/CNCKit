@@ -189,7 +189,7 @@ public:
 class test_container : public container
 {
 protected:
-	rgb_color m_fg_color, m_bg_color;
+	color_rgb m_fg_color, m_bg_color;
 
 protected:
 	test_container(rect_int rc);

@@ -18,7 +18,7 @@
  *          PDS
  */
 
-#include <wordring/debug.h>
+#include <wordring/wordring.h>
 
 //#include <wordring/gui/window.h>
 #include <wordring/gui/window_service.h>
@@ -36,16 +36,16 @@
 #include <iostream>
 #include <memory>
 
-#ifdef _WIN32
 
-#ifdef _MSC_VER // TODO: 
+#ifdef WORDRING_CC_VC // TODO: 
 #pragma comment (lib, "Library.lib")
-#endif // _MSCVER
+#endif // WORDRING_CC_VC
 
-#endif // _WIN32
 
 int main()
 {
+	::setlocale(LC_ALL, "japanese");
+
 	using namespace wordring::gui;
 	using namespace wordring::opengl;
 
@@ -77,6 +77,8 @@ int main()
 
 	root_window *rw2 = ws.push_back(root_window::create(rc));
 
+	rw2->set_title_text(L"三軸エミュレータ");
+
 	container *c2 = static_cast<container*>(
 		rw2->get_client()->push_back(test_container::create(rc)));
 	c2->set_layout(flow_layout::create());
@@ -86,7 +88,7 @@ int main()
 		//c2->push_back(test_control::create(
 		//	rect_int(point_int(0, 0), size_int(100, 100)), i));
 		button *b = static_cast<button*>(
-			c2->push_back(button::create(0, 0, 200, 16)));
+			c2->push_back(button::create(0, 0, 200, 72)));
 		b->on_click = [](mouse &m)->bool{
 			std::cout << "click" << m.pt.x << ", " << m.pt.y << std::endl;
 			return true;
@@ -95,10 +97,11 @@ int main()
 
 	c2->push_back(std::move(tc0));
 
+	std::wcout << rw2->get_title_text() << std::endl;
 
 
 	style *s = ws.get_style_service().insert(typeid(button));
-	s->insert(style::bg_color, rgb_color(0, 0x40, 0x40, 0xFF));
+	s->insert(style::bg_color, color_rgb(0, 0x40, 0x40, 0xFF));
 
 	rw2->show();
 

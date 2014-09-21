@@ -78,7 +78,7 @@ public:
 	 * @param   rgb   色
 	 */
 	virtual void draw_line(
-		point_int pt1, point_int pt2, int32_t width, rgb_color rgb);
+		point_int pt1, point_int pt2, int32_t width, color_rgb rgb);
 
 	/**
 	 * @brief   長方形を描画します
@@ -89,7 +89,7 @@ public:
 	 *
 	 * @param   rgb   色
 	 */
-	virtual void draw_rect(rect_int rc, int32_t width, rgb_color rgb);
+	virtual void draw_rect(rect_int rc, int32_t width, color_rgb rgb);
 
 	/**
 	 * @brief   長方形を塗りつぶします
@@ -98,7 +98,7 @@ public:
 	 *
 	 * @param   rgb 色
 	 */
-	virtual void fill_rect(rect_int rc, rgb_color rgb);
+	virtual void fill_rect(rect_int rc, color_rgb rgb);
 
 	/**
 	 * @brief   文字列を描画します
@@ -112,7 +112,7 @@ public:
 	 * @param   f   フォント
 	 */
 	virtual void draw_string(
-		std::string str, point_int pt, rgb_color rgb, font* f);
+		std::string str, point_int pt, color_rgb rgb, font* f);
 	/**
 	 * @brief   文字列を描画します
 	 *
@@ -125,7 +125,7 @@ public:
 	 * @param   f   フォント
 	 */
 	virtual void draw_string(
-		std::wstring str, point_int pt, rgb_color rgb, font* f);
+		std::wstring str, point_int pt, color_rgb rgb, font* f);
 };
 
 class native_memory_canvas_impl : public native_canvas_impl

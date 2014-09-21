@@ -42,7 +42,7 @@ font_conf::font_conf()
 	: style(font::normal)
 	, variant(font::normal)
 	, weight(font::normal)
-	, size(font::medium)
+	, size(font::normal)
 	, line_height(font::normal)
 	, family(font::serif)
 {
@@ -51,7 +51,7 @@ font_conf::font_conf()
 
 // font -----------------------------------------------------------------------
 
-font::font(font_conf fc)
+font::font(font_conf const &fc)
 	: m_native(detail::native_font_impl::create(fc))
 	, m_font_conf(fc)
 {

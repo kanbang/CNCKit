@@ -21,7 +21,7 @@
 #include <wordring/wordring.h>
 
 #include <wordring/gui/shape_int.h>
-#include <wordring/graphics/color.h>
+#include <wordring/gui/color.h>
 #include <wordring/gui/font.h>
 
 #include <wordring/gui/canvas.h>
@@ -59,14 +59,14 @@ void canvas::operator=(canvas&& cv)
 	m_native = std::move(cv.m_native);
 }
 
-detail::native_canvas& canvas::get_native()
+detail::native_canvas* canvas::get_native()
 {
-	return *m_native;
+	return m_native.get();
 }
 
-detail::native_canvas const& canvas::get_native() const
+detail::native_canvas const* canvas::get_native() const
 {
-	return *m_native;
+	return m_native.get();
 }
 
 detail::native_canvas* canvas::operator ->()

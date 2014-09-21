@@ -1,10 +1,10 @@
 ﻿/**
  * @file    wordring/gui/detail/win32/win32_font.h
  *
- * @brief   
+ * @brief   Win32用のフォント・ヘッダーファイル
  *
  * @details
- *          
+ *          pimplの実装側ヘッダです。
  *          
  *          
  *          
@@ -33,6 +33,7 @@ namespace wordring
 {
 namespace gui
 {
+
 namespace detail
 {
 
@@ -43,6 +44,10 @@ class native_font_impl : public native_font
 private:
 	HFONT m_hfont;
 
+public:
+	TEXTMETRIC m_tm;
+
+	// 生成・破棄 -------------------------------------------------------------
 private:
 	explicit native_font_impl(font_conf fc);
 
@@ -51,9 +56,17 @@ public:
 
 	static native_font::store create(font_conf fc);
 
-	HFONT get_handle(native_canvas const *cv);
+	HFONT create(native_canvas const *cv, LONG il);
 
 	virtual void attach(native_canvas const *cv);
+
+	// ハンドル ---------------------------------------------------------------
+
+	HFONT get_handle(native_canvas const *cv);
+
+	//
+
+	virtual point_int get_offset() const;
 };
 
 } // namespace detail

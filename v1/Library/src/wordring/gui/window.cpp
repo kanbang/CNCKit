@@ -106,7 +106,7 @@ void window::do_destroy_window()
 void window::do_paint_window(canvas& cv)
 {
 	cv->draw_string(
-		"window::do_paint()", point_int(0, 0), rgb_color(), nullptr);
+		"window::do_paint()", point_int(0, 0), color_rgb(), nullptr);
 }
 
 void window::do_size_window(size_int size)

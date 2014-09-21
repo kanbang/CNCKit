@@ -337,7 +337,7 @@ public:
 class test_control : public control
 {
 protected:
-	rgb_color m_fg_color, m_bg_color;
+	color_rgb m_fg_color, m_bg_color;
 	int32_t m_id;
 
 protected:

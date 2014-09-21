@@ -74,7 +74,7 @@ public:
 		bold, bolder, lighter,
 
 		// font-size
-		xx_large, x_large, large, medium, small, small_ = small, x_small, xx_small,
+		//xx_large, x_large, large, medium, small, small_ = small, x_small, xx_small,
 		larger, smaller,
 
 		// line-height
@@ -88,7 +88,7 @@ private:
 	font_conf m_font_conf;
 
 public:
-	font(font_conf fc);
+	font(font_conf const &fc);
 
 	detail::native_font* get_native();
 

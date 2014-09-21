@@ -218,6 +218,18 @@ rect_int root_window::get_rect() const
 	return rect_int(m_pt, m_size);
 }
 
+// その他 ---------------------------------------------------------------------
+
+std::wstring root_window::get_title_text() const
+{
+	return get_native()->get_window_text();
+}
+
+void root_window::set_title_text(std::wstring s)
+{
+	get_native()->set_window_text(s);
+}
+
 // 一般メッセージ -------------------------------------------------------------
 
 void root_window::do_destroy_window()

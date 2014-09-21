@@ -121,12 +121,12 @@ bool style_cache::find(int32_t key, style_value &result) const
 	return false;
 }
 
-bool style_cache::find(int32_t key, rgb_color &result) const
+bool style_cache::find(int32_t key, color_rgb &result) const
 {
 	style_value sv(key, 0);
 	if (find(key, sv) == false) { return false; }
 
-	rgb_color rgb(static_cast<uint32_t>(sv.int_value));
+	color_rgb rgb(static_cast<uint32_t>(sv.int_value));
 	result = rgb;
 
 	return true;

@@ -362,11 +362,11 @@ void control::do_paint(canvas &cv)
 	size_int size = get_size();
 	rect_int rc(point_int(0, 0), size_int(size.cx - 1, size.cy - 1));
 
-	rgb_color rgb(0x3F, 0x3F, 0x3F);
+	color_rgb rgb(0x3F, 0x3F, 0x3F);
 
 	int32_t w = 3;
 
-	cv.fill_rect(rc, rgb_color(0xA0, 0xA0, 0xA0));
+	cv.fill_rect(rc, color_rgb(0xA0, 0xA0, 0xA0));
 
 	cv.draw_line(rc.top_left(), rc.top_right(), w, rgb);
 	cv.draw_line(rc.bottom_left(), rc.bottom_right(), w, rgb);
@@ -422,7 +422,7 @@ bool test_control::do_mouse_down(mouse &m)
 void test_control::do_mouse_over(mouse &m)
 {
 	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
-	//m_fg_color = rgb_color(0x33, 0, 0);
+	//m_fg_color = color_rgb(0x33, 0, 0);
 	std::swap(m_fg_color, m_bg_color);
 	repaint();
 }
@@ -450,8 +450,8 @@ void test_control::do_paint(canvas &cv)
 		pt1(rc.left(), rc.top()), pt2(rc.right(), rc.top()),
 		pt3(rc.left(), rc.bottom()), pt4(rc.right(), rc.bottom());
 
-	rgb_color fg(0x3F, 0x3F, 0x3F);
-	//rgb_color bg(0xA0, 0x0, 0xA0);
+	color_rgb fg(0x3F, 0x3F, 0x3F);
+	//color_rgb bg(0xA0, 0x0, 0xA0);
 
 	int32_t w = 1;
 

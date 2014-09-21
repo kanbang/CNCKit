@@ -23,7 +23,7 @@
 #ifdef WORDRING_WS_WIN
 
 #include <wordring/gui/shape_int.h>
-#include <wordring/graphics/color.h>
+#include <wordring/gui/color.h>
 #include <wordring/gui/font.h>
 
 #include <cassert>
@@ -97,7 +97,7 @@ void native_canvas_impl::set_viewport(rect_int rc)
 }
 
 void native_canvas_impl::draw_line(
-	point_int pt1, point_int pt2, int32_t width, rgb_color rgb)
+	point_int pt1, point_int pt2, int32_t width, color_rgb rgb)
 {
 	pt1 += m_origin; pt2 += m_origin; // ビューポート・オフセット
 
@@ -120,7 +120,7 @@ void native_canvas_impl::draw_line(
 	assert(result != 0);
 }
 
-void native_canvas_impl::draw_rect(rect_int rc, int32_t width, rgb_color rgb)
+void native_canvas_impl::draw_rect(rect_int rc, int32_t width, color_rgb rgb)
 {
 	/*
 	point_int
@@ -155,7 +155,7 @@ void native_canvas_impl::draw_rect(rect_int rc, int32_t width, rgb_color rgb)
 	assert(result != 0);
 }
 
-void native_canvas_impl::fill_rect(rect_int rc, rgb_color rgb)
+void native_canvas_impl::fill_rect(rect_int rc, color_rgb rgb)
 {
 	rc.pt += m_origin;
 
@@ -186,7 +186,7 @@ void native_canvas_impl::fill_rect(rect_int rc, rgb_color rgb)
 }
 
 void native_canvas_impl::draw_string(
-	std::string str, point_int pt, rgb_color rgb, font* f)
+	std::string str, point_int pt, color_rgb rgb, font* f)
 {
 	pt += m_origin;
 
@@ -195,18 +195,24 @@ void native_canvas_impl::draw_string(
 }
 
 void native_canvas_impl::draw_string(
-	std::wstring str, point_int pt, rgb_color rgb, font* f)
+	std::wstring str, point_int pt, color_rgb rgb, font* f)
 {
 	pt += m_origin;
+
+	HGDIOBJ old = NULL;
 
 	if (f != nullptr)
 	{
 		native_font_impl *nf = static_cast<native_font_impl*>(f->get_native());
+		old = ::SelectObject(m_hdc, nf->get_handle(this));
 
-		::SelectObject(m_hdc, nf->get_handle(this));
+		pt += nf->get_offset();
 	}
+
 	BOOL result = ::TextOutW(m_hdc, pt.x, pt.y, str.c_str(), str.size());
 	assert(result != 0);
+
+	if (old != NULL) { ::SelectObject(m_hdc, old); }
 }
 
 native_memory_canvas_impl::native_memory_canvas_impl()

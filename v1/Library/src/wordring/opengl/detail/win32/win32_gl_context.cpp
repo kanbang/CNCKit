@@ -121,9 +121,10 @@ void native_gl_context_impl::create(
 {
 	using namespace wordring::gui::detail;
 
-	native_canvas_impl& nci =
-		static_cast<native_canvas_impl&>(cv.get_native());
-	HDC hdc = nci.get_handle();
+	native_canvas_impl* ncv =
+		const_cast<native_canvas_impl*>(
+			static_cast<native_canvas_impl const*>(cv.get_native()));
+	HDC hdc = ncv->get_handle();
 	assert(hdc);
 
 	create(hdc, flg, depth, bpp);
@@ -161,9 +162,10 @@ void native_gl_context_impl::make_current(wordring::gui::canvas& cv)
 {
 	using namespace wordring::gui::detail;
 
-	native_canvas_impl& nci =
-		static_cast<native_canvas_impl&>(cv.get_native());
-	HDC hdc = nci.get_handle();
+	native_canvas_impl* ncv =
+		const_cast<native_canvas_impl*>(
+		static_cast<native_canvas_impl const*>(cv.get_native()));
+	HDC hdc = ncv->get_handle();
 	assert(hdc);
 
 	make_current(hdc);
@@ -185,9 +187,11 @@ void native_gl_context_impl::unmake_current(wordring::gui::canvas& cv)
 {
 	using namespace wordring::gui::detail;
 
-	native_canvas_impl& nci =
-		static_cast<native_canvas_impl&>(cv.get_native());
-	HDC hdc = nci.get_handle();
+	native_canvas_impl* ncv =
+		const_cast<native_canvas_impl*>(
+		static_cast<native_canvas_impl const*>(cv.get_native()));
+	HDC hdc = ncv->get_handle();
+	assert(hdc);
 
 	::SwapBuffers(hdc);
 

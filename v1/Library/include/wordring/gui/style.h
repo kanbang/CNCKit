@@ -25,7 +25,7 @@
 
 #include <wordring/atom.h>
 
-#include <wordring/graphics/color.h>
+#include <wordring/gui/color.h>
 
 #include <wordring/gui/font.h>
 
@@ -146,7 +146,7 @@ public:
 
 	bool find(int32_t key, style_value &result) const;
 
-	bool find(int32_t key, rgb_color &result) const;
+	bool find(int32_t key, color_rgb &result) const;
 };
 
 class style_service

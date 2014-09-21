@@ -90,16 +90,16 @@ void button::do_paint(canvas &cv)
 	style_service &ss = ws->get_style_service();
 	style_cache sc = ss.find_styles(typeid(button), this);
 
-	rgb_color bg_color(0x20, 0x20, 0x20, 0xFF);
+	color_rgb bg_color(0x20, 0x20, 0x20, 0xFF);
 
 	if (m_state.button == down)
 	{
-		bg_color = rgb_color(0x80, 0x80, 0x80, 0xFF);
+		bg_color = color_rgb(0x80, 0x80, 0x80, 0xFF);
 		sc.find(style::active::bg_color, bg_color);
 	}
 	else if (m_state.hover)
 	{
-		bg_color = rgb_color(0xA0, 0xA0, 0xA0, 0xFF);
+		bg_color = color_rgb(0xA0, 0xA0, 0xA0, 0xFF);
 		sc.find(style::hover::bg_color, bg_color);
 	}
 	else
@@ -109,12 +109,13 @@ void button::do_paint(canvas &cv)
 	cv->fill_rect(
 		rect_int(point_int(0, 0), get_size()), bg_color);
 
-	rgb_color color(0xFF, 0, 0, 0xFF);
+	color_rgb color(0xFF, 0, 0, 0xFF);
 
 	font_conf fc;
 	fc.family = font::sans_serif;
-	fc.size = 12;
+	fc.face = L"Meiryo UI";
+	fc.size = 16;
 	font f(fc);
 
-	cv->draw_string(L"Aプロポーショナル → 16px", point_int(0, 0), color, &f);
+	cv->draw_string(L"AQgqプロポーショナル → 16px", point_int(0, 0), color, &f);
 }

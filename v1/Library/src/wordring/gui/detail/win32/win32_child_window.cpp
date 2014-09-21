@@ -102,6 +102,7 @@ LRESULT native_control_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_RBUTTONDBLCLK, onRButtonDblClk);
 		HANDLE_MSG(hwnd, WM_RBUTTONDOWN, onRButtonDown);
 		HANDLE_MSG(hwnd, WM_RBUTTONUP, onRButtonUp);
+	case WM_MOUSELEAVE: onMouseLeave(); break;
 
 		// キーボード ---------------------------------------------------------
 

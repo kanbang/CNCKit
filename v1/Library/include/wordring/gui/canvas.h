@@ -26,7 +26,7 @@
 #include <wordring/gui/font.h>
 #include <wordring/gui/shape_int.h>
 
-#include <wordring/graphics/color.h>
+#include <wordring/gui/color.h>
 #include <wordring/gui/detail/native_canvas.h>
 
 #include <memory>
@@ -51,9 +51,9 @@ public:
 
 	void operator =(canvas&& cv);
 
-	detail::native_canvas& get_native();
+	detail::native_canvas* get_native();
 
-	detail::native_canvas const& get_native() const;
+	detail::native_canvas const* get_native() const;
 
 	detail::native_canvas* operator ->();
 

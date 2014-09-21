@@ -1,5 +1,5 @@
 ﻿/**
- * @file    wordring/graphics/color.h
+ * @file    wordring/gui/color.h
  *
  * @brief   
  *
@@ -23,22 +23,24 @@
 
 #include <wordring/wordring.h>
 
+#include <cstdint>
+
 namespace wordring
 {
-namespace graphics
+namespace gui
 {
 
-struct rgb_color
+struct color_rgb
 {
 	unsigned char r, g, b, a;
 
-	rgb_color() : r(0), g(0), b(0), a(0) { }
-	rgb_color(
+	color_rgb() : r(0), g(0), b(0), a(0) { }
+	color_rgb(
 		unsigned char r_,
 		unsigned char g_,
 		unsigned char b_,
 		unsigned char a_ = 255) : r(r_), g(g_), b(b_), a(a_) { }
-	rgb_color(uint32_t rgba)
+	color_rgb(uint32_t rgba)
 		: r((rgba & 0xFF000000) >> 24)
 		, g((rgba & 0xFF0000) >> 16)
 		, b((rgba & 0xFF00) >> 8)
@@ -50,15 +52,7 @@ struct rgb_color
 	}
 };
 
-} // namespace graphics
-
-namespace gui
-{
-
-typedef wordring::graphics::rgb_color rgb_color;
-
 } // namespace gui
-
 } // namespace wordring
 
 #endif // WORDRING_COLOR_H

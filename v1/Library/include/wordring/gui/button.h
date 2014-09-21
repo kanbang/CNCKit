@@ -28,7 +28,7 @@
 #include <wordring/gui/mouse.h>
 #include <wordring/gui/shape_int.h>
 
-#include <wordring/graphics/color.h>
+#include <wordring/gui/color.h>
 
 #include <string>
 #include <functional>

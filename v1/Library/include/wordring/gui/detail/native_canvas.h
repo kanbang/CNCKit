@@ -25,7 +25,7 @@
 
 #include <wordring/gui/font.h>
 #include <wordring/gui/shape_int.h>
-#include <wordring/graphics/color.h>
+#include <wordring/gui/color.h>
 
 #include <string>
 
@@ -77,7 +77,7 @@ public:
 	 * @param   rgb   色
 	 */
 	virtual void draw_line(
-		point_int pt1, point_int pt2, int32_t width, rgb_color rgb) = 0;
+		point_int pt1, point_int pt2, int32_t width, color_rgb rgb) = 0;
 
 	/**
 	 * @brief   長方形を描画します
@@ -86,7 +86,7 @@ public:
 	 * @param   width 太さ
 	 * @param   rgb   色
 	 */
-	virtual void draw_rect(rect_int rc, int32_t width, rgb_color rgb) = 0;
+	virtual void draw_rect(rect_int rc, int32_t width, color_rgb rgb) = 0;
 
 	/**
 	 * @brief   長方形を塗りつぶします
@@ -94,7 +94,7 @@ public:
 	 * @param   rc  長方形
 	 * @param   rgb 色
 	 */
-	virtual void fill_rect(rect_int rc, rgb_color rgb) = 0;
+	virtual void fill_rect(rect_int rc, color_rgb rgb) = 0;
 
 	/**
 	 * @brief   文字列を描画します
@@ -106,7 +106,7 @@ public:
 	 */
 
 	virtual void draw_string(
-		std::string str, point_int pt, rgb_color rgb, font* f) = 0;
+		std::string str, point_int pt, color_rgb rgb, font* f) = 0;
 	/**
 	 * @brief   文字列を描画します
 	 *
@@ -116,7 +116,7 @@ public:
 	 * @param   f   フォント
 	 */
 	virtual void draw_string(
-		std::wstring str, point_int pt, rgb_color rgb, font* f) = 0;
+		std::wstring str, point_int pt, color_rgb rgb, font* f) = 0;
 };
 
 

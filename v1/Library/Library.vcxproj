@@ -92,9 +92,9 @@
     <ClInclude Include="include\wordring\debug.h" />
     <ClInclude Include="include\wordring\exception.h" />
     <ClInclude Include="include\wordring\geometry\shape.h" />
-    <ClInclude Include="include\wordring\graphics\color.h" />
     <ClInclude Include="include\wordring\gui\button.h" />
     <ClInclude Include="include\wordring\gui\canvas.h" />
+    <ClInclude Include="include\wordring\gui\color.h" />
     <ClInclude Include="include\wordring\gui\container.h" />
     <ClInclude Include="include\wordring\gui\control.h" />
     <ClInclude Include="include\wordring\gui\control_data.h" />

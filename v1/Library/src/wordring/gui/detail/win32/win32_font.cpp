@@ -23,6 +23,7 @@
 #ifdef WORDRING_WS_WIN
 
 #include <wordring/gui/canvas.h>
+#include <wordring/gui/shape_int.h>
 
 #include <cassert>
 
@@ -52,23 +53,9 @@ native_font::store native_font_impl::create(font_conf fc)
 	return native_font::store(new native_font_impl(fc));
 }
 
-HFONT native_font_impl::get_handle(native_canvas const *cv)
+HFONT native_font_impl::create(native_canvas const *cv, LONG dh)
 {
-	if (m_hfont == NULL)
-	{
-		attach(cv);
-	}
-
-	return m_hfont;
-}
-
-void native_font_impl::attach(native_canvas const *cv)
-{
-
-	native_canvas_impl *ncv =
-		const_cast<native_canvas_impl*>(
-			static_cast<native_canvas_impl const*>(cv));
-	HDC hdc = ncv->get_handle();
+	HFONT hfont = NULL;
 
 	font_conf const &fc = get_public()->get_conf();
 
@@ -89,14 +76,6 @@ void native_font_impl::attach(native_canvas const *cv)
 
 	std::wstring family;
 
-	if (fc.size != 0)
-	{
-		// 1インチには約72ポイントが含まれます
-		height = -::MulDiv(fc.size, ::GetDeviceCaps(hdc, LOGPIXELSY), 72);
-	}
-
-	height = 16;
-	
 	switch (fc.weight)
 	{
 	case font::normal: weight = 400;       break;
@@ -110,31 +89,78 @@ void native_font_impl::attach(native_canvas const *cv)
 		italic = TRUE;
 	}
 
+	if (fc.size != 0)
+	{
+		// dhはInternalLeadingを引くために使用
+		height = fc.size + dh;
+		// 1インチには約72ポイントが含まれます
+		//height = -::MulDiv(fc.size, ::GetDeviceCaps(hdc, LOGPIXELSY), 72);
+	}
+
 	switch (fc.family)
 	{
 	case font::sans_serif: pitch_and_family = FF_SWISS;      break;
 	case font::serif:      pitch_and_family = FF_ROMAN;      break;
 	case font::cursive:    pitch_and_family = FF_SCRIPT;     break;
 	case font::fantasy:    pitch_and_family = FF_DECORATIVE; break;
-	case font::monospace:  pitch_and_family = FF_MODERN;    break;
+	case font::monospace:  pitch_and_family = FF_MODERN;     break;
 	}
 	
-	if (fc.face.empty())
-	{
-		family = L"Meiryo";
-	}
-	else
+	if (!fc.face.empty())
 	{
 		family = fc.face;
 	}
 
-	m_hfont = ::CreateFont(
+	// hdc変更不可
+	native_canvas_impl const *ncv = static_cast<native_canvas_impl const*>(cv);
+	HDC hdc = const_cast<native_canvas_impl*>(ncv)->get_handle();
+
+	hfont = ::CreateFont(
 		height, width, escapement, orientation, weight,
 		italic, under_line, strike_out, char_set, output_precision, clip_precision,
 		quality, pitch_and_family, family.c_str());
+	assert(hfont != NULL);
 
-	assert(m_hfont != NULL);
+	// 内部レディングを測る
+	HGDIOBJ old = ::SelectObject(hdc, hfont);
+	BOOL ret = ::GetTextMetrics(hdc, &m_tm);
+	assert(ret != 0);
+	::SelectObject(hdc, old);
+
+	return hfont;
 }
 
+void native_font_impl::attach(native_canvas const *cv)
+{
+	HFONT hfont = create(cv, 0);
+
+	// 内部レディングが0以外の場合、フォントを消して再作成する
+	if (m_tm.tmInternalLeading != 0)
+	{
+		// (フォントの高さに対する内部レディングの割合) + 1
+		float dh = float(m_tm.tmInternalLeading) / m_tm.tmHeight + 1;
+
+		BOOL ret = ::DeleteObject(hfont);
+		assert(ret != 0);
+		hfont = create(cv, LONG(m_tm.tmInternalLeading * dh));
+	}
+
+	m_hfont = hfont;
+}
+
+HFONT native_font_impl::get_handle(native_canvas const *cv)
+{
+	if (m_hfont == NULL)
+	{
+		attach(cv);
+	}
+
+	return m_hfont;
+}
+
+point_int native_font_impl::get_offset() const
+{
+	return point_int(0, -m_tm.tmInternalLeading);
+}
 
 #endif // WRODRING_WS_WIN
