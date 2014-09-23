@@ -35,8 +35,7 @@
 using namespace wordring::gui;
 using namespace wordring::gui::detail;
 
-native_font_impl::native_font_impl(font_conf fc)
-	: m_hfont(NULL)
+native_font_impl::native_font_impl() : m_hfont(NULL)
 {
 }
 
@@ -48,16 +47,16 @@ native_font_impl::~native_font_impl()
 	}
 }
 
-native_font::store native_font_impl::create(font_conf fc)
+native_font::store native_font_impl::create()
 {
-	return native_font::store(new native_font_impl(fc));
+	return native_font::store(new native_font_impl());
 }
 
 HFONT native_font_impl::create(native_canvas const *cv, LONG dh)
 {
 	HFONT hfont = NULL;
 
-	font_conf const &fc = get_public()->get_conf();
+	font const *public_ = get_public();
 
 	int height      = 0;
 	int width       = 0;
@@ -74,30 +73,18 @@ HFONT native_font_impl::create(native_canvas const *cv, LONG dh)
 	DWORD quality          = DEFAULT_QUALITY;
 	DWORD pitch_and_family = DEFAULT_PITCH;
 
-	std::wstring family;
+	std::wstring const &family = public_->get_face();
 
-	switch (fc.weight)
-	{
-	case font::normal: weight = 400;       break;
-	case font::bold:   weight = 700;       break;
-	default:           weight = fc.weight; break;
-	}
-	assert(100 <= weight && weight <= 900);
+	// dhはInternalLeadingを引くために使用
+	// 1インチには約72ポイントが含まれます
+	//height = -::MulDiv(fc.size, ::GetDeviceCaps(hdc, LOGPIXELSY), 72);
+	height = public_->get_size() + dh;
 
-	if (fc.style == font::italic || fc.style == font::oblique)
-	{
-		italic = TRUE;
-	}
+	weight = public_->get_weight();
 
-	if (fc.size != 0)
-	{
-		// dhはInternalLeadingを引くために使用
-		height = fc.size + dh;
-		// 1インチには約72ポイントが含まれます
-		//height = -::MulDiv(fc.size, ::GetDeviceCaps(hdc, LOGPIXELSY), 72);
-	}
+	italic = public_->is_italic() ? TRUE : FALSE;
 
-	switch (fc.family)
+	switch (public_->get_family())
 	{
 	case font::sans_serif: pitch_and_family = FF_SWISS;      break;
 	case font::serif:      pitch_and_family = FF_ROMAN;      break;
@@ -106,11 +93,6 @@ HFONT native_font_impl::create(native_canvas const *cv, LONG dh)
 	case font::monospace:  pitch_and_family = FF_MODERN;     break;
 	}
 	
-	if (!fc.face.empty())
-	{
-		family = fc.face;
-	}
-
 	// hdc変更不可
 	native_canvas_impl const *ncv = static_cast<native_canvas_impl const*>(cv);
 	HDC hdc = const_cast<native_canvas_impl*>(ncv)->get_handle();

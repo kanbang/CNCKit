@@ -49,12 +49,12 @@ public:
 
 	// 生成・破棄 -------------------------------------------------------------
 private:
-	explicit native_font_impl(font_conf fc);
+	explicit native_font_impl();
 
 public:
 	virtual ~native_font_impl();
 
-	static native_font::store create(font_conf fc);
+	static native_font::store create();
 
 	HFONT create(native_canvas const *cv, LONG il);
 

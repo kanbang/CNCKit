@@ -73,6 +73,8 @@ public:
 
 	static control::store create(int32_t x, int32_t y, int32_t cx, int32_t cy);
 
+	static style* load_default(style_service &ss);
+
 	virtual bool do_mouse_down(mouse &m);
 
 	/// マウス・ポインタがコントロールに入ったとき呼び出されます

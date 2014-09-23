@@ -21,8 +21,8 @@
 #include <wordring/wordring.h>
 
 #include <wordring/gui/control.h>
-
 #include <wordring/gui/style.h>
+#include <wordring/gui/window_service.h>
 
 #include <string>
 #include <algorithm>
@@ -32,10 +32,25 @@ using namespace wordring::gui;
 
 // style_value ----------------------------------------------------------------
 
-style_value::style_value(int32_t key_, int32_t value_)
-	: key(key_), int_value(value_)
+style_value::style_value(uint32_t key_, int32_t value_)
+	: key(key_), value(value_)
 {
 
+}
+
+style_value::style_value() : key(style::error), value(0)
+{
+
+}
+
+style_value::operator bool() const
+{
+	return key != style::error;
+}
+
+void style_value::operator =(int32_t value_)
+{
+	value = value_;
 }
 
 bool style_value::operator <(style_value const &rhs) const
@@ -75,22 +90,62 @@ style::const_iterator style::end() const
 	return m_storage.end();
 }
 
-style::const_range_type style::equal_range(int32_t key) const
+style::iterator style::begin()
 {
-	style_value sv(key, 0);
-	return std::equal_range(begin(), end(), sv);
+	return m_storage.begin();
 }
 
-style::const_iterator style::find(int32_t key) const
+style::iterator style::end()
 {
-	style_value sv(key, 0);
-	return std::find(begin(), end(), sv);
+	return m_storage.end();
 }
 
-void style::insert(int32_t key, int32_t value)
+style::const_range_type style::equal_range(uint32_t key) const
+{
+	return std::equal_range(begin(), end(), style_value(key, style::error));
+}
+
+style::iterator style::find(uint32_t key)
+{
+	return std::find(begin(), end(), style_value(key, style::error));
+}
+
+style::const_iterator style::find(uint32_t key) const
+{
+	return std::find(begin(), end(), style_value(key, style::error));
+}
+
+void style::insert(uint32_t key, int32_t value)
 {
 	style_value sv(key, value);
-	m_storage.push_back(sv);
+	
+	iterator it = find(key);
+	if (it == end())
+	{
+		m_storage.push_back(sv);
+	}
+	else
+	{
+		*it = sv;
+	}
+
+	std::sort(m_storage.begin(), m_storage.end());
+}
+
+void style::insert(uint32_t key, uint32_t value)
+{
+	style_value sv(key, value);
+
+	iterator it = find(key);
+	if (it == end())
+	{
+		m_storage.push_back(sv);
+	}
+	else
+	{
+		*it = sv;
+	}
+
 	std::sort(m_storage.begin(), m_storage.end());
 }
 
@@ -106,34 +161,81 @@ void style_cache::push_back(style const *s)
 	m_storage.push_back(s);
 }
 
-bool style_cache::find(int32_t key, style_value &result) const
+style_value style_cache::find(uint32_t key) const
 {
 	for (style const* s : m_storage)
 	{
 		style::const_iterator it = s->find(key);
 		if (it != s->end())
 		{
-			result = *it;
-			return true;
+			return *it;
 		}
 	}
 
-	return false;
+	return style_value();
 }
 
-bool style_cache::find(int32_t key, color_rgb &result) const
+color_rgb style_cache::find(uint32_t key, color_rgb default_) const
 {
-	style_value sv(key, 0);
-	if (find(key, sv) == false) { return false; }
+	color_rgb result = default_;
 
-	color_rgb rgb(static_cast<uint32_t>(sv.int_value));
-	result = rgb;
+	style_value sv = find(key);
+	if (sv)
+	{
+		result = sv.value;
+	}
 
-	return true;
+	return result;
+}
+
+int32_t style_cache::find(uint32_t key, int32_t default_) const
+{
+	int32_t result = default_;
+
+	style_value sv = find(key);
+	if (sv)
+	{
+		result = sv.value;
+	}
+
+	return result;
+}
+
+uint32_t style_cache::find(uint32_t key, uint32_t default_) const
+{
+	int32_t result = default_;
+
+	style_value sv = find(key);
+	if (sv)
+	{
+		result = sv.value;
+	}
+
+	return result;
 }
 
 // style_service --------------------------------------------------------------
 
+style_service::style_service() : m_window_service(nullptr)
+{
+
+}
+
+window_service& style_service::get_window_service()
+{
+	assert(m_window_service != nullptr);
+	return *m_window_service;
+}
+
+void style_service::set_window_service(window_service *ws)
+{
+	m_window_service = ws;
+}
+
+font_service& style_service::get_font_service()
+{
+	return m_window_service->get_font_service();
+}
 
 void style_service::erase(void const *c)
 {
@@ -221,7 +323,7 @@ style_cache style_service::find_styles(void const *p) const
 
 	while (it1 != it2)
 	{
-		int32_t atom = (it1++)->int_value;
+		int32_t atom = (it1++)->value;
 		style const *s1 = find(atom);
 		if (s1 != nullptr) { result.push_back(s1); }
 	}

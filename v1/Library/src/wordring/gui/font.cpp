@@ -22,6 +22,8 @@
 
 #include <wordring/gui/font.h>
 
+#include <cassert>
+
 #ifdef WORDRING_WS_WIN // Windows ---------------------------------------------
 
 #include <wordring/gui/detail/win32/win32_font.h>
@@ -36,36 +38,37 @@
 
 using namespace wordring::gui;
 
-// font_conf ------------------------------------------------------------------
-
-font_conf::font_conf()
-	: style(font::normal)
-	, variant(font::normal)
-	, weight(font::normal)
-	, size(font::normal)
-	, line_height(font::normal)
-	, family(font::serif)
-{
-	
-}
-
 // font -----------------------------------------------------------------------
 
-font::font(font_conf const &fc)
-	: m_native(detail::native_font_impl::create(fc))
-	, m_font_conf(fc)
+font::font(uint32_t code, std::wstring const &face)
+	: m_native(detail::native_font_impl::create())
+	, m_code(code)
+	, m_face(face)
 {
 	m_native->set_public(this);
+}
+
+font::store font::create(uint32_t code, std::wstring const &face)
+{
+	return store(new font(code, face));
+}
+
+uint32_t font::create_code(
+	int32_t size, int32_t family, int32_t weight, bool italic_, uint32_t face)
+{
+	uint32_t code =
+		  (size << size_shift)
+		| family
+		| ((weight / 100) << weight_shift)
+		| (italic_ ? italic : 0)
+		| face;
+
+	return code;
 }
 
 detail::native_font* font::get_native()
 {
 	return m_native.get();
-}
-
-font_conf const& font::get_conf() const
-{
-	return m_font_conf;
 }
 
 void font::attach(detail::native_canvas const *cv)
@@ -78,44 +81,45 @@ void font::detach()
 	m_native = nullptr;
 }
 
-// font_hash ------------------------------------------------------------------
-
-size_t font_hash::operator ()(font const &f) const
+uint32_t font::get_code() const
 {
-	std::wstring val;
-	font_conf const &fc = f.get_conf();
-
-	val.push_back(fc.style);
-	val.push_back(fc.variant);
-	val.push_back(fc.weight);
-	val.push_back(fc.size);
-	val.push_back(fc.line_height);
-	val.push_back(fc.family);
-	val.append(fc.face);
-
-	return std::hash<std::wstring>()(val);
+	return m_code;
 }
 
-// font_equal_to --------------------------------------------------------------
-
-bool font_equal_to::operator()(font const &lhs, font const &rhs) const
+void font::set_code(uint32_t code)
 {
-	font_conf const &lfc = lhs.get_conf();
-	font_conf const &rfc = rhs.get_conf();
+	assert(m_code == 0);
+	m_code = code;
+}
 
-	return lfc.style       == rfc.style
-		&& lfc.variant     == rfc.variant
-		&& lfc.weight      == rfc.weight
-		&& lfc.size        == rfc.size
-		&& lfc.line_height == rfc.line_height
-		&& lfc.family      == rfc.family
-		&& lfc.face        == rfc.face;
+int32_t font::get_size() const
+{
+	return (m_code & size_mask) >> size_shift;
+}
+
+int32_t font::get_weight() const
+{
+	return ((m_code & weight_mask) >> weight_shift) * 100;
+}
+
+bool font::is_italic() const
+{
+	return (m_code & italic_mask) ? true : false;
+}
+
+int32_t font::get_family() const
+{
+	return m_code & family_mask;
+}
+
+std::wstring const& font::get_face() const
+{
+	return m_face;
 }
 
 // font_service ---------------------------------------------------------------
 
-font_service::font_service()
-	: m_window_service(nullptr)
+font_service::font_service() : m_window_service(nullptr)
 {
 
 }
@@ -130,8 +134,36 @@ void font_service::set_window_service(window_service *ws)
 	m_window_service = ws;
 }
 
+uint32_t font_service::create(
+	int32_t size, int32_t family, int32_t weight, bool italic, std::wstring face)
+{
+	uint32_t atom = m_atom_service.get_atom(face);
+	uint32_t code = font::create_code(size, family, weight, italic, atom);
 
+	font::store f = m_storage[code];
 
+	if (!f)
+	{
+		f = font::create(code, face);
+		m_storage[code] = f;
+	}
+
+	return code;
+}
+
+font::store font_service::find(
+	int32_t size, int32_t family, int32_t weight, bool italic, uint32_t face)
+{
+	uint32_t code = font::create_code(size, family, weight, italic, face);
+	font::store result = m_storage[code];
+
+	return result;
+}
+
+font::store font_service::find(uint32_t code)
+{
+	return m_storage[code];
+}
 
 
 

@@ -259,6 +259,7 @@ void message_service::do_tack()
 window_service::window_service()
 {
 	m_message_service.set_window_service(this);
+	m_style_service.set_window_service(this);
 	m_font_service.set_window_service(this);
 }
 

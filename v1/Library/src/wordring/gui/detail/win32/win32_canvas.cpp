@@ -199,20 +199,21 @@ void native_canvas_impl::draw_string(
 {
 	pt += m_origin;
 
-	HGDIOBJ old = NULL;
-
+	HGDIOBJ hfont = NULL;
 	if (f != nullptr)
 	{
 		native_font_impl *nf = static_cast<native_font_impl*>(f->get_native());
-		old = ::SelectObject(m_hdc, nf->get_handle(this));
+		hfont = ::SelectObject(m_hdc, nf->get_handle(this));
 
 		pt += nf->get_offset();
 	}
 
+	::SetTextColor(m_hdc, RGB(rgb.r, rgb.g, rgb.b));
+
 	BOOL result = ::TextOutW(m_hdc, pt.x, pt.y, str.c_str(), str.size());
 	assert(result != 0);
 
-	if (old != NULL) { ::SelectObject(m_hdc, old); }
+	if (hfont != NULL) { ::SelectObject(m_hdc, hfont); }
 }
 
 native_memory_canvas_impl::native_memory_canvas_impl()

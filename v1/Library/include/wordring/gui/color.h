@@ -50,6 +50,14 @@ struct color_rgb
 	{
 		return (r << 24) + (g << 16) + (b << 8) + a;
 	}
+
+	void operator =(uint32_t rgba)
+	{
+		r = (rgba & 0xFF000000) >> 24;
+		g = (rgba & 0xFF0000) >> 16;
+		b = (rgba & 0xFF00) >> 8;
+		a = rgba & 0xFF;
+	}
 };
 
 } // namespace gui

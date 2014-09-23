@@ -24,9 +24,7 @@
 #include <wordring/wordring.h>
 
 #include <wordring/atom.h>
-
 #include <wordring/gui/color.h>
-
 #include <wordring/gui/font.h>
 
 #include <memory>
@@ -45,14 +43,16 @@ class style_service; // 先行宣言
 
 struct style_value
 {
-	int32_t key;
-	union
-	{
-		int32_t int_value;
-		font *font_value;
-	};
+	uint32_t key;
+	int32_t  value;
 
-	style_value(int32_t key_, int32_t value_);
+	style_value(uint32_t key_, int32_t value_);
+
+	style_value();
+
+	operator bool() const;
+
+	void operator =(int32_t value_);
 
 	bool operator <(style_value const &rhs) const;
 
@@ -67,6 +67,7 @@ public:
 	typedef std::unique_ptr<style> store;
 
 	typedef std::vector<style_value> storage_type;
+	typedef std::vector<font::store> font_storage_type;
 
 	typedef storage_type::iterator iterator;
 	typedef storage_type::const_iterator const_iterator;
@@ -75,43 +76,97 @@ public:
 	typedef std::pair<const_iterator, const_iterator> const_range_type;
 
 public:
-	enum : int32_t
+	struct state
 	{
+		enum : uint32_t
+		{
+			mask   = 0xFF000000, // 上位8ビット
+			normal = 0,          // 0
+			active = 0x1000000,  // 1
+			focus  = 0x2000000,  // 2
+			hover  = 0x3000000,  // 3
+		};
+	};
+
+	enum : uint32_t
+	{
+		mask  = 0xFFFFFF, // 下位24ビット 
+		error = 0,
+
 		style_class, ///< スタイル・クラス
 
-		// 色
-		bg_color, ///< 背景色
-		fg_color, ///< 前景色
+		width,
+		min_width,
+		max_width,
+
+		height,
+		min_height,
+		max_height,
+
+		font,
+		color,
+
+		foreground_key = 10000,
+		background_key = 10100,
+		border_key     = 10200,
+		margin_key     = 10300,
+		padding_key    = 10400,
 
 		control_specific = 20000, ///< これ以降はコントロールが使用します
 	};
 
-	struct active
+	struct foreground
 	{
-		enum : int32_t
+		enum : uint32_t
 		{
-			bg_color = 1000,
-			fg_color,
+			color = foreground_key,
 		};
 	};
 
-	struct focus
+	struct background
 	{
-		enum : int32_t
+		enum : uint32_t
 		{
-			bg_color = 2000,
-			fg_color,
+			color = background_key,
+			image,
+			repeat,
+		};
+	};
+	
+	struct border
+	{
+		enum : uint32_t
+		{
+			color = border_key,
+			width,
+			style,
 		};
 	};
 
-	struct hover
+	struct margin
 	{
 		enum : int32_t
 		{
-			bg_color = 3000,
-			fg_color,
+			all = style::margin_key,
+			left,
+			right,
+			top,
+			bottom,
 		};
 	};
+
+	struct padding
+	{
+		enum : int32_t
+		{
+			all = style::padding_key,
+			left,
+			right,
+			top,
+			bottom,
+		};
+	};
+
 protected:
 	storage_type m_storage; ///< key, value
 
@@ -121,15 +176,27 @@ protected:
 public:
 	static store create();
 
+	//style_value& operator [](uint32_t key);
+
 	const_iterator begin() const;
 
 	const_iterator end() const;
 
-	const_range_type equal_range(int32_t key) const;
+	iterator begin();
 
-	const_iterator find(int32_t key) const;
+	iterator end();
 
-	void insert(int32_t key, int32_t value);
+	const_range_type equal_range(uint32_t key) const;
+
+	const_iterator find(uint32_t key) const;
+
+	iterator find(uint32_t key);
+
+	void insert(uint32_t key, int32_t value);
+
+	void insert(uint32_t key, uint32_t value);
+
+	void insert(uint32_t key, wordring::gui::font::store value);
 };
 
 class style_cache
@@ -144,9 +211,13 @@ public:
 
 	void push_back(style const *s);
 
-	bool find(int32_t key, style_value &result) const;
+	style_value find(uint32_t key) const;
 
-	bool find(int32_t key, color_rgb &result) const;
+	color_rgb find(uint32_t key, color_rgb default_) const;
+
+	int32_t find(uint32_t key, int32_t default_) const;
+
+	uint32_t find(uint32_t key, uint32_t default_) const;
 };
 
 class style_service
@@ -169,6 +240,8 @@ public:
 	typedef class_map_type::const_iterator const_class_iterator;
 
 private:
+	window_service *m_window_service;
+
 	/// C++オブジェクトとスタイルのマップ
 	object_map_type m_object_map;
 	/// アトムとスタイルのマップ
@@ -180,6 +253,17 @@ private:
 	wordring::atom_service m_atom_service;
 
 public:
+	// 構築・破棄 -------------------------------------------------------------
+	
+	style_service();
+
+	// 
+	window_service& get_window_service();
+
+	void set_window_service(window_service *ws);
+
+	font_service& get_font_service();
+
 	// 消去 -------------------------------------------------------------------
 
 	/// C++オブジェクトに関連付けられたデータを消去します
