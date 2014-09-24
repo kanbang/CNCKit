@@ -21,6 +21,7 @@
 
 #include <wordring/wordring.h>
 
+#include <wordring/gui/style.h>
 #include <wordring/gui/shape_int.h>
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/message.h>
@@ -53,8 +54,10 @@ public:
 	typedef std::unique_ptr<control> store;
 
 protected:
-	container* m_parent; ///< 親コンテナ
-	rect_int m_rc; ///< コントロールの長方形
+	container *m_parent; ///< 親コンテナ
+	rect_int   m_rc;     ///< コントロールの長方形
+
+	style::store m_style;
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -263,6 +266,243 @@ public:
 
 	/// cからコントロールまでのオフセットを取得する
 	point_int query_offset_from(container *c) const;
+
+	// スタイル ---------------------------------------------------------------
+
+	style* get_style();
+
+	style const* get_style() const
+	{
+		return m_style.get();
+	}
+
+	void set_style(style::store s);
+
+	layout_style const* find_layout_style() const
+	{
+		layout_style const *result = nullptr;
+		style const *s = get_style();
+		if (s)
+		{
+			result =
+				static_cast<layout_style const*>(s->find(style::type::layout));
+		}
+		return result;
+	}
+
+	color_style const* find_color_style(style::state st) const
+	{
+		color_style const *result = nullptr;
+		style const *s = get_style();
+		if (s)
+		{
+			result = static_cast<color_style const*>(
+				s->find(style::type::color, st));
+		}
+		return result;
+	}
+
+	color_style const* find_color_style(
+		style::state st1, style::state st2) const
+	{
+		color_style const *result = nullptr;
+		style const *s = get_style();
+		if (s)
+		{
+			result = static_cast<color_style const*>(
+				s->find(style::type::color, st1, st2));
+		}
+		return result;
+	}
+
+	text_style const* find_text_style(style::state st) const
+	{
+		text_style const *result = nullptr;
+		style const *s = get_style();
+		if (s)
+		{
+			result =
+				static_cast<text_style const*>(s->find(style::type::text, st));
+		}
+		return result;
+	}
+
+	text_style const* find_text_style(
+		style::state st1, style::state st2) const
+	{
+		text_style const *result = nullptr;
+		style const *s = get_style();
+		if (s)
+		{
+			result = static_cast<text_style const*>(
+				s->find(style::type::text, st1, st2));
+		}
+		return result;
+	}
+
+	int16_t get_min_width() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->min_width : 16;
+	}
+
+	int16_t get_max_width() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->max_width : 0x7FFF;
+	}
+
+	int16_t get_min_height() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->min_height : 16;
+	}
+
+	int16_t get_max_height() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->max_height : 0x7FFF;
+	}
+
+	int16_t get_margin_left() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->margin_left : 0;
+	}
+
+	int16_t get_margin_right() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->margin_right : 0;
+	}
+
+	int16_t get_margin_top() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->margin_top : 0;
+	}
+
+	int16_t get_margin_bottom() const	
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->margin_bottom : 0;
+	}
+
+	int16_t get_padding_left() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->padding_left : 0;
+	}
+
+	int16_t get_padding_right() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s ->padding_right : 0;
+	}
+
+	int16_t get_padding_top() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s ->padding_top : 0;
+	}
+
+	int16_t get_padding_bottom() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s ->padding_bottom : 0;
+	}
+
+	int16_t get_border_width() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->border_width : 0;
+	}
+
+	int16_t get_border_style() const
+	{
+		layout_style const *s = find_layout_style();
+		return s ? s->border_style : 0;
+	}
+
+	color_rgb get_color(style::state st) const
+	{
+		color_style const *s = nullptr;
+		if (st == style::state::normal)
+		{
+			s = find_color_style(style::state::normal);
+		}
+		else
+		{
+			s = find_color_style(st, style::state::normal);
+		}
+		/*
+		if (s == nullptr)
+		{
+			s = get_parent()->get_color(st);
+		}
+		*/
+		return s ? s->color : color_rgb(0, 0, 0, 0xFF);
+	}
+
+	color_rgb get_foreground_color(style::state st) const
+	{
+		color_style const *s = nullptr;
+		if (st == style::state::normal)
+		{
+			s = find_color_style(style::state::normal);
+		}
+		else
+		{
+			s = find_color_style(st, style::state::normal);
+		}
+		/*
+		if (s == nullptr)
+		{
+		s = get_parent()->get_color(st);
+		}
+		*/
+		return s ? s->foreground_color : color_rgb(0, 0, 0, 0xFF);
+	}
+
+	color_rgb get_background_color(style::state st) const
+	{
+		color_style const *s = nullptr;
+		if (st == style::state::normal)
+		{
+			s = find_color_style(style::state::normal);
+		}
+		else
+		{
+			s = find_color_style(st, style::state::normal);
+		}
+		/*
+		if (s == nullptr)
+		{
+		s = get_parent()->get_color(st);
+		}
+		*/
+		return s ? s->background_color : color_rgb(0xFF, 0xFF, 0xFF, 0xFF);
+	}
+
+	color_rgb get_border_color(style::state st) const
+	{
+		color_style const *s = nullptr;
+		if (st == style::state::normal)
+		{
+			s = find_color_style(style::state::normal);
+		}
+		else
+		{
+			s = find_color_style(st, style::state::normal);
+		}
+		/*
+		if (s == nullptr)
+		{
+		s = get_parent()->get_color(st);
+		}
+		*/
+		return s ? s->border_color : color_rgb(0, 0, 0, 0);
+	}
 
 	// タイマー ---------------------------------------------------------------
 

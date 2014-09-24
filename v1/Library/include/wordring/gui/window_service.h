@@ -190,7 +190,6 @@ private:
 	//timer_service m_timer_service;
 	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
 	//control_data_service m_data_service; ///< コントロールの外部データ
-	style_service m_style_service; ///< スタイル
 	font_service m_font_service;
 
 public:
@@ -239,7 +238,6 @@ public:
 
 	// スタイル ---------------------------------------------------------------
 
-	style_service& get_style_service();
 
 	font_service& get_font_service();
 };

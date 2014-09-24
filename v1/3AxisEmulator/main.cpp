@@ -54,7 +54,6 @@ int main()
 	rect_int rc(0, 0, 640, 480);
 
 	window_service  ws;
-	style_service  &ss = ws.get_style_service();
 	font_service   &fs = ws.get_font_service();
 	gl_context gl;
 
@@ -91,6 +90,11 @@ int main()
 		//	rect_int(point_int(0, 0), size_int(100, 100)), i));
 		button *b = static_cast<button*>(
 			c2->push_back(button::create(0, 0, 200, 24)));
+
+		style::store s = color_style::create(style::state::active);
+		color_style *cs = static_cast<color_style*>(s.get());
+		cs->background_color = color_rgb(0x40, 0x40, 0x40);
+		b->set_style(s);
 		b->on_click = [](mouse &m)->bool{
 			std::cout << "click" << m.pt.x << ", " << m.pt.y << std::endl;
 			return true;
@@ -105,14 +109,11 @@ int main()
 	//	10, font::sans_serif, 400, false, L"Meiryo UI")->get_code();
 
 	// ボタンのスタイル
-	style *s = button::load_default(ss);
 
 	//ss.insert(typeid(button));
 	//*s = button::create_default_style(ws);
 
 	rw2->show();
-
-	std::cout << sizeof(style_value) << std::endl;
 
 	//size_int s1 = f.get_size(),
 	//	s2 = a3e->get_size();

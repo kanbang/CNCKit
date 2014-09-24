@@ -141,6 +141,16 @@ window_service* control::find_service()
 	return get_parent()->find_service();
 }
 
+style* control::get_style()
+{
+	return m_style.get();
+}
+
+void control::set_style(style::store s)
+{
+	m_style = s;
+}
+
 // 表示 -----------------------------------------------------------------------
 
 bool control::is_visible() const
@@ -274,7 +284,7 @@ point_int control::query_offset_from(container *c) const
 	return point_int();
 }
 
-// タイマー ---------------------------------------------------------------
+// タイマー -------------------------------------------------------------------
 
 void control::set_timer(int32_t ms)
 {

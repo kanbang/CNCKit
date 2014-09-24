@@ -61,6 +61,7 @@ class font
 
 public:
 	typedef std::shared_ptr<font> store;
+	typedef std::weak_ptr<font>   reference;
 
 public:
 	enum : uint32_t

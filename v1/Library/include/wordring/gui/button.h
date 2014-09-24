@@ -47,10 +47,6 @@ public:
 	{
 		up = 0,
 		down = 1,
-		
-		style_specific = style::control_specific,
-		hover_bg_color,
-		down_bg_color,
 	};
 
 	struct state
@@ -73,7 +69,7 @@ public:
 
 	static control::store create(int32_t x, int32_t y, int32_t cx, int32_t cy);
 
-	static style* load_default(style_service &ss);
+	//static style* load_default(style_service &ss);
 
 	virtual bool do_mouse_down(mouse &m);
 

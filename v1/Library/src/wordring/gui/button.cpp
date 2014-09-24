@@ -49,7 +49,7 @@ control::store button::create(int32_t x, int32_t y, int32_t cx, int32_t cy)
 {
 	return control::store(new button(rect_int(x, y, cx, cy)));
 }
-
+/*
 style* button::load_default(style_service &ss)
 {
 	style *result = ss.insert(typeid(button));
@@ -92,7 +92,7 @@ style* button::load_default(style_service &ss)
 
 	return result;
 }
-
+*/
 bool button::do_mouse_down(mouse &m)
 {
 	m_state.button = down;
@@ -130,35 +130,22 @@ void button::do_paint(canvas &cv)
 {
 	window_service *ws = find_service();
 	assert(ws);
-	style_service &ss = ws->get_style_service();
-
-	style_cache sc = ss.find_styles(typeid(button), this);
 
 	font::store f;
-	color_rgb bg_color(0x20, 0x20, 0x20, 0xFF);
 
-	uint32_t state = style::state::normal;
+	style::state st = style::state::normal;
+	if (m_state.button == down) st = style::state::active;
+	else if (m_state.hover) st = style::state::hover;
 
 //	f = sc.find(state | style::font, f);
 
-	if (m_state.button == down) state = style::state::active;
-	else if (m_state.hover) state = style::state::hover;
-
-	bg_color = sc.find(state | style::background::color, bg_color);
+	color_rgb bg_color = get_background_color(st);
+	color_rgb color = get_color(st);
 
 	cv->fill_rect(
 		rect_int(point_int(0, 0), get_size()), bg_color);
-
-	//int32_t fw;
-	//sc.find(style::font_weight);
-
-	int32_t color = sc.find(state | style::color, color_rgb(0xFF, 0xFF, 0));
-
-	uint32_t c = sc.find(style::font, 0);
-	font_service &fs = ws->get_font_service();
-	f = fs.find(c);
 	//font f(16);// , font::cursive, 400, false, L"");
 
 	cv->draw_string(
-		L"AQgqプロポーショナル → 16px", point_int(0, 0), color, f.get());
+		L"AQgqプロポーショナル → 16px", point_int(0, 0), color, nullptr);
 }

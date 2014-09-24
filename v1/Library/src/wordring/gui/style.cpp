@@ -30,352 +30,40 @@
 
 using namespace wordring::gui;
 
-// style_value ----------------------------------------------------------------
-
-style_value::style_value(uint32_t key_, int32_t value_)
-	: key(key_), value(value_)
-{
-
-}
-
-style_value::style_value() : key(style::error), value(0)
-{
-
-}
-
-style_value::operator bool() const
-{
-	return key != style::error;
-}
-
-void style_value::operator =(int32_t value_)
-{
-	value = value_;
-}
-
-bool style_value::operator <(style_value const &rhs) const
-{
-	return key < rhs.key;
-}
-
-bool style_value::operator ==(style_value const &rhs) const
-{
-	return key == rhs.key;
-}
-
-bool style_value::operator >(style_value const &rhs) const
-{
-	return key > rhs.key;
-}
-
 // style ----------------------------------------------------------------------
 
-style::style()
+// control_style --------------------------------------------------------------
+
+layout_style::layout_style()
+	: style            (style::type::layout, style::state::normal)
+	, min_width        (0)
+	, max_width        (0)
+	, min_height       (0)
+	, max_height       (0)
+
+	, margin_left      (0)
+	, margin_right     (0)
+	, margin_top       (0)
+	, margin_bottom    (0)
+
+	, padding_left     (0)
+	, padding_right    (0)
+	, padding_top      (0)
+	, padding_bottom   (0)
+
+	, border_width     (0)
+	, border_style     (0)
 {
 
 }
 
-style::store style::create()
+style::store layout_style::create()
 {
-	return style::store(new style());
+	return style::store(new layout_style());
 }
 
-style::const_iterator style::begin() const
-{
-	return m_storage.begin();
-}
+// text_style -----------------------------------------------------------------
 
-style::const_iterator style::end() const
-{
-	return m_storage.end();
-}
 
-style::iterator style::begin()
-{
-	return m_storage.begin();
-}
-
-style::iterator style::end()
-{
-	return m_storage.end();
-}
-
-style::const_range_type style::equal_range(uint32_t key) const
-{
-	return std::equal_range(begin(), end(), style_value(key, style::error));
-}
-
-style::iterator style::find(uint32_t key)
-{
-	return std::find(begin(), end(), style_value(key, style::error));
-}
-
-style::const_iterator style::find(uint32_t key) const
-{
-	return std::find(begin(), end(), style_value(key, style::error));
-}
-
-void style::insert(uint32_t key, int32_t value)
-{
-	style_value sv(key, value);
-	
-	iterator it = find(key);
-	if (it == end())
-	{
-		m_storage.push_back(sv);
-	}
-	else
-	{
-		*it = sv;
-	}
-
-	std::sort(m_storage.begin(), m_storage.end());
-}
-
-void style::insert(uint32_t key, uint32_t value)
-{
-	style_value sv(key, value);
-
-	iterator it = find(key);
-	if (it == end())
-	{
-		m_storage.push_back(sv);
-	}
-	else
-	{
-		*it = sv;
-	}
-
-	std::sort(m_storage.begin(), m_storage.end());
-}
-
-// style_cache ----------------------------------------------------------------
-
-style_cache::style_cache(style_service const &ss) : m_style_service(ss)
-{
-
-}
-
-void style_cache::push_back(style const *s)
-{
-	m_storage.push_back(s);
-}
-
-style_value style_cache::find(uint32_t key) const
-{
-	for (style const* s : m_storage)
-	{
-		style::const_iterator it = s->find(key);
-		if (it != s->end())
-		{
-			return *it;
-		}
-	}
-
-	return style_value();
-}
-
-color_rgb style_cache::find(uint32_t key, color_rgb default_) const
-{
-	color_rgb result = default_;
-
-	style_value sv = find(key);
-	if (sv)
-	{
-		result = sv.value;
-	}
-
-	return result;
-}
-
-int32_t style_cache::find(uint32_t key, int32_t default_) const
-{
-	int32_t result = default_;
-
-	style_value sv = find(key);
-	if (sv)
-	{
-		result = sv.value;
-	}
-
-	return result;
-}
-
-uint32_t style_cache::find(uint32_t key, uint32_t default_) const
-{
-	int32_t result = default_;
-
-	style_value sv = find(key);
-	if (sv)
-	{
-		result = sv.value;
-	}
-
-	return result;
-}
-
-// style_service --------------------------------------------------------------
-
-style_service::style_service() : m_window_service(nullptr)
-{
-
-}
-
-window_service& style_service::get_window_service()
-{
-	assert(m_window_service != nullptr);
-	return *m_window_service;
-}
-
-void style_service::set_window_service(window_service *ws)
-{
-	m_window_service = ws;
-}
-
-font_service& style_service::get_font_service()
-{
-	return m_window_service->get_font_service();
-}
-
-void style_service::erase(void const *c)
-{
-	m_object_map.erase(c);
-}
-
-void style_service::erase(int32_t atom)
-{
-	m_atom_map.erase(atom);
-}
-
-void style_service::erase(std::wstring name)
-{
-	int32_t atom = m_atom_service.get_atom(name);
-	erase(atom);
-}
-
-void style_service::erase(std::type_index type)
-{
-	m_class_map.erase(type);
-}
-
-style* style_service::find(void const *p)
-{
-	object_map_type::iterator it = m_object_map.find(p);
-	return (it == m_object_map.end()) ? nullptr : it->second.get();
-}
-
-style const* style_service::find(void const *p) const
-{
-	style_service *self = const_cast<style_service*>(this);
-	return self->find(p);
-}
-
-style* style_service::find(int32_t atom)
-{
-	atom_map_type::iterator it = m_atom_map.find(atom);
-	return (it == m_atom_map.end()) ? nullptr : it->second.get();
-}
-
-style const* style_service::find(int32_t atom) const
-{
-	style_service *self = const_cast<style_service*>(this);
-	return self->find(atom);
-}
-
-style* style_service::find(std::wstring name)
-{
-	int32_t atom = m_atom_service.get_atom(name);
-	return find(atom);
-}
-
-style* style_service::find(std::type_index type)
-{
-	class_map_type::iterator it = m_class_map.find(type);
-	return (it == m_class_map.end()) ? nullptr : it->second.get();
-}
-
-style const* style_service::find(std::type_index type) const
-{
-	class_map_type::const_iterator it = m_class_map.find(type);
-	return (it == m_class_map.end()) ? nullptr : it->second.get();
-}
-
-style_cache style_service::find_styles(void const *p) const
-{
-	style_cache result(*this);
-
-	// オブジェクトのスタイルを検索
-	style const *s0 = find(p);
-	if (s0 == nullptr) { return result; } // 空のキャッシュを返す
-	result.push_back(s0);
-
-	// オブジェクトに設定されているスタイル・クラスからスタイルを検索
-
-	// まず、スタイル・クラス識別子を検索する
-	style::const_range_type er = s0->equal_range(style::style_class);
-
-	style::const_iterator
-		it1 = er.first,
-		it2 = er.second;
-
-	// スタイル・クラス識別子が設定されていない場合終了
-	if (it1 == it2) { return result; }
-
-	while (it1 != it2)
-	{
-		int32_t atom = (it1++)->value;
-		style const *s1 = find(atom);
-		if (s1 != nullptr) { result.push_back(s1); }
-	}
-
-	return result;
-}
-
-style_cache style_service::find_styles(std::type_index ti, void const *p) const
-{
-	style_cache result = find_styles(p);
-
-	style const *s = find(ti);
-	if (s != nullptr) { result.push_back(s); }
-
-	return result;
-}
-
-int32_t style_service::get_atom(std::wstring name)
-{
-	return m_atom_service.get_atom(name);
-}
-
-style* style_service::insert(void const *p)
-{
-	style::store s = style::create();
-	style * result = s.get();
-	m_object_map[p] = std::move(s);
-
-	return result;
-}
-
-style* style_service::insert(int32_t atom)
-{
-	style::store s = style::create();
-	style * result = s.get();
-	m_atom_map[atom] = std::move(s);
-
-	return result;
-}
-
-style* style_service::insert(std::wstring name)
-{
-	return insert(get_atom(name));
-}
-
-style* style_service::insert(std::type_index type)
-{
-	style::store s = style::create();
-	style * result = s.get();
-	m_class_map[type] = std::move(s);
-
-	return result;
-}
 
 
