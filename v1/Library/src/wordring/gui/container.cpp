@@ -102,7 +102,7 @@ bool container::is_ancestor_of(control const *c) const
 {
 	assert(c != nullptr);
 
-	container const *c0 = c->get_parent();
+	control const *c0 = c->get_parent();
 
 	while (c0 != nullptr)
 	{

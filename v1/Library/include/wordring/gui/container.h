@@ -94,11 +94,13 @@ public:
 	 */
 	control* push_back(control::store s);
 
+	// レイアウト -------------------------------------------------------------
+
 	/// レイアウトを設定します
-	void set_layout(layout::store l);
+	virtual void set_layout(layout::store l);
 
 	/// レイアウトを取得します
-	layout* get_layout();
+	virtual layout* get_layout();
 
 	// 情報 -------------------------------------------------------------------
 

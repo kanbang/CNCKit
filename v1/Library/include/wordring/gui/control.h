@@ -26,6 +26,7 @@
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/message.h>
 #include <wordring/gui/mouse.h>
+#include <wordring/gui/layout.h>
 
 #include <cstdint>
 #include <memory>
@@ -120,7 +121,7 @@ public:
 	 * @details
 	 *          最上位のコンテナは親を持たないため、nullptrを返します。
 	 */
-	virtual container* get_parent();
+	control* get_parent();
 
 	/**
 	 * @brief   親コンテナを取得します
@@ -128,7 +129,7 @@ public:
 	 * @details
 	 *          最上位のコンテナは親を持たないため、nullptrを返します。
 	 */
-	virtual container const* get_parent() const;
+	control const* get_parent() const;
 
 	// 情報 -------------------------------------------------------------------
 
@@ -150,14 +151,6 @@ public:
 	 *          クロス・キャストを避けるため仮想関数で実装します。
 	 */
 	virtual window* find_window();
-
-	/**
-	 * @brief   一番近いコンテナを返します
-	 *
-	 * @details 
-	 *          thisがコンテナの場合、thisを返します。
-	 */
-	virtual container* find_container();
 
 	/**
 	 * @brief   ルート・ウィンドウを検索します
@@ -267,6 +260,14 @@ public:
 	/// cからコントロールまでのオフセットを取得する
 	point_int query_offset_from(container *c) const;
 
+	// レイアウト -------------------------------------------------------------
+
+	/// レイアウトを設定します
+	virtual void set_layout(layout::store l);
+
+	/// レイアウトを取得します
+	virtual layout* get_layout();
+
 	// スタイル ---------------------------------------------------------------
 
 	control_style* get_style();
@@ -283,6 +284,14 @@ public:
 	}
 
 	void set_style(style::store s);
+
+	color_rgb get_color(
+		control_style const *s1, control_style const *s2) const
+	{
+		if (s1) return s1->color;
+		if (s2) return s2->color;
+		return 0;
+	}
 
 	// タイマー ---------------------------------------------------------------
 
