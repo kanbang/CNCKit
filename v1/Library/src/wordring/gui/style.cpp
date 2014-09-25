@@ -32,10 +32,15 @@ using namespace wordring::gui;
 
 // style ----------------------------------------------------------------------
 
+style::style(type tp, state st) : m_type(tp), m_state(st)
+{
+
+}
+
 // control_style --------------------------------------------------------------
 
-layout_style::layout_style()
-	: style            (style::type::layout, style::state::normal)
+control_style::control_style(style::state st)
+	: style            (style::type::control, st)
 	, min_width        (0)
 	, max_width        (0)
 	, min_height       (0)
@@ -53,13 +58,20 @@ layout_style::layout_style()
 
 	, border_width     (0)
 	, border_style     (0)
+	
+	, color            (color_rgb(0xFF, 0xFF, 0xFF, 0xFF))
+	, foreground_color (color_rgb(0x80, 0x80, 0x80, 0xFF))
+	, background_color (color_rgb(0x20, 0x20, 0x20, 0xFF))
+	, border_color     (color_rgb(0x80, 0x80, 0x80, 0xFF))
+
+	, line_height      (16)
 {
 
 }
 
-style::store layout_style::create()
+style::store control_style::create(style::state st)
 {
-	return style::store(new layout_style());
+	return style::store(new control_style(st));
 }
 
 // text_style -----------------------------------------------------------------

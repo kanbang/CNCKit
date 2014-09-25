@@ -27,6 +27,7 @@
 #include <wordring/gui/root_window.h>
 
 #include <wordring/gui/button.h>
+#include <wordring/gui/style.h>
 
 #include "cnc_3axis_emulator_control.h"
 
@@ -91,10 +92,22 @@ int main()
 		button *b = static_cast<button*>(
 			c2->push_back(button::create(0, 0, 200, 24)));
 
-		style::store s = color_style::create(style::state::active);
-		color_style *cs = static_cast<color_style*>(s.get());
-		cs->background_color = color_rgb(0x40, 0x40, 0x40);
+		style::store s = control_style::create(style::state::normal);
 		b->set_style(s);
+		control_style *cs = static_cast<control_style*>(s.get());
+		cs->background_color = color_rgb(0x40, 0x40, 0x40);
+
+		cs = static_cast<control_style*>(
+			s->push_back(control_style::create(style::state::active)));
+
+		cs->background_color = color_rgb(0xFF, 0xFF, 0, 0xFF);
+
+
+		//s = color_style::create(style::hover);
+		//cs = static_cast<color_style*>(s.get());
+		cs->color = color_rgb(0xFF, 0xFF, 0xFF);
+		//b->set_style(s);
+
 		b->on_click = [](mouse &m)->bool{
 			std::cout << "click" << m.pt.x << ", " << m.pt.y << std::endl;
 			return true;

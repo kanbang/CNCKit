@@ -139,8 +139,16 @@ void button::do_paint(canvas &cv)
 
 //	f = sc.find(state | style::font, f);
 
-	color_rgb bg_color = get_background_color(st);
-	color_rgb color = get_color(st);
+
+	style::store s;
+	control_style const *cs = find_style(st);
+	if (cs == nullptr)
+	{
+		s = control_style::create(style::state::normal);
+		cs = static_cast<control_style const*>(s.get());
+	}
+	color_rgb bg_color = cs->background_color;
+	color_rgb color = cs->color;
 
 	cv->fill_rect(
 		rect_int(point_int(0, 0), get_size()), bg_color);

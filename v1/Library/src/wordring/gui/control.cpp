@@ -141,9 +141,9 @@ window_service* control::find_service()
 	return get_parent()->find_service();
 }
 
-style* control::get_style()
+control_style* control::get_style()
 {
-	return m_style.get();
+	return static_cast<control_style*>(m_style.get());
 }
 
 void control::set_style(style::store s)
