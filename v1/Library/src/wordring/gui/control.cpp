@@ -90,12 +90,12 @@ void control::detach_window_internal()
 {
 }
 
-control* control::get_parent()
+container* control::get_parent()
 {
 	return m_parent;
 }
 
-control const* control::get_parent() const
+container const* control::get_parent() const
 {
 	return m_parent;
 }
@@ -121,6 +121,12 @@ window* control::find_window()
 {
 	assert(get_parent());
 	return get_parent()->find_window();
+}
+
+container* control::find_container()
+{
+	assert(get_parent());
+	return get_parent();
 }
 
 root_window* control::find_root_window()
@@ -202,12 +208,6 @@ void control::set_rect_internal(rect_int rc, bool notify, bool paint)
 
 	std::swap(m_rc, rc);
 
-	layout *l = get_layout();
-	if (l)
-	{
-		get_layout()->perform_layout(this);
-	}
-
 	if (notify)
 	{
 		// rcは更新前の長方形と置き換わっている
@@ -272,7 +272,7 @@ point_int control::query_offset_from(container *c) const
 	assert(c->is_ancestor_of(this));
 
 	point_int result = get_position();
-	control const *c0 = get_parent();
+	container const *c0 = get_parent();
 
 	do
 	{
@@ -283,22 +283,6 @@ point_int control::query_offset_from(container *c) const
 
 	return point_int();
 }
-
-// レイアウト -------------------------------------------------------------
-
-/// レイアウトを設定します
-void control::set_layout(layout::store l)
-{
-	assert(false);
-}
-
-/// レイアウトを取得します
-layout* control::get_layout()
-{
-	assert(false);
-	return nullptr;
-}
-
 
 // タイマー -------------------------------------------------------------------
 

@@ -67,7 +67,7 @@ public:
 	 *          コンテナのレイアウトは、さらに親コンテナのレイアウトを
 	 *          引き起こす場合があります。
 	 */
-	virtual void perform_layout(control* c);
+	virtual void perform_layout(container* c);
 
 	/**
 	 * @brief   子コントロールの位置が変更されたとき呼び出されます

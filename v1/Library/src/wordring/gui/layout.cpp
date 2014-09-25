@@ -44,7 +44,7 @@ layout::store layout::create()
 	return layout::store(new layout);
 }
 
-void layout::perform_layout(control* c)
+void layout::perform_layout(container* c)
 {
 }
 
@@ -80,7 +80,7 @@ layout::store full_layout::create()
 	return layout::store(new full_layout);
 }
 
-void full_layout::perform_layout(control* c)
+void full_layout::perform_layout(container* c)
 {
 	size_int size = c->get_size();
 	container::storage_type& children = c->get_children();
