@@ -53,7 +53,6 @@ control::control(rect_int rc, layout::store l)
 
 control::~control()
 {
-	//m_storage.clear();
 }
 
 control::store control::create(rect_int rc)
@@ -63,7 +62,22 @@ control::store control::create(rect_int rc)
 
 // 親子関係 -------------------------------------------------------------------
 
-void control::attach_parent_internal(container *parent)
+bool control::is_ancestor_of(control const *c) const
+{
+	assert(c != nullptr);
+
+	control const *c0 = c->get_parent();
+
+	while (c0 != nullptr)
+	{
+		if (c0 == this) { return true; }
+		c0 = c0->get_parent();
+	}
+
+	return false;
+}
+
+void control::attach_parent_internal(control *parent)
 {
 	assert(parent);
 
@@ -138,14 +152,23 @@ void control::detach_window_internal()
 	}
 }
 
-container* control::get_parent()
+control* control::get_parent()
 {
 	return m_parent;
 }
 
-container const* control::get_parent() const
+control const* control::get_parent() const
 {
 	return m_parent;
+}
+
+control* control::push_back(control::store s)
+{
+	control *c = s.get();
+	m_storage.push_back(std::move(s));
+
+	c->attach_parent_internal(this);
+	return c;
 }
 
 control::iterator control::begin()
@@ -220,27 +243,10 @@ window* control::to_window()
 	return nullptr;
 }
 
-/*
-root_window* control::find_root_window()
-{
-	assert(get_parent());
-	return get_parent()->find_root_window();
-}
-*/
 window_service* control::find_service()
 {
 	assert(get_parent());
 	return get_parent()->find_service();
-}
-
-control_style* control::get_style()
-{
-	return static_cast<control_style*>(m_style.get());
-}
-
-void control::set_style(style::store s)
-{
-	m_style = s;
 }
 
 // 表示 -----------------------------------------------------------------------
@@ -252,11 +258,20 @@ bool control::is_visible() const
 
 void control::show()
 {
+	window *w = to_window();
+	if (w)
+	{
+		w->get_native()->show_window();
+	}
 }
 
 void control::hide()
 {
-
+	window *w = to_window();
+	if (w)
+	{
+		w->get_native()->show_window();
+	}
 }
 
 // 描画 -----------------------------------------------------------------------
@@ -295,35 +310,29 @@ void control::set_rect(rect_int rc)
 
 void control::set_rect_internal(rect_int rc, bool notify, bool paint)
 {
-	// ルート・コンテナはオーバーライドする必要があります
-	assert(get_parent() != nullptr);
-	/*
-	rect_int old_rc = m_rc;
+	rect_int old = m_rc;
+	m_rc = rc;
 
-	if (is_container())
+	window *w = to_window();
+	if (w)
 	{
-		get_layout()->perform_layout(static_cast<container*>(this));
+		rc.pt = query_offset_from_window();
+		w->get_native()->set_window_rect(rc);
 	}
-	else if (is_window()) // ウィンドウは
+
+	layout *l = get_layout();
+	if (l)
 	{
+		l->perform_layout(this);
 	}
-	*/
-	
-	std::swap(m_rc, rc);
-	
-	if (is_container())
-	{
-		get_layout()->perform_layout(static_cast<container*>(this));
-	}
-	
+
 	if (notify)
 	{
-		// rcは更新前の長方形と置き換わっている
-		get_parent()->get_layout()->do_child_rect(this, rc);
+		assert(get_parent() != nullptr);
+		get_parent()->get_layout()->do_child_rect(this, old);
 	}
 
 	if (paint) { repaint(); }
-	
 }
 
 rect_int control::get_rect() const
@@ -338,7 +347,7 @@ void control::set_size(size_int size)
 
 size_int control::get_size() const
 {
-	return is_visible() ? m_rc.size : size_int();
+	return m_rc.size;
 }
 
 size_int control::get_preferred_size() const
@@ -389,7 +398,7 @@ point_int control::query_offset_from(container *c) const
 	assert(c->is_ancestor_of(this));
 
 	point_int result = get_position();
-	container const *c0 = get_parent();
+	control const *c0 = get_parent();
 
 	do
 	{
@@ -405,6 +414,20 @@ bool control::hit_test(point_int pt) const
 {
 	return true;
 }
+
+// スタイル -------------------------------------------------------------------
+
+control_style* control::get_style()
+{
+	return static_cast<control_style*>(m_style.get());
+}
+
+void control::set_style(style::store s)
+{
+	m_style = s;
+}
+
+
 
 // レイアウト -----------------------------------------------------------------
 
@@ -446,6 +469,27 @@ bool control::do_mouse_down(mouse &m)
 
 bool control::do_mouse_down_internal(mouse &m)
 {
+	// 子コントロールの処理を開始
+	// 最前面からテストするために逆イテレータを使う
+	reverse_iterator it1 = rbegin(), it2 = rend();
+	if (it1 != it2)
+	{
+		m.pt -= get_position(); // 子コントロール用に位置を変更
+
+		while (it1 != it2)
+		{
+			if ((*it1)->get_rect().including(m.pt)) // ヒット・テスト
+			{
+				// 子が処理したら終わり
+				if ((*it1)->do_mouse_down_internal(m)) { return true; }
+			}
+			++it1;
+		}
+		// 子コントロールの処理終わり
+
+		m.pt += get_position(); // this用に位置を変更
+	}
+
 	return do_mouse_down(m);
 }
 
@@ -455,11 +499,42 @@ void control::do_mouse_move(mouse &m)
 
 void control::do_mouse_move_internal(mouse &m)
 {
-	window_service *service = find_service();
+	window_service *ws = find_service();
+	assert(ws);
+	mouse_service &ms = ws->get_mouse_service();
 
-	service->get_mouse_service().process_bubble_up(this, m);
-	service->get_mouse_service().process_bubble_top(this, m);
+	ms.process_bubble_up(this, m); // 上昇バブルが通過したことを通知
 
+	// 最前面からテストするために逆イテレータを使う
+	// 子コントロールの処理を開始
+	auto it1 = rbegin(), it2 = rend();
+	if (it1 != it2)
+	{
+		m.pt -= get_position(); // 子コントロール用に位置を変更
+
+		while (it1 != it2)
+		{
+			if ((*it1)->get_rect().including(m.pt)) // ヒット・テスト
+			{
+				(*it1)->do_mouse_move_internal(m);
+				break; // バブルを上昇させることが出来た
+			}
+			++it1;
+		}
+		// 子コントロールの処理終わり
+
+		m.pt += get_position(); // this用に位置を変更
+
+		// バブルを上昇させられない場合、このコンテナがトップ
+		if (it1 == it2)
+		{
+			ms.process_bubble_top(this, m);
+		}
+	}
+	else
+	{
+		ms.process_bubble_top(this, m);
+	}
 	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
 
 	do_mouse_move(m);
@@ -480,6 +555,28 @@ bool control::do_mouse_up(mouse &m)
 
 bool control::do_mouse_up_internal(mouse &m)
 {
+	// 最前面からテストするために逆イテレータを使う
+	// 子コントロールの処理を開始
+	storage_type::reverse_iterator it1 = rbegin(), it2 = rend();
+
+	if (it1 != it2)
+	{
+		m.pt -= get_position(); // 子コントロール用に位置を変更
+
+		while (it1 != it2)
+		{
+			if ((*it1)->get_rect().including(m.pt)) // ヒット・テスト
+			{
+				// 子が処理したら終わり
+				if ((*it1)->do_mouse_up_internal(m)) { return true; }
+			}
+			++it1;
+		}
+		// 子コントロールの処理終わり
+
+		m.pt += get_position(); // this用に位置を変更
+	}
+
 	return do_mouse_up(m);
 }
 
@@ -528,8 +625,30 @@ void control::do_paint(canvas &cv)
 
 void control::do_paint_internal(canvas& cv)
 {
-	//cv->set_viewport(query_rect_from_window());
-	do_paint(cv);
+	do_paint(cv); // まず自分を描画する
+
+	iterator it1 = begin(), it2 = end();
+	if (it1 != it2)
+	{
+		rect_int rc0 = cv->get_viewport(); // コンテナ自身のビューポート
+		point_int origin = cv->get_origin();
+
+		// 子コントロールを下（ストアのbegin()側）から描画していく
+		while (it1 != it2)
+		{
+			// continueに備えて、ここでイテレータをインクリメントしておく
+			control *c = (*it1++).get();
+			// windowはシステムからメッセージが来るのでここでは描画しない
+			if (c->to_window()) { continue; }
+			// 重なりを調べる
+			rect_int rc1 = c->query_rect_from_window() & rc0;
+			// 重なりが無い場合、描画しないでよい
+			if (!rc1.size) { continue; }
+			cv->set_viewport(rc1);
+			cv->set_origin(origin + c->get_position());
+			c->do_paint_internal(cv);
+		}
+	}
 }
 
 void control::do_size(size_int size)
@@ -611,19 +730,17 @@ void test_control::do_paint(canvas &cv)
 	cv->draw_string(
 		get_control_name(), point_int(0, 0), fg, nullptr);
 
-	char str[128];
 	std::string src("(");
-	src += ::_itoa(get_rect().left(), str, 10);
+	src += std::to_string(get_rect().left());
 	src += ", ";
-	src += ::_itoa(get_rect().top(), str, 10);
+	src += std::to_string(get_rect().top());
 	src += ") - (";
-	src += ::_itoa(get_rect().right(), str, 10);
+	src += std::to_string(get_rect().right());
 	src += ", ";
-	src += ::_itoa(get_rect().bottom(), str, 10);
+	src += std::to_string(get_rect().bottom());
 	src += ") ";
-	src += ::_itoa(m_id, str, 10);
-	cv->draw_string(
-		src, point_int(0, 16), fg, nullptr);
+	src += std::to_string(m_id);
+	cv->draw_string(src, point_int(0, 16), fg, nullptr);
 
 	//std::cout << "paint: " << m_id << std::endl;
 }

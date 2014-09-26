@@ -63,14 +63,13 @@ public:
 public:
 
 protected:
-	container *m_parent; ///< 親コンテナ
-	rect_int   m_rc;     ///< コントロールの長方形
+	control  *m_parent; ///< 親コンテナ
+	rect_int  m_rc;     ///< コントロールの長方形
 
 	style::store m_style;
 
 	std::unique_ptr<layout> m_layout;
 	storage_type            m_storage;
-
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -95,6 +94,15 @@ public:
 	// 親子関係 ---------------------------------------------------------------
 
 	/**
+	 * @brief   コンテナがcの先祖であるか調べます
+	 *
+	 * @return  コンテナがcの先祖である場合、trueを返します。
+	 *          コンテナがcの先祖でない場合、falseを返します。
+	 *          cがthisである場合、falseを返します。
+	 */
+	bool is_ancestor_of(control const *c) const;
+
+	/**
 	 * @brief   [内部用]親コンテナを取り付けます
 	 *
 	 * @details 
@@ -102,7 +110,7 @@ public:
 	 *          root_containerには親コンテナが無いため、呼び出されません。
 	 *          代わりに、attach_root_window_internalが呼び出されます。
 	 */
-	void attach_parent_internal(container *parent);
+	void attach_parent_internal(control *parent);
 
 	/// [内部用]親コンテナを取り外します
 	void detach_parent_internal();
@@ -139,7 +147,7 @@ public:
 	 * @details
 	 *          最上位のコンテナは親を持たないため、nullptrを返します。
 	 */
-	container* get_parent();
+	control* get_parent();
 
 	/**
 	 * @brief   親コンテナを取得します
@@ -147,7 +155,18 @@ public:
 	 * @details
 	 *          最上位のコンテナは親を持たないため、nullptrを返します。
 	 */
-	container const* get_parent() const;
+	control const* get_parent() const;
+
+	/**
+	 * @brief   コンテナの末尾に子コントロールを追加します
+	 *
+	 * @details
+	 *          control::storeはコピーできません。
+	 *          std::move()で所有権を移動させてください。
+	 *
+	 * @return  追加したコントロールへのポインタを返します。
+	 */
+	control* push_back(control::store s);
 
 	iterator begin();
 
@@ -191,16 +210,11 @@ public:
 	 *          コントロール自身がウィンドウの場合は、このメンバをオーバーライド
 	 *          してください。
 	 *          クロス・キャストを避けるため仮想関数で実装します。
+	 * @return
+	 *          thisをwindow*に変換して返します。
+	 *          windowを継承していないコントロールは、nullptrを返します。
 	 */
 	virtual window* to_window();
-
-	/**
-	 * @brief   ルート・ウィンドウを検索します
-	 *
-	 * @details 
-	 *          ルート・ウィンドウはデスクトップ直下のウィンドウです。
-	 */
-	//virtual root_window* find_root_window();
 
 	/**
 	 * @brief   スレッドのウィンドウ・サービスを検索します
@@ -215,10 +229,10 @@ public:
 	virtual bool is_visible() const;
 
 	/// コントロールを表示します
-	virtual void show();
+	void show();
 
 	/// コントロールを非表示にします
-	virtual void hide();
+	void hide();
 
 	// 描画 -------------------------------------------------------------------
 
@@ -231,10 +245,10 @@ public:
 	// 大きさ・位置 -----------------------------------------------------------
 
 	/// コントロールの位置を設定する
-	virtual void set_position(point_int pt);
+	void set_position(point_int pt);
 
 	/// コントロールの位置を取得する
-	virtual point_int get_position() const;
+	point_int get_position() const;
 
 	/**
 	 * @brief   コントロールの長方形を設定する
@@ -273,16 +287,16 @@ public:
 	 *
 	 * @param   paint trueの場合、再描画します
 	 */
-	virtual void set_rect_internal(rect_int rc, bool notify, bool paint);
+	void set_rect_internal(rect_int rc, bool notify, bool paint);
 
 	/// コントロールの長方形を取得する
-	virtual rect_int get_rect() const;
+	rect_int get_rect() const;
 
 	/// コントロールの大きさを設定する
-	virtual void set_size(size_int size);
+	void set_size(size_int size);
 
 	/// コントロールの大きさを取得する
-	virtual size_int get_size() const;
+	size_int get_size() const;
 
 	/// 推奨される大きさを取得する
 	virtual size_int get_preferred_size() const;
@@ -303,7 +317,6 @@ public:
 	point_int query_offset_from(container *c) const;
 
 	bool hit_test(point_int pt) const;
-
 
 	// スタイル ---------------------------------------------------------------
 
@@ -348,7 +361,7 @@ public:
 	virtual bool do_mouse_down(mouse &m);
 
 	/// [内部用] マウス・ボタンが押されたとき呼び出されます
-	virtual bool do_mouse_down_internal(mouse &m);
+	bool do_mouse_down_internal(mouse &m);
 
 	/*
 	 * @brief   マウスの移動で呼び出されます
@@ -365,7 +378,7 @@ public:
 	 *          containerはこのメンバを実装しています。
 	 *          その中で、メッセージの配送を処理しています。
 	 */
-	virtual void do_mouse_move_internal(mouse &m);
+	void do_mouse_move_internal(mouse &m);
 
 	/// マウス・ポインタがコントロールに入ったとき呼び出されます
 	virtual void do_mouse_over(mouse &m);
@@ -377,9 +390,7 @@ public:
 	virtual bool do_mouse_up(mouse &m);
 
 	// [内部用] マウス・ボタンが離されたとき呼び出されます
-	virtual bool do_mouse_up_internal(mouse &m);
-
-	//virtual 
+	bool do_mouse_up_internal(mouse &m);
 
 	// キーボード・メッセージ -------------------------------------------------
 
@@ -395,7 +406,7 @@ public:
 	virtual void do_paint(canvas& cv);
 
 	/// [内部用]再描画要求で呼び出されます
-	virtual void do_paint_internal(canvas &cv);
+	void do_paint_internal(canvas &cv);
 
 	virtual void do_size(size_int size);
 };

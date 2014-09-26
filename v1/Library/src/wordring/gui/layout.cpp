@@ -44,7 +44,7 @@ layout::store layout::create()
 	return layout::store(new layout);
 }
 
-void layout::perform_layout(container* c)
+void layout::perform_layout(control* c)
 {
 }
 
@@ -80,7 +80,7 @@ layout::store full_layout::create()
 	return layout::store(new full_layout);
 }
 
-void full_layout::perform_layout(container* c)
+void full_layout::perform_layout(control* c)
 {
 	size_int size = c->get_size();
 	//container::storage_type& children = c->get_children();
@@ -110,7 +110,7 @@ layout::store flow_layout::create()
 	return layout::store(new flow_layout);
 }
 
-void flow_layout::perform_layout(container* c)
+void flow_layout::perform_layout(control* c)
 {
 	int32_t
 		cx = c->get_size().cx,
@@ -124,10 +124,6 @@ void flow_layout::perform_layout(container* c)
 	while (it1 != it2)
 	{
 		size_int size = (*it1)->get_size();
-
-		control_style const* cs = (*it1)->get_style();
-		mbottom = cs->margin_bottom;
-		mtop = std::max(cs->margin_top, mbottom);
 
 		x += dx;
 		dx = size.cx;
@@ -164,13 +160,11 @@ layout::store vertical_layout::create()
 	return layout::store(new vertical_layout());
 }
 
-void vertical_layout::perform_layout(container *c)
+void vertical_layout::perform_layout(control *c)
 {
 	size_int sz0 = c->get_size();
 
-	control_style const *cs = c->get_style();
-
-	int32_t dx0 = cs->padding_left;
+	int32_t dx0 = 0;
 	int32_t cx0 = sz0.cx; // コンテナの最大横幅
 
 	int32_t x = 0;

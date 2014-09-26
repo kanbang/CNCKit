@@ -82,17 +82,6 @@ public:
 	 */
 	static control::store create(rect_int rc, layout::store l);
 
-	/**
-	 * @brief   コンテナの末尾に子コントロールを追加します
-	 *
-	 * @details
-	 *          control::storeはコピーできません。
-	 *          std::move()で所有権を移動させてください。
-	 *
-	 * @return  追加したコントロールへのポインタを返します。
-	 */
-	control* push_back(control::store s);
-
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
@@ -104,61 +93,16 @@ public:
 
 	// 親子関係 ---------------------------------------------------------------
 
-	/**
-	 * @brief   コンテナがcの先祖であるか調べます
-	 *
-	 * @return  コンテナがcの先祖である場合、trueを返します。
-	 *          コンテナがcの先祖でない場合、falseを返します。
-	 *          cがthisである場合、falseを返します。
-	 */
-	bool is_ancestor_of(control const *c) const;
-
-	/**
-	 * @brief   [内部用] コントロールにウィンドウを取り付けます
-	 *
-	 * @details
-	 *          親に追加される時、attach_parent()から呼び出されます。
-	 *          再帰的に子へ伝搬しウィンドウを取り付けていきます。
-	 *          この動作により、
-	 */
-	//virtual void attach_window_internal();
-
-	/**
-	 * @brief   [内部用] コントロールからウィンドウを取り外します
-	 *
-	 * @details
-	 *          親から取り外される時、detach_parent()から呼び出されます。
-	 *          再帰的に子へ伝搬しウィンドウを取り外していきます。
-	 */
-	//virtual void detach_window_internal();
 
 	// 描画 -------------------------------------------------------------------
 
 	// 大きさ・位置 -----------------------------------------------------------
 
-	//virtual void set_rect_internal(rect_int rc, bool notify, bool paint);
-
 	// マウス・メッセージ -----------------------------------------------------
-
-	virtual bool do_mouse_down_internal(mouse &m);
-
-	/*
-	 * @brief   [内部用] マウスの移動で呼び出されます
-	 *
-	 * @details
-	 *          containerはこのメンバを実装しています。
-	 *          その中で、メッセージの配送を処理しています。
-	 */
-	virtual void do_mouse_move_internal(mouse &m);
-
-	virtual bool do_mouse_up_internal(mouse &m);
 
 	// キーボード・メッセージ -------------------------------------------------
 
 	// 一般メッセージ ---------------------------------------------------------
-
-	/// [内部用] 再描画要求で呼び出されます
-	virtual void do_paint_internal(canvas& cv);
 
 };
 

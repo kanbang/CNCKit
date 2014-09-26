@@ -4,7 +4,7 @@
  * @brief   GUIコンテナの実装ファイル
  *
  * @details
- *          フォームなどのGUIコンテナです。
+ *          フォームなどのGUIコンテナの基礎を定義します。
  *
  *
  *
@@ -56,15 +56,6 @@ control::store container::create(rect_int rc, layout::store l)
 	return control::store(new container(rc, std::move(l)));
 }
 
-control* container::push_back(control::store s)
-{
-	control *c = s.get();
-	m_storage.push_back(std::move(s));
-
-	c->attach_parent_internal(this);
-	return c;
-}
-
 // 情報 -----------------------------------------------------------------------
 
 wchar_t const* container::get_control_name() const
@@ -79,165 +70,15 @@ bool container::is_container() const
 
 // 親子関係 -------------------------------------------------------------------
 
-bool container::is_ancestor_of(control const *c) const
-{
-	assert(c != nullptr);
-
-	container const *c0 = c->get_parent();
-
-	while (c0 != nullptr)
-	{
-		if (c0 == this) { return true; }
-		c0 = c0->get_parent();
-	}
-
-	return false;
-}
-/*
-void container::attach_window_internal()
-{
-	for (control::store &s : m_storage)
-	{
-		s->attach_window_internal();
-	}
-}
-
-void container::detach_window_internal()
-{
-	for (control::store &s : m_storage)
-	{
-		s->detach_window_internal();
-	}
-}
-*/
 // 描画 -----------------------------------------------------------------------
 
 // 大きさ・位置 ---------------------------------------------------------------
-/*
-void container::set_rect_internal(rect_int rc, bool notify, bool paint)
-{
-	std::swap(m_rc, rc);
 
-	get_layout()->perform_layout(this);
-
-	if (notify)
-	{
-		assert(get_parent() != nullptr);
-		// rcは更新前の長方形と置き換わっている
-		get_parent()->get_layout()->do_child_rect(this, rc);
-	}
-
-	if (paint) { repaint(); }
-}
-*/
 // マウス・メッセージ ---------------------------------------------------------
-
-bool container::do_mouse_down_internal(mouse &m)
-{
-	// 子コントロールの処理を開始
-
-	m.pt -= get_position(); // 子コントロール用に位置を変更
-
-	// 最前面からテストするために逆イテレータを使う
-	storage_type::reverse_iterator current = rbegin(), last = rend();
-	while (current != last)
-	{
-		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
-		{
-			// 子が処理したら終わり
-			if ((*current)->do_mouse_down_internal(m)) { return true; }
-		}
-		++current;
-	}
-	// 子コントロールの処理終わり
-
-	m.pt += get_position(); // this用に位置を変更
-
-	return do_mouse_down(m);
-}
-
-void container::do_mouse_move_internal(mouse &m)
-{
-	window_service *service = find_service();
-
-	service->get_mouse_service().process_bubble_up(this, m);
-
-	// 子コントロールの処理を開始
-
-	m.pt -= get_position(); // 子コントロール用に位置を変更
-
-	// 最前面からテストするために逆イテレータを使う
-	auto current = rbegin(), last = rend();
-	
-	while (current != last)
-	{
-		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
-		{
-			(*current)->do_mouse_move_internal(m);
-			break;
-		}
-		++current;
-	}
-	// 子コントロールの処理終わり
-
-	m.pt += get_position(); // this用に位置を変更
-
-	// バブルを上昇させられない場合、このコンテナがトップ
-	if (current == last)
-	{
-		service->get_mouse_service().process_bubble_top(this, m);
-	}
-
-	// ハンドラ呼び出し
-	do_mouse_move(m);
-}
-
-bool container::do_mouse_up_internal(mouse &m)
-{
-	// 子コントロールの処理を開始
-
-	m.pt -= get_position(); // 子コントロール用に位置を変更
-
-	// 最前面からテストするために逆イテレータを使う
-	storage_type::reverse_iterator current = rbegin(), last = rend();
-	while (current != last)
-	{
-		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
-		{
-			// 子が処理したら終わり
-			if ((*current)->do_mouse_up_internal(m)) { return true; }
-		}
-		++current;
-	}
-	// 子コントロールの処理終わり
-
-	m.pt += get_position(); // this用に位置を変更
-
-	return do_mouse_up(m);
-}
 
 // キーボード・メッセージ -----------------------------------------------------
 
 // 一般メッセージ -------------------------------------------------------------
-
-void container::do_paint_internal(canvas& cv)
-{
-	rect_int rc0 = cv->get_viewport(); // コンテナ自身のビューポート
-	point_int origin = cv->get_origin();
-
-	do_paint(cv); // まず自分を描画する
-
-	// 子コントロールを下（ストアのbegin()側）から描画していく
-	for (store& s : m_storage)
-	{
-		if (s->is_window()) { continue; }
-		rect_int rc1 = s->query_rect_from_window() & rc0;
-		if (!rc1.size) { continue; }
-		cv->set_viewport(rc1);
-		cv->set_origin(origin + s->get_position());
-		s->do_paint_internal(cv);
-	}
-}
 
 // test_container -------------------------------------------------------------
 

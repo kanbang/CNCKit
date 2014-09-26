@@ -79,7 +79,7 @@ public:
 	 *          コンテナのレイアウトは、さらに親コンテナのレイアウトを
 	 *          引き起こす場合があります。
 	 */
-	virtual void perform_layout(container* c);
+	virtual void perform_layout(control *c);
 
 	/**
 	 * @brief   子コントロールの位置が変更されたとき呼び出されます
@@ -126,7 +126,7 @@ public:
 
 	static layout::store create();
 
-	virtual void perform_layout(container* c);
+	virtual void perform_layout(control* c);
 };
 
 /**
@@ -145,7 +145,7 @@ public:
 
 	static layout::store create();
 
-	virtual void perform_layout(container* c);
+	virtual void perform_layout(control* c);
 
 };
 
@@ -159,7 +159,7 @@ public:
 
 	static layout::store create();
 
-	virtual void perform_layout(container* c);
+	virtual void perform_layout(control* c);
 };
 
 } // namespace gui

@@ -38,23 +38,7 @@ window_container::~window_container()
 }
 
 // 親子関係 -------------------------------------------------------------------
-/*
-void window_container::attach_window_internal()
-{
-}
 
-void window_container::detach_window_internal()
-{
-	// 子のウィンドウを処理する
-	for (control::store &s : m_storage)
-	{
-		s->detach_window_internal();
-	}
-
-	// 自分のウィンドウを破棄する
-	get_native()->destroy_window();
-}
-*/
 // 情報 -----------------------------------------------------------------------
 
 wchar_t const* window_container::get_control_name() const
@@ -74,48 +58,7 @@ window* window_container::to_window()
 
 // 表示 -----------------------------------------------------------------------
 
-void window_container::show()
-{
-	get_native()->show_window();
-}
-
-void window_container::hide()
-{
-	get_native()->hide_window();
-}
-
 // 大きさ・位置 ---------------------------------------------------------------
-
-void window_container::set_rect_internal(rect_int rc, bool notify, bool paint)
-{
-
-	rect_int old = rc;
-	std::swap(old, m_rc);
-
-	rc.pt = query_offset_from_window();
-
-	get_native()->set_window_rect(rc);
-
-	if (notify)
-	{
-		assert(get_parent() != nullptr);
-		get_parent()->get_layout()->do_child_rect(this, old);
-	}
-
-	if (paint) { repaint(); }
-
-}
-
-point_int window_container::query_offset_from_window() const
-{
-	return point_int(0, 0);
-}
-
-rect_int window_container::query_rect_from_window() const
-{
-	rect_int result;
-	return m_rc;
-}
 
 // マウス・メッセージ ---------------------------------------------------------
 
