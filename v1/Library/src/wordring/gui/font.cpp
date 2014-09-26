@@ -134,7 +134,7 @@ void font_service::set_window_service(window_service *ws)
 	m_window_service = ws;
 }
 
-uint32_t font_service::create(
+font::store font_service::create(
 	int32_t size, int32_t family, int32_t weight, bool italic, std::wstring face)
 {
 	uint32_t atom = m_atom_service.get_atom(face);
@@ -148,7 +148,7 @@ uint32_t font_service::create(
 		m_storage[code] = f;
 	}
 
-	return code;
+	return f;
 }
 
 font::store font_service::find(

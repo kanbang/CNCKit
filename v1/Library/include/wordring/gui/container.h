@@ -108,12 +108,6 @@ public:
 	/// コントロールがコンテナの場合、trueを返します
 	virtual bool is_container() const;
 
-	/**
-	 * @brief   一番近いコンテナを返します
-	 *
-	 * @details thisがコンテナの場合、thisを返します。
-	 */
-	virtual container* find_container();
 
 	// 親子関係 ---------------------------------------------------------------
 

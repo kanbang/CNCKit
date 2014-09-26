@@ -93,6 +93,8 @@ public:
 		border_color,
 	};
 
+	
+
 protected:
 	type  m_type;
 	state m_state;
@@ -181,6 +183,9 @@ public:
 
 	int16_t     line_height;
 	font::store font;
+
+	int8_t align;
+	
 
 private:
 	explicit control_style(style::state st);

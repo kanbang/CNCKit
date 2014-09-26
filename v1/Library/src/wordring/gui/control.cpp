@@ -122,19 +122,13 @@ window* control::find_window()
 	assert(get_parent());
 	return get_parent()->find_window();
 }
-
-container* control::find_container()
-{
-	assert(get_parent());
-	return get_parent();
-}
-
+/*
 root_window* control::find_root_window()
 {
 	assert(get_parent());
 	return get_parent()->find_root_window();
 }
-
+*/
 window_service* control::find_service()
 {
 	assert(get_parent());
@@ -207,7 +201,12 @@ void control::set_rect_internal(rect_int rc, bool notify, bool paint)
 	assert(get_parent() != nullptr);
 
 	std::swap(m_rc, rc);
-
+	/*
+	if (is_container())
+	{
+		get_layout()->perform_layout(this);
+	}
+	*/
 	if (notify)
 	{
 		// rcは更新前の長方形と置き換わっている
@@ -249,7 +248,15 @@ size_int control::get_max_size() const
 
 point_int control::query_offset_from_window() const
 {
-	return get_parent()->query_offset_from_window() + get_position();
+	point_int result(0, 0);
+	control const *c = this;
+	while (c)
+	{
+		if (c->is_window()) break;
+		result += c->get_position();
+		c = c->get_parent();
+	}
+	return result;
 }
 
 rect_int control::query_rect_from_window() const
@@ -282,6 +289,11 @@ point_int control::query_offset_from(container *c) const
 	while ((c0 = c0->get_parent()) != nullptr);
 
 	return point_int();
+}
+
+bool control::hit_test(point_int pt) const
+{
+	return true;
 }
 
 // タイマー -------------------------------------------------------------------

@@ -74,49 +74,59 @@ int main()
 	rw1->show();
 	*/
 
-	test_control::store tc0 = test_control::create(
-		rect_int(point_int(0, 0), size_int(100, 100)), 11);
+	//test_control::store tc0 = test_control::create(
+	//	rect_int(point_int(0, 0), size_int(100, 100)), 11);
 
-	root_window *rw2 = ws.push_back(root_window::create(rc));
+	// スタイル ---------------------------------------------------------------
 
-	rw2->set_title_text(L"三軸エミュレータ");
+	style::store s = control_style::create(style::state::normal);
 
-	container *c2 = static_cast<container*>(
-		rw2->get_client()->push_back(test_container::create(rc)));
-	c2->set_layout(flow_layout::create());
+	// ------------------------------------------------------------------------
+	control_style *cs = static_cast<control_style*>(s.get());
+
+	cs->background_color = color_rgb(0x40, 0x40, 0x40);
+	cs->margin_top = 5;
+	cs->margin_bottom = 12;
+
+	cs->font = ws.get_font_service().create(16, 0, 400, false, L"Meiryo UI");
+
+	cs = static_cast<control_style*>(
+		s->push_back(control_style::create(style::state::active)));
+
+	cs->background_color = color_rgb(0xFF, 0xFF, 0, 0xFF);
+
+
+	//s = color_style::create(style::hover);
+	//cs = static_cast<color_style*>(s.get());
+	cs->color = color_rgb(0xFF, 0xFF, 0xFF);
+	//b->set_style(s);
+
+
+
+
+	root_window *rw = ws.push_back(root_window::create(rc));
+
+	rw->set_title_text(L"三軸エミュレータ");
+
+	container *c = static_cast<container*>(
+		rw->get_client()->push_back(test_container::create(rc)));
+	c->set_layout(flow_layout::create());
 
 	for (int i = 0; i < 200; i++)
 	{
-		//c2->push_back(test_control::create(
-		//	rect_int(point_int(0, 0), size_int(100, 100)), i));
 		button *b = static_cast<button*>(
-			c2->push_back(button::create(0, 0, 200, 24)));
+			c->push_back(button::create(0, 0, 200, 24)));
 
-		style::store s = control_style::create(style::state::normal);
 		b->set_style(s);
-		control_style *cs = static_cast<control_style*>(s.get());
-		cs->background_color = color_rgb(0x40, 0x40, 0x40);
-
-		cs = static_cast<control_style*>(
-			s->push_back(control_style::create(style::state::active)));
-
-		cs->background_color = color_rgb(0xFF, 0xFF, 0, 0xFF);
-
-
-		//s = color_style::create(style::hover);
-		//cs = static_cast<color_style*>(s.get());
-		cs->color = color_rgb(0xFF, 0xFF, 0xFF);
-		//b->set_style(s);
-
 		b->on_click = [](mouse &m)->bool{
 			std::cout << "click" << m.pt.x << ", " << m.pt.y << std::endl;
 			return true;
 		};
 	}
 
-	c2->push_back(std::move(tc0));
+	//c->push_back(std::move(tc0));
 
-	std::wcout << rw2->get_title_text() << std::endl;
+	//std::wcout << rw2->get_title_text() << std::endl;
 
 	//uint32_t fc = fs.create(
 	//	10, font::sans_serif, 400, false, L"Meiryo UI")->get_code();
@@ -126,7 +136,7 @@ int main()
 	//ss.insert(typeid(button));
 	//*s = button::create_default_style(ws);
 
-	rw2->show();
+	rw->show();
 
 	//size_int s1 = f.get_size(),
 	//	s2 = a3e->get_size();

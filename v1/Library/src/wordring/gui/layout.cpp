@@ -117,11 +117,16 @@ void flow_layout::perform_layout(container* c)
 		cy = c->get_size().cy;
 
 	int32_t x = 0, dx = 0, y = 0, dy = 0;
+	int16_t mleft, mright, mtop, mbottom;
 
 	container::storage_type& children = c->get_children();
-	for (container::store& store : children)
+	for (container::store& c1 : children)
 	{
-		size_int size = store->get_size();
+		size_int size = c1->get_size();
+
+		control_style const* cs = c1->get_style();
+		mbottom = cs->margin_bottom;
+		mtop = std::max(cs->margin_top, mbottom);
 
 		x += dx;
 		dx = size.cx;
@@ -135,12 +140,43 @@ void flow_layout::perform_layout(container* c)
 
 		dy = std::max(dy, size.cy);
 		
-		store->set_rect_internal(
+		c1->set_rect_internal(
 			rect_int(point_int(x, y), size), false, false);
 	}
 }
 
+// vertical_layout ------------------------------------------------------------
 
+vertical_layout::vertical_layout()
+{
+
+}
+
+vertical_layout::~vertical_layout()
+{
+
+}
+
+layout::store vertical_layout::create()
+{
+	return layout::store(new vertical_layout());
+}
+
+void vertical_layout::perform_layout(container *c)
+{
+	size_int sz0 = c->get_size();
+
+	control_style const *cs = c->get_style();
+
+	int32_t dx0 = cs->padding_left;
+	int32_t cx0 = sz0.cx; // コンテナの最大横幅
+
+	int32_t x = 0;
+	int32_t y = 0;
+
+
+
+}
 
 
 

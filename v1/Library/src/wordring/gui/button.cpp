@@ -131,8 +131,6 @@ void button::do_paint(canvas &cv)
 	window_service *ws = find_service();
 	assert(ws);
 
-	font::store f;
-
 	style::state st = style::state::normal;
 	if (m_state.button == down) st = style::state::active;
 	else if (m_state.hover) st = style::state::hover;
@@ -150,10 +148,12 @@ void button::do_paint(canvas &cv)
 	color_rgb bg_color = cs->background_color;
 	color_rgb color = cs->color;
 
+	font::store f = cs->font;
+
 	cv->fill_rect(
 		rect_int(point_int(0, 0), get_size()), bg_color);
 	//font f(16);// , font::cursive, 400, false, L"");
 
 	cv->draw_string(
-		L"AQgqプロポーショナル → 16px", point_int(0, 0), color, nullptr);
+		L"AQgqプロポーショナル → 16px", point_int(0, 0), color, f.get());
 }

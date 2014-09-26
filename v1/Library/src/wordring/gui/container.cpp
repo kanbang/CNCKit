@@ -91,11 +91,6 @@ bool container::is_container() const
 	return true;
 }
 
-container* container::find_container()
-{
-	return this;
-}
-
 // 親子関係 -------------------------------------------------------------------
 
 bool container::is_ancestor_of(control const *c) const

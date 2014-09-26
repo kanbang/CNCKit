@@ -37,6 +37,8 @@ namespace gui
 namespace detail
 {
 
+class native_window; // 先行宣言
+
 class native_canvas_impl : public native_canvas
 {
 protected:
@@ -44,6 +46,8 @@ protected:
 
 public:
 	native_canvas_impl();
+
+	native_canvas_impl(native_window *nw);
 
 	native_canvas_impl(HDC hdc);
 

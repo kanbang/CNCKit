@@ -139,7 +139,7 @@ public:
 
 	void set_window_service(window_service *ws);
 
-	uint32_t create(
+	font::store create(
 		int32_t      size,
 		int32_t      family = font::sans_serif,
 		int32_t      weight = 400,

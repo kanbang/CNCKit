@@ -120,7 +120,7 @@ public:
 	 * @details
 	 *          最上位のコンテナは親を持たないため、nullptrを返します。
 	 */
-	virtual container* get_parent();
+	container* get_parent();
 
 	/**
 	 * @brief   親コンテナを取得します
@@ -128,7 +128,7 @@ public:
 	 * @details
 	 *          最上位のコンテナは親を持たないため、nullptrを返します。
 	 */
-	virtual container const* get_parent() const;
+	container const* get_parent() const;
 
 	// 情報 -------------------------------------------------------------------
 
@@ -152,20 +152,12 @@ public:
 	virtual window* find_window();
 
 	/**
-	 * @brief   一番近いコンテナを返します
-	 *
-	 * @details 
-	 *          thisがコンテナの場合、thisを返します。
-	 */
-	virtual container* find_container();
-
-	/**
 	 * @brief   ルート・ウィンドウを検索します
 	 *
 	 * @details 
 	 *          ルート・ウィンドウはデスクトップ直下のウィンドウです。
 	 */
-	virtual root_window* find_root_window();
+	//virtual root_window* find_root_window();
 
 	/**
 	 * @brief   スレッドのウィンドウ・サービスを検索します
@@ -259,13 +251,16 @@ public:
 	virtual size_int get_max_size() const;
 
 	/// ウィンドウからの相対位置を取得する
-	virtual point_int query_offset_from_window() const;
+	point_int query_offset_from_window() const;
 	
 	/// ウィンドウからの相対長方形を取得する
-	virtual rect_int query_rect_from_window() const;
+	rect_int query_rect_from_window() const;
 
 	/// cからコントロールまでのオフセットを取得する
 	point_int query_offset_from(container *c) const;
+
+	bool hit_test(point_int pt) const;
+
 
 	// スタイル ---------------------------------------------------------------
 

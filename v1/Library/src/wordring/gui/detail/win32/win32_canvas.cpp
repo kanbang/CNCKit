@@ -26,10 +26,13 @@
 #include <wordring/gui/color.h>
 #include <wordring/gui/font.h>
 
+#include <wordring/gui/detail/native_window.h>
+
 #include <cassert>
 
 #include <wordring/gui/detail/win32/win32_canvas.h>
 #include <wordring/gui/detail/win32/win32_font.h>
+#include <wordring/gui/detail/win32/win32_window.h>
 
 #include <Windows.h>
 
@@ -42,9 +45,17 @@ native_canvas_impl::native_canvas_impl()
 {
 }
 
+native_canvas_impl::native_canvas_impl(native_window *nw)
+{
+	assert(nw);
+	HWND hwnd = static_cast<native_window_impl*>(nw)->get_handle();
+	m_hdc = ::GetDC(nullptr);
+}
+
 native_canvas_impl::native_canvas_impl(HDC hdc)
 	: m_hdc(hdc)
 {
+	assert(hdc);
 	::SetBkMode(m_hdc, TRANSPARENT);
 }
 

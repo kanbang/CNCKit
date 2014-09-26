@@ -37,6 +37,8 @@ namespace wordring
 namespace gui
 {
 
+class window; // 先行宣言
+
 class canvas
 {
 protected:
@@ -44,6 +46,8 @@ protected:
 
 public:
 	canvas();
+
+	explicit canvas(window *w);
 
 	explicit canvas(std::unique_ptr<detail::native_canvas>&& cv);
 

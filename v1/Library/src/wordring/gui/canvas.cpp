@@ -23,6 +23,7 @@
 #include <wordring/gui/shape_int.h>
 #include <wordring/gui/color.h>
 #include <wordring/gui/font.h>
+#include <wordring/gui/window.h>
 
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/detail/native_canvas.h>
@@ -46,7 +47,14 @@ canvas::canvas() : m_native(new detail::native_canvas_impl)
 {
 }
 
-canvas::canvas(std::unique_ptr<detail::native_canvas>&& cv) : m_native(std::move(cv))
+canvas::canvas(window *w)
+	: m_native(new detail::native_canvas_impl(w->get_native()))
+{
+
+}
+
+canvas::canvas(std::unique_ptr<detail::native_canvas>&& cv)
+	: m_native(std::move(cv))
 {
 }
 

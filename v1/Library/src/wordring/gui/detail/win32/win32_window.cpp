@@ -98,6 +98,11 @@ bool native_window_impl::is_created() const
 	return m_hwnd != nullptr;
 }
 
+HWND native_window_impl::get_handle()
+{
+	return m_hwnd;
+}
+
 // 表示 -----------------------------------------------------------------------
 
 void native_window_impl::close_window()

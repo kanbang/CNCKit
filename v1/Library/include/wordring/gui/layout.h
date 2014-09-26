@@ -137,6 +137,19 @@ public:
 
 };
 
+class vertical_layout : public layout
+{
+protected:
+	vertical_layout();
+
+public:
+	virtual ~vertical_layout();
+
+	static layout::store create();
+
+	virtual void perform_layout(container* c);
+};
+
 } // namespace gui
 } // namespace wordring
 
