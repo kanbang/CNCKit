@@ -58,7 +58,7 @@ int main()
 	font_service   &fs = ws.get_font_service();
 	gl_context gl;
 
-	//std::cout << sizeof(control::state) << std::endl;
+	std::cout << sizeof(control) << std::endl;
 //	root_window* rw1 = ws.push_back(root_window::create(rc));
 
 

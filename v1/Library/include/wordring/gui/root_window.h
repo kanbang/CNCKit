@@ -80,14 +80,8 @@ public:
 	/// 親となるルート・ウィンドウを取り外します
 	virtual void detach_root_window_internal();
 
-	/// ルート・コンテナに親コンテナは無く、attach_root_windowを使用します
-	virtual void attach_parent_internal(container *parent);
-
-	/// ルート・コンテナに親コンテナは無く、detach_root_windowを使用します
-	virtual void detach_parent_internal();
-
 	/// 再帰的にウィンドウを取り付けます
-	virtual void attach_window_internal();
+	//virtual void attach_window_internal();
 
 	// 情報 -------------------------------------------------------------------
 

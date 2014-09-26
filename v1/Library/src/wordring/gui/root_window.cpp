@@ -64,7 +64,7 @@ root_container::store root_container::create()
 void root_container::attach_root_window_internal(root_window *parent)
 {
 	m_root_window = parent;
-	attach_window_internal();
+	attach_window_internal(parent);
 }
 
 void root_container::detach_root_window_internal()
@@ -72,29 +72,19 @@ void root_container::detach_root_window_internal()
 	find_service()->erase_message(this);
 	detach_window_internal();
 }
-
-void root_container::attach_parent_internal(container *c)
-{
-	assert(false); // ルート・コンテナに親コンテナはありません
-}
-
-void root_container::detach_parent_internal()
-{
-	assert(false); // ルート・コンテナに親コンテナはありません
-}
-
+/*
 void root_container::attach_window_internal()
 {
 	// 自分のウィンドウを作成する
-	get_native()->create_window(m_root_window, get_rect());
+	find_window()->get_native()->create_window(m_root_window, get_rect());
 
 	// 子のウィンドウを処理する
-	for (control::store &s : m_children)
+	for (control::store &s : m_storage)
 	{
 		s->attach_window_internal();
 	}
 }
-
+*/
 // 情報 -----------------------------------------------------------------------
 
 wchar_t const* root_container::get_control_name() const

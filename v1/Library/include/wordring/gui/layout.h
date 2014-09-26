@@ -24,6 +24,7 @@
 #include <wordring/wordring.h>
 
 #include <wordring/gui/shape_int.h>
+#include <wordring/gui/canvas.h>
 
 #include <cstdint>
 #include <memory>
@@ -36,11 +37,22 @@ namespace gui
 class control;
 class container;
 
+class layout_context
+{
+public:
+protected:
+	canvas m_canvas;
+
+public:
+	layout_context(){}
+};
+
 /// 何もしないレイアウトです
 class layout
 {
 public:
 	typedef std::unique_ptr<layout> store;
+
 
 protected:
 	layout();

@@ -44,8 +44,16 @@ control::control(rect_int rc)
 {
 }
 
+control::control(rect_int rc, layout::store l)
+	: m_parent(nullptr)
+	, m_rc(rc)
+	, m_layout(std::move(l))
+{
+}
+
 control::~control()
 {
+	//m_storage.clear();
 }
 
 control::store control::create(rect_int rc)
@@ -67,10 +75,10 @@ void control::attach_parent_internal(container *parent)
 	// 子コントロールが再帰的にウィンドウ作成される。
 
 	window *w = parent->find_window();
-	if (w->get_native()->is_created()) { attach_window_internal(); }
+	if (w->get_native()->is_created()) { attach_window_internal(w); }
 }
 
-void  control::detach_parent_internal()
+void control::detach_parent_internal()
 {
 	assert(m_parent);
 
@@ -82,12 +90,52 @@ void  control::detach_parent_internal()
 	m_parent = nullptr;
 }
 
-void control::attach_window_internal()
+void control::attach_window_internal(window *pw)
 {
+	// もし自身がウィンドウを継承していれば、ウィンドウを作成する
+	window *self = to_window();
+	if (self)
+	{
+		// 位置の正規化
+		point_int pt = get_position();
+
+		control const *pc = get_parent();
+		if (pc)
+		{
+			// 自身がウィンドウを持つため、ウィンドウ作成前の検索は必ず失敗する
+			// そのため、親コンテナに検索させて差分を計算する
+			pt += pc->query_offset_from_window();
+		}
+		self->get_native()->create_window(pw, rect_int(pt, get_size()));
+
+		pw = self; // 子のために自身を親とする
+	}
+
+	// 子のウィンドウを処理する
+	iterator it1 = begin(), it2 = end();
+	while (it1 != it2)
+	{
+		(*it1)->attach_window_internal(pw);
+		++it1;
+	}
 }
 
 void control::detach_window_internal()
 {
+	// 子のウィンドウを処理する
+	iterator it1 = begin(), it2 = end();
+	while (it1 != it2)
+	{
+		(*it1)->detach_window_internal();
+		++it1;
+	}
+
+	// もし自身がウィンドウを継承していれば、ウィンドウを破棄する
+	window *w = to_window();
+	if (w)
+	{
+		w->get_native()->destroy_window();
+	}
 }
 
 container* control::get_parent()
@@ -98,6 +146,46 @@ container* control::get_parent()
 container const* control::get_parent() const
 {
 	return m_parent;
+}
+
+control::iterator control::begin()
+{
+	return m_storage.begin();
+}
+
+control::iterator control::end()
+{
+	return m_storage.end();
+}
+
+control::const_iterator control::begin() const
+{
+	return m_storage.begin();
+}
+
+control::const_iterator control::end() const
+{
+	return m_storage.end();
+}
+
+control::reverse_iterator control::rbegin()
+{
+	return m_storage.rbegin();
+}
+
+control::reverse_iterator control::rend()
+{
+	return m_storage.rend();
+}
+
+control::const_reverse_iterator control::rbegin() const
+{
+	return m_storage.rbegin();
+}
+
+control::const_reverse_iterator control::rend() const
+{
+	return m_storage.rend();
 }
 
 // 情報 -----------------------------------------------------------------------
@@ -119,9 +207,19 @@ bool control::is_container() const
 
 window* control::find_window()
 {
-	assert(get_parent());
-	return get_parent()->find_window();
+	control *c = this;
+	while (!c->to_window())
+	{
+		c = c->get_parent();
+	}
+	return c->to_window();
 }
+
+window* control::to_window()
+{
+	return nullptr;
+}
+
 /*
 root_window* control::find_root_window()
 {
@@ -199,14 +297,25 @@ void control::set_rect_internal(rect_int rc, bool notify, bool paint)
 {
 	// ルート・コンテナはオーバーライドする必要があります
 	assert(get_parent() != nullptr);
-
-	std::swap(m_rc, rc);
 	/*
+	rect_int old_rc = m_rc;
+
 	if (is_container())
 	{
-		get_layout()->perform_layout(this);
+		get_layout()->perform_layout(static_cast<container*>(this));
+	}
+	else if (is_window()) // ウィンドウは
+	{
 	}
 	*/
+	
+	std::swap(m_rc, rc);
+	
+	if (is_container())
+	{
+		get_layout()->perform_layout(static_cast<container*>(this));
+	}
+	
 	if (notify)
 	{
 		// rcは更新前の長方形と置き換わっている
@@ -214,6 +323,7 @@ void control::set_rect_internal(rect_int rc, bool notify, bool paint)
 	}
 
 	if (paint) { repaint(); }
+	
 }
 
 rect_int control::get_rect() const
@@ -294,6 +404,19 @@ point_int control::query_offset_from(container *c) const
 bool control::hit_test(point_int pt) const
 {
 	return true;
+}
+
+// レイアウト -----------------------------------------------------------------
+
+void control::set_layout(layout::store l)
+{
+	m_layout = std::move(l);
+}
+
+/// レイアウトを取得します
+layout* control::get_layout()
+{
+	return m_layout.get();
 }
 
 // タイマー -------------------------------------------------------------------
@@ -416,8 +539,9 @@ void control::do_size(size_int size)
 // test_control ---------------------------------------------------------------
 
 test_control::test_control(rect_int rc, int32_t id)
-	: control(rc), m_id(id)
+	: m_id(id)
 	, m_fg_color(0xFF, 0xFF, 0xFF)
+	, control(rc)
 {
 
 }

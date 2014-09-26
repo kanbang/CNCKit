@@ -38,30 +38,15 @@ window_container::~window_container()
 }
 
 // 親子関係 -------------------------------------------------------------------
-
+/*
 void window_container::attach_window_internal()
 {
-	// 自身がウィンドウを持つため、ウィンドウ作成前の検索は必ず失敗する
-	// そのため、親コンテナに検索させて差分を計算する
-
-	// 位置の正規化
-	rect_int rc = get_rect();
-	rc.pt += get_parent()->query_offset_from_window();
-
-	// 自分のウィンドウを作成する
-	get_native()->create_window(get_parent()->find_window(), rc);
-
-	// 子のウィンドウを処理する
-	for (control::store &s : m_children)
-	{
-		s->attach_window_internal();
-	}
 }
 
 void window_container::detach_window_internal()
 {
 	// 子のウィンドウを処理する
-	for (control::store &s : m_children)
+	for (control::store &s : m_storage)
 	{
 		s->detach_window_internal();
 	}
@@ -69,7 +54,7 @@ void window_container::detach_window_internal()
 	// 自分のウィンドウを破棄する
 	get_native()->destroy_window();
 }
-
+*/
 // 情報 -----------------------------------------------------------------------
 
 wchar_t const* window_container::get_control_name() const
@@ -82,7 +67,7 @@ bool window_container::is_window() const
 	return true;
 }
 
-window* window_container::find_window()
+window* window_container::to_window()
 {
 	return this;
 }
@@ -103,6 +88,7 @@ void window_container::hide()
 
 void window_container::set_rect_internal(rect_int rc, bool notify, bool paint)
 {
+
 	rect_int old = rc;
 	std::swap(old, m_rc);
 
@@ -117,6 +103,7 @@ void window_container::set_rect_internal(rect_int rc, bool notify, bool paint)
 	}
 
 	if (paint) { repaint(); }
+
 }
 
 point_int window_container::query_offset_from_window() const

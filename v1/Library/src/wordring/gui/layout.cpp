@@ -83,13 +83,13 @@ layout::store full_layout::create()
 void full_layout::perform_layout(container* c)
 {
 	size_int size = c->get_size();
-	container::storage_type& children = c->get_children();
-
-	for (container::store& store : children)
+	//container::storage_type& children = c->get_children();
+	control::iterator it1 = c->begin(), it2 = c->end();
+	while (it1 != it2)
 	{
-		control* child = store.get();
-		child->set_rect_internal(
+		(*it1)->set_rect_internal(
 			rect_int(point_int(0, 0), size), false, false);
+		++it1;
 	}
 }
 
@@ -119,12 +119,13 @@ void flow_layout::perform_layout(container* c)
 	int32_t x = 0, dx = 0, y = 0, dy = 0;
 	int16_t mleft, mright, mtop, mbottom;
 
-	container::storage_type& children = c->get_children();
-	for (container::store& c1 : children)
+	//container::storage_type& children = c->get_children();
+	control::iterator it1 = c->begin(), it2 = c->end();
+	while (it1 != it2)
 	{
-		size_int size = c1->get_size();
+		size_int size = (*it1)->get_size();
 
-		control_style const* cs = c1->get_style();
+		control_style const* cs = (*it1)->get_style();
 		mbottom = cs->margin_bottom;
 		mtop = std::max(cs->margin_top, mbottom);
 
@@ -140,8 +141,9 @@ void flow_layout::perform_layout(container* c)
 
 		dy = std::max(dy, size.cy);
 		
-		c1->set_rect_internal(
+		(*it1)->set_rect_internal(
 			rect_int(point_int(x, y), size), false, false);
+		++it1;
 	}
 }
 

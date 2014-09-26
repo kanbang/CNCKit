@@ -33,21 +33,17 @@ using namespace wordring::gui;
 
 // 構築・破棄 -----------------------------------------------------------------
 
-container::container(rect_int rc)
-	: m_layout(flow_layout::create())
-	, control(rc)
+container::container(rect_int rc) : control(rc, flow_layout::create())
 {
 }
 
 container::container(rect_int rc, layout::store l)
-	: m_layout(std::move(l))
-	, control(rc)
+	: control(rc, std::move(l))
 {
 }
 
 container::~container()
 {
-	m_children.clear();
 }
 
 control::store container::create(rect_int rc)
@@ -63,20 +59,10 @@ control::store container::create(rect_int rc, layout::store l)
 control* container::push_back(control::store s)
 {
 	control *c = s.get();
-	m_children.push_back(std::move(s));
+	m_storage.push_back(std::move(s));
 
 	c->attach_parent_internal(this);
 	return c;
-}
-
-void container::set_layout(layout::store l)
-{
-	m_layout = std::move(l);
-}
-
-layout* container::get_layout()
-{
-	return m_layout.get();
 }
 
 // 情報 -----------------------------------------------------------------------
@@ -107,15 +93,10 @@ bool container::is_ancestor_of(control const *c) const
 
 	return false;
 }
-
-container::storage_type& container::get_children()
-{
-	return m_children;
-}
-
+/*
 void container::attach_window_internal()
 {
-	for (control::store &s : m_children)
+	for (control::store &s : m_storage)
 	{
 		s->attach_window_internal();
 	}
@@ -123,16 +104,16 @@ void container::attach_window_internal()
 
 void container::detach_window_internal()
 {
-	for (control::store &s : m_children)
+	for (control::store &s : m_storage)
 	{
 		s->detach_window_internal();
 	}
 }
-
+*/
 // 描画 -----------------------------------------------------------------------
 
 // 大きさ・位置 ---------------------------------------------------------------
-
+/*
 void container::set_rect_internal(rect_int rc, bool notify, bool paint)
 {
 	std::swap(m_rc, rc);
@@ -148,7 +129,7 @@ void container::set_rect_internal(rect_int rc, bool notify, bool paint)
 
 	if (paint) { repaint(); }
 }
-
+*/
 // マウス・メッセージ ---------------------------------------------------------
 
 bool container::do_mouse_down_internal(mouse &m)
@@ -158,9 +139,7 @@ bool container::do_mouse_down_internal(mouse &m)
 	m.pt -= get_position(); // 子コントロール用に位置を変更
 
 	// 最前面からテストするために逆イテレータを使う
-	storage_type::reverse_iterator current =
-		get_children().rbegin(), last = get_children().rend();
-
+	storage_type::reverse_iterator current = rbegin(), last = rend();
 	while (current != last)
 	{
 		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
@@ -188,10 +167,8 @@ void container::do_mouse_move_internal(mouse &m)
 	m.pt -= get_position(); // 子コントロール用に位置を変更
 
 	// 最前面からテストするために逆イテレータを使う
-	storage_type::reverse_iterator
-		current = get_children().rbegin(),
-		last = get_children().rend();
-
+	auto current = rbegin(), last = rend();
+	
 	while (current != last)
 	{
 		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
@@ -222,9 +199,7 @@ bool container::do_mouse_up_internal(mouse &m)
 	m.pt -= get_position(); // 子コントロール用に位置を変更
 
 	// 最前面からテストするために逆イテレータを使う
-	storage_type::reverse_iterator current =
-		get_children().rbegin(), last = get_children().rend();
-
+	storage_type::reverse_iterator current = rbegin(), last = rend();
 	while (current != last)
 	{
 		if ((*current)->get_rect().including(m.pt)) // ヒット・テスト
@@ -253,7 +228,7 @@ void container::do_paint_internal(canvas& cv)
 	do_paint(cv); // まず自分を描画する
 
 	// 子コントロールを下（ストアのbegin()側）から描画していく
-	for (store& s : m_children)
+	for (store& s : m_storage)
 	{
 		if (s->is_window()) { continue; }
 		rect_int rc1 = s->query_rect_from_window() & rc0;

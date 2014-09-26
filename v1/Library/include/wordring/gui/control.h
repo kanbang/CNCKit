@@ -26,6 +26,7 @@
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/message.h>
 #include <wordring/gui/mouse.h>
+#include <wordring/gui/layout.h>
 
 #include <cstdint>
 #include <memory>
@@ -53,16 +54,30 @@ class control
 public:
 	typedef std::unique_ptr<control> store;
 
+	typedef std::vector<control::store> storage_type;
+	typedef storage_type::iterator iterator;
+	typedef storage_type::const_iterator const_iterator;
+	typedef storage_type::reverse_iterator reverse_iterator;
+	typedef storage_type::const_reverse_iterator const_reverse_iterator;
+
+public:
+
 protected:
 	container *m_parent; ///< 親コンテナ
 	rect_int   m_rc;     ///< コントロールの長方形
 
 	style::store m_style;
 
+	std::unique_ptr<layout> m_layout;
+	storage_type            m_storage;
+
+
 	// 構築・破棄 -------------------------------------------------------------
 protected:
 	/// コントロールを作成します
 	explicit control(rect_int rc);
+
+	control(rect_int rc, layout::store l);
 
 public:
 	/// コントロールを破棄します
@@ -84,11 +99,13 @@ public:
 	 *
 	 * @details 
 	 *          親コンテナから呼び出されます。
+	 *          root_containerには親コンテナが無いため、呼び出されません。
+	 *          代わりに、attach_root_window_internalが呼び出されます。
 	 */
-	virtual void attach_parent_internal(container *parent);
+	void attach_parent_internal(container *parent);
 
 	/// [内部用]親コンテナを取り外します
-	virtual void detach_parent_internal();
+	void detach_parent_internal();
 
 	/**
 	 * @brief   [内部用]ウィンドウを取り付けます
@@ -99,8 +116,10 @@ public:
 	 *          ウィンドウを持たないコントロールは何もしません。
 	 *          コンテナは、自身のウィンドウを処理した後、子のatatch_window()を
 	 *          順に呼び出します。
+	 * @param
+	 *          pw 親ウィンドウ
 	 */
-	virtual void attach_window_internal();
+	void attach_window_internal(window *pw);
 
 	/**
 	 * @brief   [内部用]ウィンドウを取り外します
@@ -112,7 +131,7 @@ public:
 	 *          コンテナは、子のdetach_window()を順に呼び出した後、自身の
 	 *          ウィンドウを処理します。
 	 */
-	virtual void detach_window_internal();
+	void detach_window_internal();
 
 	/**
 	 * @brief   親コンテナを取得します
@@ -130,6 +149,22 @@ public:
 	 */
 	container const* get_parent() const;
 
+	iterator begin();
+
+	iterator end();
+
+	const_iterator begin() const;
+
+	const_iterator end() const;
+
+	reverse_iterator rbegin();
+
+	reverse_iterator rend();
+
+	const_reverse_iterator rbegin() const;
+
+	const_reverse_iterator rend() const;
+
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
@@ -144,12 +179,20 @@ public:
 	/**
 	 * @brief   コントロールが配置されているウィンドウを検索します
 	 * 
-	 * @details コントロール自身がウィンドウの場合もあり得ます。
+	 * @details
+	 *          コントロール自身がウィンドウの場合もあり得ます。
+	 */
+	window* find_window();
+
+	/**
+	 * @brief   コントロールをウィンドウに変換します
+	 *
+	 * @details
 	 *          コントロール自身がウィンドウの場合は、このメンバをオーバーライド
 	 *          してください。
 	 *          クロス・キャストを避けるため仮想関数で実装します。
 	 */
-	virtual window* find_window();
+	virtual window* to_window();
 
 	/**
 	 * @brief   ルート・ウィンドウを検索します
@@ -278,6 +321,14 @@ public:
 	}
 
 	void set_style(style::store s);
+
+	// レイアウト -------------------------------------------------------------
+
+	/// レイアウトを設定します
+	void set_layout(layout::store l);
+
+	/// レイアウトを取得します
+	layout* get_layout();
 
 	// タイマー ---------------------------------------------------------------
 

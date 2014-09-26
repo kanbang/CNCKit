@@ -46,8 +46,7 @@ public:
 	typedef storage_type::const_iterator const_iterator;
 
 protected:
-	std::unique_ptr<layout> m_layout;
-	storage_type m_children;
+	//storage_type m_storage;
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -94,12 +93,6 @@ public:
 	 */
 	control* push_back(control::store s);
 
-	/// レイアウトを設定します
-	void set_layout(layout::store l);
-
-	/// レイアウトを取得します
-	layout* get_layout();
-
 	// 情報 -------------------------------------------------------------------
 
 	/// コントロール名を返します
@@ -120,9 +113,6 @@ public:
 	 */
 	bool is_ancestor_of(control const *c) const;
 
-	/// 子コントロールの配列を返します
-	storage_type& get_children();
-
 	/**
 	 * @brief   [内部用] コントロールにウィンドウを取り付けます
 	 *
@@ -131,7 +121,7 @@ public:
 	 *          再帰的に子へ伝搬しウィンドウを取り付けていきます。
 	 *          この動作により、
 	 */
-	virtual void attach_window_internal();
+	//virtual void attach_window_internal();
 
 	/**
 	 * @brief   [内部用] コントロールからウィンドウを取り外します
@@ -140,21 +130,13 @@ public:
 	 *          親から取り外される時、detach_parent()から呼び出されます。
 	 *          再帰的に子へ伝搬しウィンドウを取り外していきます。
 	 */
-	virtual void detach_window_internal();
-
-//	iterator begin();
-
-//	const_iterator begin() const;
-
-//	iterator end();
-
-//	const_iterator end() const;
+	//virtual void detach_window_internal();
 
 	// 描画 -------------------------------------------------------------------
 
 	// 大きさ・位置 -----------------------------------------------------------
 
-	virtual void set_rect_internal(rect_int rc, bool notify, bool paint);
+	//virtual void set_rect_internal(rect_int rc, bool notify, bool paint);
 
 	// マウス・メッセージ -----------------------------------------------------
 
