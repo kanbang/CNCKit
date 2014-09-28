@@ -25,6 +25,8 @@
 #include <wordring/gui/style.h>
 #include <wordring/gui/window_service.h>
 
+#include <iostream>
+
 using namespace wordring::gui;
 
 button::state::state()
@@ -97,6 +99,7 @@ bool button::do_mouse_down(mouse &m)
 {
 	m_state.button = down;
 
+	std::cout << "click" << m.pt.x << ", " << m.pt.y << std::endl;
 	repaint();
 
 	return true;
@@ -108,7 +111,7 @@ void button::do_mouse_over(mouse &m)
 	repaint();
 }
 
-void button::do_mouse_out(mouse &m)
+void button::do_mouse_out()
 {
 	m_state.hover = false;
 	m_state.button = up;

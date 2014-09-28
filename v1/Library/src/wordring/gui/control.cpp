@@ -31,8 +31,145 @@
 #include <string>
 #include <atomic>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace wordring::gui;
+
+// control::ancestor_iterator -------------------------------------------------
+
+control::ancestor_iterator::ancestor_iterator() : m_current(nullptr)
+{
+}
+
+control::ancestor_iterator::ancestor_iterator(control *c) : m_current(c)
+{
+}
+
+control* control::ancestor_iterator::operator *()
+{
+	assert(m_current);
+	return m_current;
+}
+
+control const* control::ancestor_iterator::operator *() const
+{
+	assert(m_current);
+	return m_current;
+}
+
+control* control::ancestor_iterator::operator ->()
+{
+	assert(m_current);
+	return m_current;
+}
+
+control const* control::ancestor_iterator::operator ->() const
+{
+	assert(m_current);
+	return m_current;
+}
+
+control::ancestor_iterator control::ancestor_iterator::operator ++(int)
+{
+	ancestor_iterator result(*this);
+	++(*this);
+	return result;
+}
+
+control::ancestor_iterator& control::ancestor_iterator::operator ++()
+{
+	assert(m_current);
+	m_current = m_current->get_parent();
+	return *this;
+}
+
+bool control::ancestor_iterator::operator !=(
+	ancestor_iterator const& rhs) const
+{
+	return m_current != rhs.m_current;
+}
+
+bool control::ancestor_iterator::operator ==(
+	ancestor_iterator const& rhs) const
+{
+	return m_current == rhs.m_current;
+}
+
+// control::descendant_reverse_iterator ---------------------------------------
+
+control::descendant_reverse_iterator::descendant_reverse_iterator()
+	: m_current(nullptr)
+{
+}
+
+control::descendant_reverse_iterator::descendant_reverse_iterator(
+	control *first, selector_function fn) : m_current(first), m_selector(fn)
+{
+}
+
+control* control::descendant_reverse_iterator::operator *()
+{
+	assert(m_current);
+	return m_current;
+}
+
+control const* control::descendant_reverse_iterator::operator *() const
+{
+	assert(m_current);
+	return m_current;
+}
+
+control* control::descendant_reverse_iterator::operator ->()
+{
+	assert(m_current);
+	return m_current;
+}
+
+control const* control::descendant_reverse_iterator::operator ->() const
+{
+	assert(m_current);
+	return m_current;
+}
+
+control::descendant_reverse_iterator
+control::descendant_reverse_iterator::operator ++(int)
+{
+	descendant_reverse_iterator result(*this);
+	++(*this);
+	return result;
+}
+
+control::descendant_reverse_iterator&
+control::descendant_reverse_iterator::operator ++()
+{
+	assert(m_current);
+	control::reverse_iterator
+		it1 = m_current->rbegin(), it2 = m_current->rend();
+	while (it1 != it2)
+	{
+		if (m_selector(it1->get()))
+		{
+			m_current = it1->get();
+			break;
+		}
+		++it1;
+	}
+	if (it1 == it2) m_current = nullptr;
+
+	return *this;
+}
+
+bool control::descendant_reverse_iterator::operator !=(
+	descendant_reverse_iterator const& rhs) const
+{
+	return m_current != rhs.m_current;
+}
+
+bool control::descendant_reverse_iterator::operator ==(
+	descendant_reverse_iterator const& rhs) const
+{
+	return m_current == rhs.m_current;
+}
 
 // control --------------------------------------------------------------------
 
@@ -75,6 +212,24 @@ bool control::is_ancestor_of(control const *c) const
 	}
 
 	return false;
+}
+
+control* control::find_descendant_from_point(point_int pt)
+{
+	// まず自身に含まれるかテストする
+	if (!hit_test(pt)) return nullptr;
+
+	control *result = nullptr;
+	// 子のテストを開始
+	descendant_reverse_iterator
+		it1(this, [&](control *c)->bool { return c->hit_test(pt); }), it2;
+
+	std::for_each(it1, it2, [&](control *c){
+		pt -= c->get_position();
+		result = c;
+	});
+
+	return result;
 }
 
 void control::attach_parent_internal(control *parent)
@@ -393,7 +548,7 @@ rect_int control::query_rect_from_window() const
 	return rc1 & rc2; // 重なる長方形
 }
 
-point_int control::query_offset_from(container *c) const
+point_int control::query_offset_from(control *c) const
 {
 	assert(c->is_ancestor_of(this));
 
@@ -412,7 +567,7 @@ point_int control::query_offset_from(container *c) const
 
 bool control::hit_test(point_int pt) const
 {
-	return true;
+	return get_rect().including(pt);
 }
 
 // スタイル -------------------------------------------------------------------
@@ -427,8 +582,6 @@ void control::set_style(style::store s)
 	m_style = s;
 }
 
-
-
 // レイアウト -----------------------------------------------------------------
 
 void control::set_layout(layout::store l)
@@ -436,7 +589,6 @@ void control::set_layout(layout::store l)
 	m_layout = std::move(l);
 }
 
-/// レイアウトを取得します
 layout* control::get_layout()
 {
 	return m_layout.get();
@@ -469,27 +621,6 @@ bool control::do_mouse_down(mouse &m)
 
 bool control::do_mouse_down_internal(mouse &m)
 {
-	// 子コントロールの処理を開始
-	// 最前面からテストするために逆イテレータを使う
-	reverse_iterator it1 = rbegin(), it2 = rend();
-	if (it1 != it2)
-	{
-		m.pt -= get_position(); // 子コントロール用に位置を変更
-
-		while (it1 != it2)
-		{
-			if ((*it1)->get_rect().including(m.pt)) // ヒット・テスト
-			{
-				// 子が処理したら終わり
-				if ((*it1)->do_mouse_down_internal(m)) { return true; }
-			}
-			++it1;
-		}
-		// 子コントロールの処理終わり
-
-		m.pt += get_position(); // this用に位置を変更
-	}
-
 	return do_mouse_down(m);
 }
 
@@ -499,52 +630,13 @@ void control::do_mouse_move(mouse &m)
 
 void control::do_mouse_move_internal(mouse &m)
 {
-	window_service *ws = find_service();
-	assert(ws);
-	mouse_service &ms = ws->get_mouse_service();
-
-	ms.process_bubble_up(this, m); // 上昇バブルが通過したことを通知
-
-	// 最前面からテストするために逆イテレータを使う
-	// 子コントロールの処理を開始
-	auto it1 = rbegin(), it2 = rend();
-	if (it1 != it2)
-	{
-		m.pt -= get_position(); // 子コントロール用に位置を変更
-
-		while (it1 != it2)
-		{
-			if ((*it1)->get_rect().including(m.pt)) // ヒット・テスト
-			{
-				(*it1)->do_mouse_move_internal(m);
-				break; // バブルを上昇させることが出来た
-			}
-			++it1;
-		}
-		// 子コントロールの処理終わり
-
-		m.pt += get_position(); // this用に位置を変更
-
-		// バブルを上昇させられない場合、このコンテナがトップ
-		if (it1 == it2)
-		{
-			ms.process_bubble_top(this, m);
-		}
-	}
-	else
-	{
-		ms.process_bubble_top(this, m);
-	}
-	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
-
-	do_mouse_move(m);
 }
 
 void control::do_mouse_over(mouse &m)
 {
 }
 
-void control::do_mouse_out(mouse &m)
+void control::do_mouse_out()
 {
 }
 
@@ -692,7 +784,7 @@ void test_control::do_mouse_over(mouse &m)
 	repaint();
 }
 
-void test_control::do_mouse_out(mouse &m)
+void test_control::do_mouse_out()
 {
 	//std::cout << m.pt.x << ", " << m.pt.y << std::endl;
 	std::swap(m_fg_color, m_bg_color);

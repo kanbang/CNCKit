@@ -77,7 +77,7 @@ public:
 	virtual void do_mouse_over(mouse &m);
 
 	/// マウス・ポインタがコントロールから出たとき呼び出されます
-	virtual void do_mouse_out(mouse &m);
+	virtual void do_mouse_out();
 
 	virtual bool do_mouse_up(mouse &m);
 

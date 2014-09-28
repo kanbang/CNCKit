@@ -290,7 +290,8 @@ LRESULT native_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_RBUTTONDBLCLK, onRButtonDblClk);
 		HANDLE_MSG(hwnd, WM_RBUTTONDOWN, onRButtonDown);
 		HANDLE_MSG(hwnd, WM_RBUTTONUP, onRButtonUp);
-	case WM_MOUSELEAVE: onMouseLeave(); break;
+	case WM_MOUSELEAVE: onMouseLeave(); return 0L;
+	case WM_MOUSEHOVER: return 0L;
 
 		// キーボード ---------------------------------------------------------
 
@@ -328,8 +329,9 @@ LRESULT native_window_impl::WindowProc(
 		HANDLE_MSG(hwnd, WM_TIMER, onTimer);
 		HANDLE_MSG(hwnd, WM_WINDOWPOSCHANGED, onWindowPosChanged);
 		HANDLE_MSG(hwnd, WM_WINDOWPOSCHANGING, onWindowPosChanging);
-
 	}
+	m_msg_handled = false;
+
 	return 0;
 }
 

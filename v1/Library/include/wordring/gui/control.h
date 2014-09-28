@@ -31,6 +31,7 @@
 #include <cstdint>
 #include <memory>
 #include <functional>
+#include <iterator>
 
 namespace wordring
 {
@@ -61,15 +62,106 @@ public:
 	typedef storage_type::const_reverse_iterator const_reverse_iterator;
 
 public:
+	/// 子から親へ辿るイテレータです
+	class ancestor_iterator
+		: public std::iterator < std::forward_iterator_tag, control* >
+	{
+	private:
+		control *m_current;
+
+	public:
+		ancestor_iterator();
+
+		ancestor_iterator(control *c);
+
+		control* operator *();
+
+		control const* operator *() const;
+
+		control* operator ->();
+
+		control const* operator ->() const;
+
+		ancestor_iterator operator ++(int);
+
+		ancestor_iterator& operator ++();
+
+		bool operator != (ancestor_iterator const& rhs) const;
+
+		bool operator == (ancestor_iterator const& rhs) const;
+	};
+
+	/**
+	 * @brief   親から子へセレクタにマッチするコントロールを辿るイテレータです
+	 *
+	 * @details
+	 *          コントロールの階層は、ツリー状になっています。
+	 *          子から親へ辿るのは一つの道しかありませんが、親から子へは複数の
+	 *          道があります。
+	 *          このイテレータは、選択する条件を付けることでどの子を選ぶか決定
+	 *          します。
+	 *          イテレータをインクリメントすると、現在ポイントしている
+	 *          コントロールの子を末尾から先頭に向けて検索します。
+	 *          兄弟の末尾から先頭に向けて検索し、最初に条件に合った子をポイント
+	 *          します。
+	 */
+	class descendant_reverse_iterator
+		: public std::iterator<std::forward_iterator_tag, control*>
+	{
+	public:
+		typedef std::function<bool(control*)> selector_function;
+
+	private:
+		selector_function  m_selector;
+		control           *m_current;
+
+	public:
+		/// rend()相当のイテレータを作ります
+		descendant_reverse_iterator();
+
+		/**
+		 * @brief   firstをポイントする、rbegin()相当のイテレータを作ります
+		 *
+		 * @param   first イテレータが最初に指すコントロール
+		 *
+		 * @param   fn
+		 *          bool fn(control *c)という形式の関数オブジェクトを指定します。
+		 *          この関数は、cが選択条件に合う場合、trueを返してください。
+		 */
+		descendant_reverse_iterator(control *first, selector_function fn);
+
+		control* operator *();
+
+		control const* operator *() const;
+
+		control* operator ->();
+
+		control const* operator ->() const;
+
+		descendant_reverse_iterator operator ++(int);
+
+		descendant_reverse_iterator& operator ++();
+
+		bool operator != (descendant_reverse_iterator const& rhs) const;
+
+		bool operator == (descendant_reverse_iterator const& rhs) const;
+	};
+
+	struct state
+	{
+		bool focus : 1;
+		bool hover : 1;
+	};
 
 protected:
 	control  *m_parent; ///< 親コンテナ
 	rect_int  m_rc;     ///< コントロールの長方形
+	state     m_state;  ///< コントロールの状態
 
-	style::store m_style;
+	style::store  m_style; ///< 共有されるスタイル
 
-	std::unique_ptr<layout> m_layout;
-	storage_type            m_storage;
+	layout::store m_layout;  ///< レイアウト
+	storage_type  m_storage; ///< 子コントロール
 
 	// 構築・破棄 -------------------------------------------------------------
 protected:
@@ -101,6 +193,9 @@ public:
 	 *          cがthisである場合、falseを返します。
 	 */
 	bool is_ancestor_of(control const *c) const;
+
+	/// 位置ptを含む最子孫のコントロールを検索します
+	control* find_descendant_from_point(point_int pt);
 
 	/**
 	 * @brief   [内部用]親コンテナを取り付けます
@@ -314,9 +409,9 @@ public:
 	rect_int query_rect_from_window() const;
 
 	/// cからコントロールまでのオフセットを取得する
-	point_int query_offset_from(container *c) const;
+	point_int query_offset_from(control *c) const;
 
-	bool hit_test(point_int pt) const;
+	virtual bool hit_test(point_int pt) const;
 
 	// スタイル ---------------------------------------------------------------
 
@@ -384,7 +479,7 @@ public:
 	virtual void do_mouse_over(mouse &m);
 
 	/// マウス・ポインタがコントロールから出たとき呼び出されます
-	virtual void do_mouse_out(mouse &m);
+	virtual void do_mouse_out();
 
 	/// マウス・ボタンが離されたとき呼び出されます
 	virtual bool do_mouse_up(mouse &m);
@@ -429,7 +524,7 @@ public:
 
 	virtual void do_mouse_over(mouse &m);
 
-	virtual void do_mouse_out(mouse &m);
+	virtual void do_mouse_out();
 
 	virtual bool do_mouse_up(mouse &m);
 

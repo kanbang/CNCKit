@@ -5,7 +5,7 @@
  *
  * @details
  *          ウィンドウ・サービスはメッセージ・ポンプに相当します。\n
- *          Boost.Asioのコンセプトに類似します。\n
+ *
  *          
  *          このヘッダー・ファイルは、ライブラリ利用者に公開されます。
  *
@@ -61,31 +61,34 @@ public:
 private:
 	storage_type m_queue; ///< 現在マウスが載っているコントロール
 
+	control *m_hover;
+	control *m_capture;
+	control *m_;
+
 public:
 	mouse_service();
 
-	/// マウスの移動メッセージが上昇する時、呼び出されます
-	void process_bubble_up(control *c, mouse &m);
+	control* get_hover();
 
-	/// マウスの移動メッセージが最前面に到達した時、呼び出されます
-	void process_bubble_top(control *c, mouse &m);
+	control* set_hover(control *c, mouse &m);
 
-	/// マウス・ポインタがコントロール外に移動したか検査し、処理します
-	bool process_mouse_out(control *c0, control *c, mouse &m);
+	control* release_hover();
 
-	/**
-	 * @brief   マウス・ポインタがコントロールから外れたとき呼び出されます
-	 *
-	 * @details
-	 *          このメンバは、マウス・ポインタがウィンドウから出たときに呼び
-	 *          出され、処理を行います。
-	 *          マウス・ポインタがスレッド内のいずれかのコントロール上にある
-	 *          場合、process_bubble_top()で処理できますが、例えばルート・
-	 *          コンテナから出たような場合、process_bubble_top()は呼び出され
-	 *          ません。
-	 *          そこで、ウィンドウから通知をもらい処理を行います。
-	 */
-	void process_mouse_leave(control *c);
+	control* get_capture();
+
+	control* set_capture(control *c);
+
+	void process_mouse_down(control *w, mouse &m);
+
+	void process_mouse_up(control *w, mouse &m);
+
+	void process_mouse_enter(control *w, mouse &m);
+
+	void process_mouse_leave(control *w);
+
+	void process_mouse_move(control *w, mouse &m);
+
+	void process_mouse_wheel(control *w, mouse &m);
 };
 
 class timer_service

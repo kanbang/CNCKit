@@ -50,78 +50,108 @@ using namespace wordring::gui;
 
 // mouse_service --------------------------------------------------------------
 
-mouse_service::mouse_service()
+mouse_service::mouse_service() : m_hover(nullptr), m_capture(nullptr)
 {
 
 }
 
-void mouse_service::process_bubble_up(control *c, mouse &m)
+control* mouse_service::get_hover()
 {
-	if (std::find(m_queue.begin(), m_queue.end(), c) == m_queue.end())
+	return m_hover;
+}
+
+control* mouse_service::set_hover(control *c, mouse &m)
+{
+	if (c != m_hover)
 	{
-		m_queue.push_back(c);
+		if(m_hover) m_hover->do_mouse_out();
 		c->do_mouse_over(m);
+		std::swap(m_hover, c);
 	}
+	return c; // 元のm_hover
 }
 
-void mouse_service::process_bubble_top(control *c, mouse &m)
+control* mouse_service::release_hover()
 {
-	iterator it = std::remove_if(
-		m_queue.begin(),
-		m_queue.end(),
-		[&](control *c0)->bool{ return process_mouse_out(c0, c, m); });
-
-	m_queue.erase(it, m_queue.end());
-}
-
-bool mouse_service::process_mouse_out(control *c0, control *c, mouse &m)
-{
-	bool result = true; // マウス・カーソルがc0から出ていればtrue
-
-	// 同じコントロール内でptが変わっただけの場合、カーソルは出ていない
-	if (c0 == c) { result = false; }
-
-	// カーソルのあるコントロールを載せているコンテナは、カーソルが出ていない
-	if (c0->is_container() && static_cast<container*>(c0)->is_ancestor_of(c))
-	{
-		result = false;
-	}
-
-	if (result)
-	{
-		c0->do_mouse_out(m);
-	}
-
+	control *result = m_hover;
+	if (result) result->do_mouse_out();
+	m_hover = nullptr;
 	return result;
 }
 
-void mouse_service::process_mouse_leave(control *c)
+control* mouse_service::get_capture()
 {
-	// コントロールの場合、cだけ処理する
-	if (!c->is_container())
+	return m_capture;
+}
+
+control* mouse_service::set_capture(control *c)
+{
+	std::swap(m_capture, c);
+	return c;
+}
+
+void mouse_service::process_mouse_down(control *w, mouse &m)
+{
+	control *c = w->find_descendant_from_point(m.pt);
+	m.pt -= c->query_offset_from(w);
+	control::ancestor_iterator it1(c), it2(w->get_parent());
+	while (it1 != it2)
 	{
-		m_queue.erase(
-			std::find(m_queue.begin(), m_queue.end(), c),
-			m_queue.end());
-		return;
+		if (it1->do_mouse_down_internal(m)) break;
+		m.pt += it1->get_position();
+		++it1;
 	}
+}
 
-	// コンテナの場合、cの子もすべて処理する
-	iterator it = std::remove_if(
-		m_queue.begin(),
-		m_queue.end(),
-		[&](control *c0)->bool{
-			assert(c->is_container());
-			if (static_cast<container*>(c)->is_ancestor_of(c0))
-			{
-				mouse m(0, 0);
-				c0->do_mouse_out(m);
-				return true;
-			}
-			return false;
+void mouse_service::process_mouse_up(control *w, mouse &m)
+{
+	control *c = w->find_descendant_from_point(m.pt);
+	m.pt -= c->query_offset_from(w);
+	control::ancestor_iterator it1(c), it2(w->get_parent());
+	while (it1 != it2)
+	{
+		if (it1->do_mouse_up_internal(m)) break;
+		m.pt += it1->get_position();
+		++it1;
+	}
+}
+
+void mouse_service::process_mouse_enter(control *w, mouse &m)
+{
+
+}
+
+void mouse_service::process_mouse_leave(control *w)
+{
+	release_hover();
+}
+
+void mouse_service::process_mouse_move(control *w, mouse &m)
+{
+	control *c = nullptr;
+
+	c = get_capture();
+	if (c) // マウスがキャプチャされている場合
+	{
+		set_hover(c, m);
+		c->do_mouse_move_internal(m);
+	}
+	else // マウスがキャプチャされていない場合
+	{
+		control::descendant_reverse_iterator
+			it1(w, [&](control *c)->bool { return c->hit_test(m.pt); }), it2;
+		std::for_each(it1, it2, [&](control *c1){
+			c = c1;
+			m.pt -= c->get_position(); // 位置正規化
+			c->do_mouse_move_internal(m);
 		});
+		set_hover(c, m);
+	}
+}
 
-	m_queue.erase(it, m_queue.end());
+void mouse_service::process_mouse_wheel(control *w, mouse &m)
+{
+
 }
 
 // timer_service --------------------------------------------------------------
