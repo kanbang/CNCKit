@@ -469,14 +469,14 @@ void control::set_rect_internal(rect_int rc, bool notify, bool paint)
 	m_rc = rc;
 
 	window *w = to_window();
-	if (w)
+	if (w) // 自身がウィンドウである場合
 	{
 		rc.pt = query_offset_from_window();
 		w->get_native()->set_window_rect(rc);
 	}
 
 	layout *l = get_layout();
-	if (l)
+	if (l) // レイアウトを持つ場合（コンテナである）
 	{
 		l->perform_layout(this);
 	}

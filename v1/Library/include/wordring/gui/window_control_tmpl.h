@@ -44,8 +44,8 @@ class dummy;
  *
  * @details ウィンドウの特性とコントロールの特性を合成できます。
  *          ウィンドウを持つすべてのコントロールは、ここから派生するべきです。
- *          コンテナの場合、window_container_tmplから派生してください。
- *          window_container_tmplは、window_control_tmplを継承しています。
+ *          コンテナの場合、window_control_tmplから派生してください。
+ *          window_control_tmplは、window_control_tmplを継承しています。
  *
  * @param   T1 基本コントロール
  * @param   T2 基本ウィンドウ
@@ -60,7 +60,7 @@ public:
 	// 構築・破棄 -------------------------------------------------------------
 protected:
 	/**
-	 * @brief   window_container_tmpl専用のコンストラクタ
+	 * @brief   window_control_tmpl専用のコンストラクタ
 	 *
 	 * @param   l レイアウト
 	 * @param   nw ネイティブ・ウィンドウ

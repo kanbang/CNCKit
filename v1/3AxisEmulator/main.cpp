@@ -115,7 +115,7 @@ int main()
 	for (int i = 0; i < 200; i++)
 	{
 		button *b = static_cast<button*>(
-			c->push_back(button::create(0, 0, 200, 24)));
+			c->push_back(button::create(0, 0, 200, 16)));
 
 		b->set_style(s);
 		b->on_click = [](mouse &m)->bool{

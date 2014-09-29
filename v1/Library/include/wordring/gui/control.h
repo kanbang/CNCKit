@@ -26,7 +26,9 @@
 #include <wordring/gui/canvas.h>
 #include <wordring/gui/message.h>
 #include <wordring/gui/mouse.h>
+
 #include <wordring/gui/layout.h>
+#include <wordring/gui/render.h>
 
 #include <cstdint>
 #include <memory>
@@ -40,9 +42,11 @@ namespace gui
 
 class window_service; // 前方宣言
 class window;         // 前方宣言
-class root_window;    // 前方宣言
-class container;      // 前方宣言
-class root_container; // 前方宣言
+//class render;         // 前方宣言
+
+//class root_window;    // 前方宣言
+//class container;      // 前方宣言
+//class root_container; // 前方宣言
 
 /**
  * @brief   GUIコントロール基本クラス
@@ -62,7 +66,15 @@ public:
 	typedef storage_type::const_reverse_iterator const_reverse_iterator;
 
 public:
-	/// 子から親へ辿るイテレータです
+	/**
+	 * @brief   子から親へ辿るイテレータです
+	 *
+	 * @details
+	 *          コントロール階層の子から親へ辿ります。
+	 *          インクリメントすると現在指しているコントロールの親を指すように
+	 *          なります。
+	 *          前進イテレータなので、デクリメントできません。
+	 */
 	class ancestor_iterator
 		: public std::iterator < std::forward_iterator_tag, control* >
 	{
@@ -70,8 +82,14 @@ public:
 		control *m_current;
 
 	public:
+		/// end()相当のイテレータを作ります
 		ancestor_iterator();
 
+		/**
+		 * @brief   begin()相当のイテレータを作ります
+		 *
+		 * @param   c 初期状態でポイントするコントロール
+		 */
 		ancestor_iterator(control *c);
 
 		control* operator *();
@@ -158,9 +176,10 @@ protected:
 	rect_int  m_rc;     ///< コントロールの長方形
 	state     m_state;  ///< コントロールの状態
 
-	style::store  m_style; ///< 共有されるスタイル
+	style::store  m_style;  ///< 共有されるスタイル
+	layout::store m_layout; ///< レイアウト
+	render::store m_render; ///< 描画
 
-	layout::store m_layout;  ///< レイアウト
 	storage_type  m_storage; ///< 子コントロール
 
 	// 構築・破棄 -------------------------------------------------------------
@@ -263,20 +282,28 @@ public:
 	 */
 	control* push_back(control::store s);
 
+	/// 子コントロール配列の最初をポイントするイテレータを返します
 	iterator begin();
 
+	/// 子コントロール配列の末尾の次をポイントするイテレータを返します
 	iterator end();
 
+	/// 子コントロール配列の最初をポイントするイテレータを返します
 	const_iterator begin() const;
 
+	/// 子コントロール配列の末尾の次をポイントするイテレータを返します
 	const_iterator end() const;
 
+	/// 子コントロール配列の末尾をポイントする逆イテレータを返します
 	reverse_iterator rbegin();
 
+	/// 子コントロール配列の最初の前をポイントする逆イテレータを返します
 	reverse_iterator rend();
 
+	/// 子コントロール配列の末尾をポイントする逆イテレータを返します
 	const_reverse_iterator rbegin() const;
 
+	/// 子コントロール配列の最初の前をポイントする逆イテレータを返します
 	const_reverse_iterator rend() const;
 
 	// 情報 -------------------------------------------------------------------
@@ -449,8 +476,6 @@ public:
 	virtual void do_message_internal(message &m);
 
 	// マウス・メッセージ -----------------------------------------------------
-
-	//virtual bool do_click(mouse &m);
 
 	/// マウス・ボタンが押されたとき呼び出されます
 	virtual bool do_mouse_down(mouse &m);

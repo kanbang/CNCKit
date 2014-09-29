@@ -112,12 +112,13 @@
     <ClInclude Include="include\wordring\gui\layout.h" />
     <ClInclude Include="include\wordring\gui\message.h" />
     <ClInclude Include="include\wordring\gui\mouse.h" />
+    <ClInclude Include="include\wordring\gui\render.h" />
     <ClInclude Include="include\wordring\gui\root_window.h" />
     <ClInclude Include="include\wordring\gui\scroll_container.h" />
     <ClInclude Include="include\wordring\gui\shape_int.h" />
     <ClInclude Include="include\wordring\gui\style.h" />
     <ClInclude Include="include\wordring\gui\window.h" />
-    <ClInclude Include="include\wordring\gui\window_container.h" />
+    <ClInclude Include="include\wordring\gui\window_control.h" />
     <ClInclude Include="include\wordring\gui\window_control_tmpl.h" />
     <ClInclude Include="include\wordring\gui\window_service.h" />
     <ClInclude Include="include\wordring\opengl\detail\native_gl_context.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="include\wordring\opengl\gl_context.h" />
     <ClInclude Include="include\wordring\opengl\gl_exception.h" />
     <ClInclude Include="include\wordring\wordring.h" />
+    <ClInclude Include="src\wordring\gui\render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wordring\atom.cpp" />
@@ -144,10 +146,11 @@
     <ClCompile Include="src\wordring\gui\font.cpp" />
     <ClCompile Include="src\wordring\gui\layout.cpp" />
     <ClCompile Include="src\wordring\gui\message.cpp" />
+    <ClCompile Include="src\wordring\gui\mouse.cpp" />
     <ClCompile Include="src\wordring\gui\root_window.cpp" />
     <ClCompile Include="src\wordring\gui\style.cpp" />
     <ClCompile Include="src\wordring\gui\window.cpp" />
-    <ClCompile Include="src\wordring\gui\window_container.cpp" />
+    <ClCompile Include="src\wordring\gui\window_control.cpp" />
     <ClCompile Include="src\wordring\gui\window_service.cpp" />
     <ClCompile Include="src\wordring\opengl\detail\win32\win32_gl_context.cpp" />
     <ClCompile Include="src\wordring\opengl\gl_context.cpp" />

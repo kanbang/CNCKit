@@ -23,7 +23,7 @@
 
 #include <wordring/wordring.h>
 
-#include <wordring/gui/window_container.h>
+#include <wordring/gui/window_control.h>
 #include <wordring/gui/container.h>
 
 #include <wordring/gui/detail/native_window.h>
@@ -48,7 +48,7 @@ class root_window; // 前方宣言
  *          この処理は特にLinuxでの処理の重さを改善する狙いがあります。
  *          レイアウト要求の圧縮や調停を行う能力があります。
  */
-class root_container : public window_container
+class root_container : public window_control
 {
 public:
 	typedef std::unique_ptr<root_container> store;

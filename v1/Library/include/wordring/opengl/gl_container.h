@@ -25,7 +25,7 @@
 
 #include <wordring/gui/control.h>
 #include <wordring/gui/container.h>
-#include <wordring/gui/window_container.h>
+#include <wordring/gui/window_control.h>
 
 #include <wordring/opengl/gl_context.h>
 
@@ -51,7 +51,7 @@ class dummy;
  *
  *
  */
-class gl_container : public window_container
+class gl_container : public window_control
 {
 public:
 

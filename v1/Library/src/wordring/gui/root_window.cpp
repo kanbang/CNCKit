@@ -43,7 +43,7 @@ using namespace wordring::gui;
 // 構築・破棄 -----------------------------------------------------------------
 
 root_container::root_container()
-	: window_container(
+	: window_control(
 		  rect_int() // ルート・ウィンドウによって決まるので空
 		, full_layout::create()
 		, std::move(detail::native_control_window_impl::create()))

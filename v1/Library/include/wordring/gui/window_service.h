@@ -51,45 +51,6 @@ class root_window;
 class container;
 class window_service;
 
-class mouse_service
-{
-public:
-	typedef std::deque<control*> storage_type;
-	typedef storage_type::iterator iterator;
-	typedef storage_type::reverse_iterator reverse_iterator;
-
-private:
-	storage_type m_queue; ///< 現在マウスが載っているコントロール
-
-	control *m_hover;
-	control *m_capture;
-	control *m_;
-
-public:
-	mouse_service();
-
-	control* get_hover();
-
-	control* set_hover(control *c, mouse &m);
-
-	control* release_hover();
-
-	control* get_capture();
-
-	control* set_capture(control *c);
-
-	void process_mouse_down(control *w, mouse &m);
-
-	void process_mouse_up(control *w, mouse &m);
-
-	void process_mouse_enter(control *w, mouse &m);
-
-	void process_mouse_leave(control *w);
-
-	void process_mouse_move(control *w, mouse &m);
-
-	void process_mouse_wheel(control *w, mouse &m);
-};
 
 class timer_service
 {

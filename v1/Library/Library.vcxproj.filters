@@ -171,9 +171,6 @@
     <ClInclude Include="include\wordring\gui\style.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\gui\window_container.h">
-      <Filter>ヘッダー ファイル\gui</Filter>
-    </ClInclude>
     <ClInclude Include="include\wordring\gui\control_data.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
@@ -187,6 +184,15 @@
       <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
     </ClInclude>
     <ClInclude Include="include\wordring\gui\color.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\window_control.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wordring\gui\render.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\render.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
   </ItemGroup>
@@ -245,9 +251,6 @@
     <ClCompile Include="src\wordring\gui\button.cpp">
       <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
-    <ClCompile Include="src\wordring\gui\window_container.cpp">
-      <Filter>ソース ファイル\gui</Filter>
-    </ClCompile>
     <ClCompile Include="src\wordring\atom.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -259,6 +262,12 @@
     </ClCompile>
     <ClCompile Include="src\wordring\gui\detail\win32\win32_font.cpp">
       <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\window_control.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\mouse.cpp">
+      <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
