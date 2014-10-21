@@ -14,6 +14,7 @@
     <ProjectGuid>{6DFDED9A-3606-46FD-A0DE-6BF89D85DB97}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>v2</RootNamespace>
+    <ProjectName>Uniscribe</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
