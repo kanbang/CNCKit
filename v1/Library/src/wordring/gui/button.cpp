@@ -153,6 +153,22 @@ void button::do_paint(canvas &cv)
 
 	font::store f = cs->font;
 
+
+
+
+
+	canvas wcv(find_window());
+	std::wstring str(L"‚ ‚¢‚¤‚¦‚¨");
+	wcv->get_string_extents(str, f.get(), 1280);
+
+	wcv->draw_line(point_int(0, 0), point_int(100, 100), 2, color_rgb(200, 0, 0));
+
+
+
+
+
+
+
 	cv->fill_rect(
 		rect_int(point_int(0, 0), get_size()), bg_color);
 	//font f(16);// , font::cursive, 400, false, L"");

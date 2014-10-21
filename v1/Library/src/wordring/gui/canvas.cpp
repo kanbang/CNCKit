@@ -47,10 +47,10 @@ canvas::canvas() : m_native(new detail::native_canvas_impl)
 {
 }
 
-canvas::canvas(window *w)
-	: m_native(new detail::native_canvas_impl(w->get_native()))
+canvas::canvas(window *w) : m_native(new detail::native_window_canvas_impl)
 {
-
+	static_cast<detail::native_window_canvas_impl*>(
+		m_native.get())->set_window(w->get_native());
 }
 
 canvas::canvas(std::unique_ptr<detail::native_canvas>&& cv)

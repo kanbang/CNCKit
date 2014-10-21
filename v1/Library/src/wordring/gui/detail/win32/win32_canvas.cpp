@@ -41,15 +41,10 @@ using namespace wordring::gui;
 
 // native_canvas_impl ---------------------------------------------------------
 
-native_canvas_impl::native_canvas_impl()
+native_canvas_impl::native_canvas_impl() : m_hdc(NULL)
 {
-}
-
-native_canvas_impl::native_canvas_impl(native_window *nw)
-{
-	assert(nw);
-	HWND hwnd = static_cast<native_window_impl*>(nw)->get_handle();
-	m_hdc = ::GetDC(nullptr);
+	// ::GetDC()が失敗の時NULLを返すので、初期値をNULLにしておいても
+	// 互換性を保てると判断。
 }
 
 native_canvas_impl::native_canvas_impl(HDC hdc)
@@ -61,31 +56,37 @@ native_canvas_impl::native_canvas_impl(HDC hdc)
 
 native_canvas_impl::~native_canvas_impl()
 {
+	assert(m_hdc);
 	::SelectClipRgn(m_hdc, NULL);
 }
 
 HDC native_canvas_impl::get_handle()
 {
+	assert(m_hdc);
 	return m_hdc;
 }
 
 point_int native_canvas_impl::get_origin() const
 {
+	assert(m_hdc);
 	return m_origin;
 }
 
 void native_canvas_impl::set_origin(point_int pt)
 {
+	assert(m_hdc);
 	m_origin = pt;
 }
 
 rect_int native_canvas_impl::get_viewport() const
 {
+	assert(m_hdc);
 	return m_viewport;
 }
 
 void native_canvas_impl::set_viewport(rect_int rc)
 {
+	assert(m_hdc);
 	assert(
 		   0 <= rc.pt.x
 		&& 0 <= rc.pt.y
@@ -110,6 +111,8 @@ void native_canvas_impl::set_viewport(rect_int rc)
 void native_canvas_impl::draw_line(
 	point_int pt1, point_int pt2, int32_t width, color_rgb rgb)
 {
+	assert(m_hdc);
+
 	pt1 += m_origin; pt2 += m_origin; // ビューポート・オフセット
 
 	HPEN hpen = ::CreatePen(
@@ -133,6 +136,7 @@ void native_canvas_impl::draw_line(
 
 void native_canvas_impl::draw_rect(rect_int rc, int32_t width, color_rgb rgb)
 {
+	assert(m_hdc);
 	/*
 	point_int
 		pt1(rc.left(), rc.top()), pt2(rc.right(), rc.top()),
@@ -168,6 +172,8 @@ void native_canvas_impl::draw_rect(rect_int rc, int32_t width, color_rgb rgb)
 
 void native_canvas_impl::fill_rect(rect_int rc, color_rgb rgb)
 {
+	assert(m_hdc);
+
 	rc.pt += m_origin;
 
 	HBRUSH hbrush = ::CreateSolidBrush(RGB(rgb.r, rgb.g, rgb.b));
@@ -196,9 +202,63 @@ void native_canvas_impl::fill_rect(rect_int rc, color_rgb rgb)
 	assert(result != 0);
 }
 
+void native_canvas_impl::get_string_extents(
+	std::wstring const &str, font *f, uint32_t limit)
+{
+	HGDIOBJ hfont = NULL;
+	if (f != nullptr)
+	{
+		native_font_impl *nf = static_cast<native_font_impl*>(f->get_native());
+		hfont = ::SelectObject(m_hdc, nf->get_handle(this));
+	}
+
+	DWORD li = ::GetFontLanguageInfo(m_hdc);
+
+	bool b0 = li & GCP_REORDER;
+	bool b1 = li & GCP_DBCS;
+	bool b2 = li & GCP_DIACRITIC;
+	bool b3 = li & FLI_GLYPHS;
+	bool b4 = li & GCP_GLYPHSHAPE;
+	bool b5 = li & GCP_KASHIDA;
+	bool b6 = li & GCP_LIGATE;
+	bool b7 = li & GCP_USEKERNING;
+	bool b8 = li & GCP_REORDER;
+
+	size_t len = str.length();
+
+	GCP_RESULTSW gcp;
+	::ZeroMemory(&gcp, sizeof(gcp));
+	gcp.lStructSize = sizeof(GCP_RESULTSW);
+	gcp.lpOutString = new wchar_t[len];
+	gcp.lpDx = new int[len];
+	gcp.lpCaretPos = new int[len];
+	gcp.lpGlyphs = new WCHAR[len];
+	gcp.lpGlyphs[0] = 0;
+	gcp.nGlyphs = (UINT)len;
+
+	DWORD result = ::GetCharacterPlacementW(
+		m_hdc, str.c_str(), str.size(), limit, &gcp, li & FLI_MASK);// GCP_REORDER | GCP_GLYPHSHAPE);// GCP_GLYPHSHAPE);
+
+	int i0 = gcp.lpCaretPos[0];
+	int i1 = gcp.lpCaretPos[1];
+	int i2 = gcp.lpCaretPos[2];
+	int i3 = gcp.lpCaretPos[3];
+	int i4 = gcp.lpCaretPos[4];
+
+	delete[] gcp.lpOutString;
+	delete[] gcp.lpDx;
+	delete[] gcp.lpCaretPos;
+	delete[] gcp.lpGlyphs;
+	//delete[] gcp.
+
+	if (hfont != NULL) { ::SelectObject(m_hdc, hfont); }
+}
+
 void native_canvas_impl::draw_string(
 	std::string str, point_int pt, color_rgb rgb, font* f)
 {
+	assert(m_hdc);
+
 	pt += m_origin;
 
 	BOOL result = ::TextOutA(m_hdc, pt.x, pt.y, str.c_str(), str.size());
@@ -208,6 +268,8 @@ void native_canvas_impl::draw_string(
 void native_canvas_impl::draw_string(
 	std::wstring str, point_int pt, color_rgb rgb, font* f)
 {
+	assert(m_hdc);
+
 	pt += m_origin;
 
 	HGDIOBJ hfont = NULL;
@@ -226,6 +288,31 @@ void native_canvas_impl::draw_string(
 
 	if (hfont != NULL) { ::SelectObject(m_hdc, hfont); }
 }
+
+// native_window_canvas_impl --------------------------------------------------
+
+native_window_canvas_impl::native_window_canvas_impl()
+{
+}
+
+native_window_canvas_impl::~native_window_canvas_impl()
+{
+	assert(m_hwnd);
+	assert(m_hdc);
+	::ReleaseDC(m_hwnd, m_hdc);
+}
+
+void native_window_canvas_impl::set_window(native_window *nw)
+{
+	assert(nw);
+	m_hwnd = static_cast<native_window_impl*>(nw)->get_handle();
+	m_hdc = ::GetDC(m_hwnd);
+
+	::SetMapMode(m_hdc, MM_TEXT);
+}
+
+
+// native_memory_canvas_impl --------------------------------------------------
 
 native_memory_canvas_impl::native_memory_canvas_impl()
 {
@@ -246,7 +333,6 @@ native_memory_canvas_impl::native_memory_canvas_impl()
 	m_bitmap = ::CreateDIBSection(NULL, (BITMAPINFO*)&bmih, 0, (void**)&m_bits, NULL, 0);
 	assert(m_bitmap != NULL);
 }
-
 
 native_memory_canvas_impl::~native_memory_canvas_impl()
 {

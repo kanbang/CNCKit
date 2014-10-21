@@ -47,7 +47,7 @@ protected:
 public:
 	canvas();
 
-	explicit canvas(window *w);
+	canvas(window *w);
 
 	explicit canvas(std::unique_ptr<detail::native_canvas>&& cv);
 

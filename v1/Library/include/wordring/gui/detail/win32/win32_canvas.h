@@ -39,6 +39,8 @@ namespace detail
 
 class native_window; // 先行宣言
 
+// native_canvas_impl ---------------------------------------------------------
+
 class native_canvas_impl : public native_canvas
 {
 protected:
@@ -46,8 +48,6 @@ protected:
 
 public:
 	native_canvas_impl();
-
-	native_canvas_impl(native_window *nw);
 
 	native_canvas_impl(HDC hdc);
 
@@ -104,6 +104,10 @@ public:
 	 */
 	virtual void fill_rect(rect_int rc, color_rgb rgb);
 
+
+	virtual void get_string_extents(
+		std::wstring const &str, font *f, uint32_t limit);
+
 	/**
 	 * @brief   文字列を描画します
 	 *
@@ -131,6 +135,22 @@ public:
 	virtual void draw_string(
 		std::wstring str, point_int pt, color_rgb rgb, font* f);
 };
+
+// native_window_canvas_impl --------------------------------------------------
+
+class native_window_canvas_impl : public native_canvas_impl
+{
+protected:
+	HWND m_hwnd;
+
+public:
+	native_window_canvas_impl();
+
+	virtual ~native_window_canvas_impl();
+
+	void set_window(native_window *nw);
+};
+
 
 class native_memory_canvas_impl : public native_canvas_impl
 {

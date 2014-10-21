@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3AxisEmulator", "3AxisEmulator\3AxisEmulator.vcxproj", "{2CBADB7F-C720-4C08-B224-2FCB56ABB672}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -11,6 +11,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PostThreadMessage", "PostThreadMessage\PostThreadMessage.vcxproj", "{0A9C3A7A-98EA-44A7-849C-CFE60B355711}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library", "Library\Library.vcxproj", "{ED2985D1-5EA4-4D25-817C-C187C449B5BF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "v2", "Unidcribe\v2.vcxproj", "{6DFDED9A-3606-46FD-A0DE-6BF89D85DB97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Debug|Win32.Build.0 = Debug|Win32
 		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Release|Win32.ActiveCfg = Release|Win32
 		{ED2985D1-5EA4-4D25-817C-C187C449B5BF}.Release|Win32.Build.0 = Release|Win32
+		{6DFDED9A-3606-46FD-A0DE-6BF89D85DB97}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DFDED9A-3606-46FD-A0DE-6BF89D85DB97}.Debug|Win32.Build.0 = Debug|Win32
+		{6DFDED9A-3606-46FD-A0DE-6BF89D85DB97}.Release|Win32.ActiveCfg = Release|Win32
+		{6DFDED9A-3606-46FD-A0DE-6BF89D85DB97}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -96,6 +96,9 @@ public:
 	 */
 	virtual void fill_rect(rect_int rc, color_rgb rgb) = 0;
 
+	virtual void get_string_extents(
+		std::wstring const &str, font *f, uint32_t limit) = 0;
+
 	/**
 	 * @brief   文字列を描画します
 	 *

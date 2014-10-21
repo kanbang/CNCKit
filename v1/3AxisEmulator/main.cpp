@@ -88,7 +88,7 @@ int main()
 	cs->margin_top = 5;
 	cs->margin_bottom = 12;
 
-	cs->font = ws.get_font_service().create(16, 0, 400, false, L"Meiryo UI");
+	cs->font = ws.get_font_service().create(16, 0, 400, false, L"Tahoma");
 
 	cs = static_cast<control_style*>(
 		s->push_back(control_style::create(style::state::active)));

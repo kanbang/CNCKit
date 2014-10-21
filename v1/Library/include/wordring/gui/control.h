@@ -34,6 +34,7 @@
 #include <memory>
 #include <functional>
 #include <iterator>
+#include <typeindex>
 
 namespace wordring
 {
@@ -310,6 +311,8 @@ public:
 
 	/// コントロール名を返します
 	virtual wchar_t const* get_control_name() const;
+
+	//virtual std::type_index get_type_index() const;
 
 	/// コントロールがウィンドウの場合、trueを返します
 	virtual bool is_window() const;
