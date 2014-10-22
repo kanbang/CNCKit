@@ -27,6 +27,7 @@
 #include <wordring/gui/root_window.h>
 
 #include <wordring/gui/button.h>
+#include <wordring/gui/text.h>
 #include <wordring/gui/style.h>
 
 #include "cnc_3axis_emulator_control.h"
@@ -43,6 +44,8 @@
 #endif // WORDRING_CC_VC
 
 
+#pragma comment(lib, "usp10.lib")
+#pragma comment(lib, "imm32.lib")
 int main()
 {
 	::setlocale(LC_ALL, "japanese");
@@ -106,12 +109,17 @@ int main()
 
 	root_window *rw = ws.push_back(root_window::create(rc));
 
-	rw->set_title_text(L"三軸エミュレータ");
+	rw->set_title_string(L"三軸エミュレータ");
 
 	container *c = static_cast<container*>(
 		rw->get_client()->push_back(test_container::create(rc)));
 	c->set_layout(flow_layout::create());
 
+	text_control *tc = static_cast<text_control*>(
+		c->push_back(std::make_unique<text_control>()));
+	tc->set_string(L"あいうえお");
+
+	/*
 	for (int i = 0; i < 200; i++)
 	{
 		button *b = static_cast<button*>(
@@ -123,10 +131,11 @@ int main()
 			return true;
 		};
 	}
+	*/
 
 	//c->push_back(std::move(tc0));
 
-	//std::wcout << rw2->get_title_text() << std::endl;
+	//std::wcout << rw2->get_title_string() << std::endl;
 
 	//uint32_t fc = fs.create(
 	//	10, font::sans_serif, 400, false, L"Meiryo UI")->get_code();

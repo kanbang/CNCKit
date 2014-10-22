@@ -96,9 +96,6 @@
     <ClInclude Include="include\wordring\gui\window.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
-    <ClInclude Include="include\wordring\gui\window_control_tmpl.h">
-      <Filter>ヘッダー ファイル\gui</Filter>
-    </ClInclude>
     <ClInclude Include="include\wordring\gui\window_service.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
@@ -195,6 +192,21 @@
     <ClInclude Include="include\wordring\gui\render.h">
       <Filter>ヘッダー ファイル\gui</Filter>
     </ClInclude>
+    <ClInclude Include="include\wordring\gui\text.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\native_text.h">
+      <Filter>ヘッダー ファイル\gui\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_text.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\detail\win32\win32_ime.h">
+      <Filter>ヘッダー ファイル\gui\detail\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wordring\gui\edit_control.h">
+      <Filter>ヘッダー ファイル\gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wordring\debug.cpp">
@@ -254,9 +266,6 @@
     <ClCompile Include="src\wordring\atom.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\wordring\gui\control_data.cpp">
-      <Filter>ソース ファイル\gui</Filter>
-    </ClCompile>
     <ClCompile Include="src\wordring\gui\font.cpp">
       <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
@@ -267,6 +276,15 @@
       <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
     <ClCompile Include="src\wordring\gui\mouse.cpp">
+      <Filter>ソース ファイル\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_text.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\detail\win32\win32_ime.cpp">
+      <Filter>ソース ファイル\gui\detail\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wordring\gui\text.cpp">
       <Filter>ソース ファイル\gui</Filter>
     </ClCompile>
   </ItemGroup>

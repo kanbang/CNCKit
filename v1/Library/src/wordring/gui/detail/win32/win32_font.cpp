@@ -35,7 +35,11 @@
 using namespace wordring::gui;
 using namespace wordring::gui::detail;
 
-native_font_impl::native_font_impl() : m_hfont(NULL)
+native_font_impl::native_font_impl()
+	: m_hfont(nullptr)
+	, m_cache(nullptr)
+	, m_logfont({ 0 })
+	, m_tm({ 0 })
 {
 }
 
@@ -138,6 +142,28 @@ HFONT native_font_impl::get_handle(native_canvas const *cv)
 	}
 
 	return m_hfont;
+}
+
+HFONT native_font_impl::get_handle()
+{
+	assert(m_hfont != nullptr);
+	return m_hfont;
+}
+
+SCRIPT_CACHE* native_font_impl::get_cache()
+{
+	return &m_cache;
+}
+
+LOGFONT* native_font_impl::get_logfont()
+{
+	return &m_logfont;
+}
+
+/// フォントの高さを返す
+uint32_t native_font_impl::get_height() const
+{
+	return m_tm.tmHeight;
 }
 
 point_int native_font_impl::get_offset() const

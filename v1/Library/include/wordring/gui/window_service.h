@@ -27,6 +27,7 @@
 #include <wordring/gui/mouse.h>
 #include <wordring/gui/style.h>
 #include <wordring/gui/font.h>
+#include <wordring/gui/text.h>
 
 #include <wordring/gui/detail/native_window.h>
 #include <wordring/gui/detail/native_message_service.h>
@@ -155,6 +156,7 @@ private:
 	mouse_service m_mouse_service; ///< マウス・カーソルのトラッキングを行う
 	//control_data_service m_data_service; ///< コントロールの外部データ
 	font_service m_font_service;
+	text_service m_text_service;
 
 public:
 	window_service();
@@ -204,6 +206,10 @@ public:
 
 
 	font_service& get_font_service();
+
+	// テキスト・サービス -----------------------------------------------------
+
+	text_service& get_text_service();
 };
 
 

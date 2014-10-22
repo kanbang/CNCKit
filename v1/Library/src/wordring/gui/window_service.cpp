@@ -256,3 +256,13 @@ font_service& window_service::get_font_service()
 {
 	return m_font_service;
 }
+
+
+text_service& window_service::get_text_service()
+{
+	return m_text_service;
+}
+
+
+
+

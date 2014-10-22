@@ -92,6 +92,11 @@ void font::set_code(uint32_t code)
 	m_code = code;
 }
 
+uint32_t font::get_height() const
+{
+	return m_native->get_height();
+}
+
 int32_t font::get_size() const
 {
 	return (m_code & size_mask) >> size_shift;

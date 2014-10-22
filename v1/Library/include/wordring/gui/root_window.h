@@ -186,9 +186,9 @@ public:
 
 	// その他 -----------------------------------------------------------------
 
-	std::wstring get_title_text() const;
+	std::wstring get_title_string() const;
 
-	void set_title_text(std::wstring s);
+	void set_title_string(std::wstring s);
 
 	// 一般メッセージ ---------------------------------------------------------
 

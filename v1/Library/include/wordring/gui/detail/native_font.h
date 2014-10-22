@@ -68,6 +68,9 @@ public:
 
 	virtual void attach(native_canvas const *cv) = 0;
 
+	/// フォントの高さを返す
+	virtual uint32_t get_height() const = 0;
+
 	/**
 	 * @brief   フォントの描画始点をオフセットとして取得する
 	 *

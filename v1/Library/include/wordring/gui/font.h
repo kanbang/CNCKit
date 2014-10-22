@@ -109,6 +109,8 @@ public:
 
 	void     set_code(uint32_t code);
 
+	uint32_t get_height() const;
+
 	int32_t  get_size() const;
 
 	int32_t  get_family() const;

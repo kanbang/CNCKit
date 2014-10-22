@@ -210,12 +210,12 @@ rect_int root_window::get_rect() const
 
 // その他 ---------------------------------------------------------------------
 
-std::wstring root_window::get_title_text() const
+std::wstring root_window::get_title_string() const
 {
 	return get_native()->get_window_text();
 }
 
-void root_window::set_title_text(std::wstring s)
+void root_window::set_title_string(std::wstring s)
 {
 	get_native()->set_window_text(s);
 }
