@@ -178,12 +178,14 @@ bool control::descendant_reverse_iterator::operator ==(
 control::control(rect_int rc)
 	: m_parent(nullptr)
 	, m_rc(rc)
+	, m_state({ false })
 {
 }
 
 control::control(rect_int rc, layout::store l)
 	: m_parent(nullptr)
 	, m_rc(rc)
+	, m_state({ false })
 	, m_layout(std::move(l))
 {
 }
@@ -592,6 +594,18 @@ void control::set_layout(layout::store l)
 layout* control::get_layout()
 {
 	return m_layout.get();
+}
+
+// レンダー ---------------------------------------------------------------
+
+void control::set_render(render::store r)
+{
+	m_render = r;
+}
+
+render* control::get_render()
+{
+	return m_render.get();
 }
 
 // タイマー -------------------------------------------------------------------

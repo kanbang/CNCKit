@@ -168,8 +168,10 @@ public:
 
 	struct state
 	{
+		bool editable : 1;
 		bool focus : 1;
 		bool hover : 1;
+		bool active : 1;
 	};
 
 protected:
@@ -467,6 +469,12 @@ public:
 
 	/// レイアウトを取得します
 	layout* get_layout();
+
+	// レンダー ---------------------------------------------------------------
+
+	void set_render(render::store r);
+
+	render* get_render();
 
 	// タイマー ---------------------------------------------------------------
 

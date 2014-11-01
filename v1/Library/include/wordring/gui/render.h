@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file    wordring/gui/render.h
  *
  * @brief
@@ -12,9 +12,9 @@
  * @author  Kouichi Minami
  * @date    2014
  *
- * @par     �z�[��
+ * @par     ホーム
  *          https://github.com/wordring/
- * @par     ���C�Z���X
+ * @par     ライセンス
  *          PDS
  */
 
@@ -33,15 +33,15 @@ namespace gui
 class dummy;
 
 /**
- * @brief   �R���g���[���̕`����s���܂�
+ * @brief   コントロールの描画を行います
  *
  * @details
- *          �R���g���[���̕`��́A�R���g���[���̋@�\�ƕ����ł��܂��B
- *          �Ⴆ�΃{�^���́A�o�c��A���A������A�摜�Ȃǂ�\�����܂����A
- *          �����ꂽ��n���h�������s����Ƃ����{�^���{���̋@�\���ƁA�`����e��
- *          �֌W������܂���B
- *          �\�����e�ɍ��킹�ăN���X�����͖̂��ʂȂ̂ŁA�`�敔����������
- *          ���܂��B
+ *          コントロールの描画は、コントロールの機能と分離できます。
+ *          例えばボタンは、バツ印、矢印、文字列、画像などを表示しますが、
+ *          押されたらハンドラを実行するというボタン本来の機能性と、描画内容は
+ *          関係がありません。
+ *          表示内容に合わせてクラスを作るのは無駄なので、描画部分だけ分離
+ *          します。
  */
 class render
 {

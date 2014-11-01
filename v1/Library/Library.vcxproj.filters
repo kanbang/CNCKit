@@ -52,14 +52,14 @@
     <Filter Include="ソース ファイル\gui">
       <UniqueIdentifier>{f243adf1-6e02-4762-a3b0-5c9ca3644269}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\opengl">
-      <UniqueIdentifier>{64655292-57a3-4779-8360-223f05ef8392}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\gui\detail">
       <UniqueIdentifier>{2dc4281b-486f-4359-9a2a-e936a2d6a49a}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\gui\detail\win32">
       <UniqueIdentifier>{25d43dbc-8ca8-4406-9aad-0c716a0252d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\opengl">
+      <UniqueIdentifier>{64655292-57a3-4779-8360-223f05ef8392}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\opengl\detail">
       <UniqueIdentifier>{ee4acb8f-3b26-4b61-b5bf-ec78d0fb3e3f}</UniqueIdentifier>

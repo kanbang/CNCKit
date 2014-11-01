@@ -367,6 +367,9 @@ protected:
 	native_ime_impl::store m_ime;
 
 public:
+
+	virtual void set_text(native_text *nt) {}
+
 	native_text_render_impl();
 
 	void set_control(control *c);

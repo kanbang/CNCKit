@@ -55,6 +55,8 @@ class native_text_render
 public:
 	typedef std::unique_ptr<native_text_render> store;
 
+public:
+	virtual void set_text(native_text *nt) = 0;
 };
 
 
