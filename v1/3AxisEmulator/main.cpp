@@ -39,7 +39,6 @@
 #include <iostream>
 #include <memory>
 
-
 #ifdef WORDRING_CC_VC // TODO: 
 #pragma comment (lib, "Library.lib")
 #endif // WORDRING_CC_VC
